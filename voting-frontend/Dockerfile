@@ -2,7 +2,7 @@ FROM node:22 AS build
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm run build --prod
+RUN npm run build --omit=dev
 
 FROM nginx:1.29 AS run
-COPY --from=build /app/dist/voting-frontend /usr/share/nginx/html
+COPY --from=build /app/dist/voting-frontend/browser /usr/share/nginx/html
