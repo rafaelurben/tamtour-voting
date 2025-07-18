@@ -1,0 +1,16 @@
+name: tamtour-voting
+services:
+  voting-db:
+    image: postgres:latest
+    container_name: voting-db
+    environment:
+      POSTGRES_USER: tamtour
+      POSTGRES_PASSWORD: trophy
+      POSTGRES_DB: voting
+    ports:
+      - "5555:5432"
+    volumes:
+      - voting-data:/var/lib/postgresql/data
+volumes:
+  voting-data:
+    driver: local
