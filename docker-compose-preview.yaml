@@ -29,7 +29,7 @@ services:
     depends_on:
       - voting-db
     environment:
-      DATABASE_URL: postgresql://voting-db:5432/voting
+      DATABASE_URL: jdbc:postgresql://voting-db:5432/voting
       DATABASE_USERNAME: ${SERVICE_USER_DB}
       DATABASE_PASSWORD: ${SERVICE_PASSWORD_DB}
       SERVICE_FQDN_VOTING: /api
