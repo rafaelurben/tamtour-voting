@@ -1,0 +1,38 @@
+# This file is made to work within Coolify and is not meant to be used with Docker Compose directly.
+name: tamtour-voting
+services:
+  voting-db:
+    image: postgres:latest
+    container_name: voting-db
+    environment:
+      POSTGRES_USER: ${SERVICE_USER_DB}
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_DB}
+      POSTGRES_DB: voting
+    volumes:
+      - voting-data:/var/lib/postgresql/data
+  voting-frontend:
+    image: ch.rafaelurben.tamtour/voting-frontend:latest
+    build:
+      context: voting-frontend
+      dockerfile: Dockerfile
+    container_name: voting-frontend
+    depends_on:
+      - voting-db
+    environment:
+      SERVICE_FQDN_VOTING: /
+  voting-backend:
+    image: ch.rafaelurben.tamtour/voting-backend:latest
+    build:
+      context: voting-backend
+      dockerfile: Dockerfile
+    container_name: voting-backend
+    depends_on:
+      - voting-db
+    environment:
+      DATABASE_URL: postgresql://voting-db:5432/voting
+      DATABASE_USERNAME: ${SERVICE_USER_DB}
+      DATABASE_PASSWORD: ${SERVICE_PASSWORD_DB}
+      SERVICE_FQDN_VOTING: /api
+volumes:
+  voting-data:
+    driver: local
