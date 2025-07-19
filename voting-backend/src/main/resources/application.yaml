@@ -29,3 +29,4 @@ server:
     session:
       cookie:
         http-only: true
+  forward-headers-strategy: framework
