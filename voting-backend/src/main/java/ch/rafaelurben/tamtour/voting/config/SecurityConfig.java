@@ -24,6 +24,10 @@ public class SecurityConfig {
         .logout(
             logout ->
                 logout.logoutUrl("/api/logout").logoutSuccessUrl("/").deleteCookies("JSESSIONID"))
+        .exceptionHandling(
+            e ->
+                e.authenticationEntryPoint(
+                    (request, response, authException) -> response.sendError(401, "Unauthorized")))
         .csrf(csrf -> csrf.ignoringRequestMatchers("/api/logout"));
     return http.build();
   }
