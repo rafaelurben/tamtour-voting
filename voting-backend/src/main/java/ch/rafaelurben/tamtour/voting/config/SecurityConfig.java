@@ -12,7 +12,8 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(authz -> authz.anyRequest().authenticated())
+    http.authorizeHttpRequests(
+            authz -> authz.requestMatchers("/actuator/**").permitAll().anyRequest().authenticated())
         .oauth2Login(
             oauth2 ->
                 oauth2
@@ -22,10 +23,7 @@ public class SecurityConfig {
                     .redirectionEndpoint(redir -> redir.baseUri("/api/login/oauth2/code/*")))
         .logout(
             logout ->
-                logout
-                    .logoutUrl("/api/logout")
-                    .logoutSuccessUrl("/")
-                    .deleteCookies("JSESSIONID"));
+                logout.logoutUrl("/api/logout").logoutSuccessUrl("/").deleteCookies("JSESSIONID"));
     return http.build();
   }
 }
