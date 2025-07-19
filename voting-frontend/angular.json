@@ -59,7 +59,8 @@
               "buildTarget": "voting-frontend:build:production"
             },
             "development": {
-              "buildTarget": "voting-frontend:build:development"
+              "buildTarget": "voting-frontend:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
