@@ -30,3 +30,7 @@ server:
       cookie:
         http-only: true
   forward-headers-strategy: framework
+logging:
+  level:
+    org.springframework.security: DEBUG
+    ch.rafaelurben>.tamtour: DEBUG
