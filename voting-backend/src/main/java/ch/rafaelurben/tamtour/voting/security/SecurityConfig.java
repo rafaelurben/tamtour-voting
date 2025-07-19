@@ -1,5 +1,6 @@
-package ch.rafaelurben.tamtour.voting.config;
+package ch.rafaelurben.tamtour.voting.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,7 +9,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+  private final CustomOIDCUserService customOIDCUserService;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -18,6 +22,7 @@ public class SecurityConfig {
             oauth2 ->
                 oauth2
                     .loginPage("/api/oauth2/authorization/google")
+                    .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOIDCUserService))
                     .defaultSuccessUrl("/app", true)
                     .authorizationEndpoint(authz -> authz.baseUri("/api/oauth2/authorization"))
                     .redirectionEndpoint(redir -> redir.baseUri("/api/login/oauth2/code/*")))
@@ -27,7 +32,7 @@ public class SecurityConfig {
         .exceptionHandling(
             e ->
                 e.authenticationEntryPoint(
-                    (request, response, authException) -> response.sendError(401, "Unauthorized")))
+                    (_, response, _) -> response.sendError(401, "Unauthorized")))
         .csrf(csrf -> csrf.ignoringRequestMatchers("/api/logout"));
     return http.build();
   }

@@ -34,3 +34,5 @@ logging:
   level:
     org.springframework.security: DEBUG
     ch.rafaelurben>.tamtour: DEBUG
+app:
+  admin_emails: ${ADMIN_EMAILS:}
