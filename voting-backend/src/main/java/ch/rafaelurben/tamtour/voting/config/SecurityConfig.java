@@ -23,7 +23,8 @@ public class SecurityConfig {
                     .redirectionEndpoint(redir -> redir.baseUri("/api/login/oauth2/code/*")))
         .logout(
             logout ->
-                logout.logoutUrl("/api/logout").logoutSuccessUrl("/").deleteCookies("JSESSIONID"));
+                logout.logoutUrl("/api/logout").logoutSuccessUrl("/").deleteCookies("JSESSIONID"))
+        .csrf(csrf -> csrf.ignoringRequestMatchers("/api/logout"));
     return http.build();
   }
 }
