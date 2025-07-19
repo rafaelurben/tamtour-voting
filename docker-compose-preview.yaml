@@ -32,7 +32,6 @@ services:
       DATABASE_URL: jdbc:postgresql://voting-db:5432/voting
       DATABASE_USERNAME: ${SERVICE_USER_DB}
       DATABASE_PASSWORD: ${SERVICE_PASSWORD_DB}
-      SERVICE_FQDN_VOTING: /api
 volumes:
   voting-data:
     driver: local
