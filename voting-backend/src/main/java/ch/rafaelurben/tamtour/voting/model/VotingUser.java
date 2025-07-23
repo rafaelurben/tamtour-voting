@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "voting_user")
@@ -14,7 +14,9 @@ import org.springframework.data.annotation.CreatedDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotingUser {
-  @Id private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
   /** First name, prefilled from Google. */
   @Column(name = "first_name")
@@ -32,11 +34,19 @@ public class VotingUser {
   @Column(name = "account_name")
   private String accountName;
 
+  /** Profile picture link; fixed from Google. */
+  @Column(name = "picture_link")
+  private String pictureLink;
+
+  /** Profile picture link; fixed from Google. */
+  @Column(name = "sub", unique = true)
+  private String sub;
+
   @Column(name = "initial_registration_complete")
   private final boolean initialRegistrationComplete = false;
 
   @Column(name = "created_at")
-  @CreatedDate
+  @CreationTimestamp
   private LocalDateTime createdAt;
 
   @Column(name = "last_login_at")
