@@ -13,7 +13,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotingPosition {
-  @Id private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
   @ManyToOne
   @JoinColumn(name = "candidate_id")

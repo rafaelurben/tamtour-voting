@@ -12,7 +12,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResultViewerKey {
-  @Id private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
   @Column(name = "name")
   private String name;

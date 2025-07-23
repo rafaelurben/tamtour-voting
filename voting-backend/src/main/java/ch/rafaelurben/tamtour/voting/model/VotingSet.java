@@ -5,8 +5,8 @@ import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "voting_set")
@@ -16,7 +16,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotingSet {
-  @Id private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
   @ManyToOne
   @JoinColumn(name = "category_id")
@@ -26,15 +28,15 @@ public class VotingSet {
   @JoinColumn(name = "user_id")
   private VotingUser votingUser;
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "votingSet")
   private Set<VotingPosition> votingPositions;
 
   @Column(name = "created_at")
-  @CreatedDate
+  @CreationTimestamp
   private LocalDateTime createdAt;
 
   @Column(name = "modified_at")
-  @LastModifiedDate
+  @UpdateTimestamp
   private LocalDateTime modifiedAt;
 
   @Column(name = "submitted_at")
