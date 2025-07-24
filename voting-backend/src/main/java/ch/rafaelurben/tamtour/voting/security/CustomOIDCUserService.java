@@ -2,6 +2,7 @@ package ch.rafaelurben.tamtour.voting.security;
 
 import ch.rafaelurben.tamtour.voting.model.VotingUser;
 import ch.rafaelurben.tamtour.voting.repository.VotingUserRepository;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +57,10 @@ public class CustomOIDCUserService implements OAuth2UserService<OidcUserRequest,
                           .pictureLink(oidcUser.getPicture())
                           .build());
                 });
+
+    // Update last login
+    user.setLastLoginAt(LocalDateTime.now());
+    user = userRepository.save(user);
 
     // Give ROLE_USER to everyone
     Set<GrantedAuthority> authorities = new HashSet<>();

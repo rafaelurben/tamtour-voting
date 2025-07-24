@@ -43,7 +43,8 @@ public class VotingUser {
   private String sub;
 
   @Column(name = "initial_registration_complete")
-  private final boolean initialRegistrationComplete = false;
+  @Builder.Default
+  private boolean initialRegistrationComplete = false;
 
   @Column(name = "created_at")
   @CreationTimestamp
@@ -53,5 +54,6 @@ public class VotingUser {
   private LocalDateTime lastLoginAt;
 
   @Column(name = "blocked")
-  private final boolean blocked = false;
+  @Builder.Default
+  private boolean blocked = false;
 }
