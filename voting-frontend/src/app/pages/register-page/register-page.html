@@ -1,1 +1,23 @@
-<p>register-page works!</p>
+<form [formGroup]="nameForm" (ngSubmit)="onSubmit()">
+  <label>
+    Vorname:
+    <input formControlName="firstName" />
+  </label>
+  @if (
+    nameForm.get('firstName')?.invalid && nameForm.get('firstName')?.touched
+  ) {
+    <div class="error">Vorname ist erforderlich.</div>
+  }
+
+  <label>
+    Nachname:
+    <input formControlName="lastName" />
+  </label>
+  @if (nameForm.get('lastName')?.invalid && nameForm.get('lastName')?.touched) {
+    <div class="error">Nachname ist erforderlich.</div>
+  }
+
+  <button type="submit" [disabled]="nameForm.invalid">
+    Registrierung abschliessen
+  </button>
+</form>
