@@ -1,1 +1,5 @@
-<router-outlet />
+@if (authService.isLoading()) {
+  <span>Loading...</span>
+} @else {
+  <router-outlet />
+}
