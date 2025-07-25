@@ -3,7 +3,7 @@ import { WhoamiDto } from '../dto/whoami.dto';
 import { VotingUserDto } from '../dto/voting-user.dto';
 import { UpdateMeDto } from '../dto/update-me.dto';
 import { AuthApi } from './auth.api';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -22,35 +22,33 @@ export class AuthService {
       return of(storedVal);
     }
 
-    const obs = this.authApi.whoami().pipe(catchError(() => of(null)));
-    obs.subscribe({
-      next: data => {
+    return this.authApi.whoami().pipe(
+      catchError(() => of(null)),
+      tap(data => {
         this.whoami.set(data);
         this.loading.set(false);
-      },
-    });
-    return obs;
+      })
+    );
   }
 
   updateMe(update: UpdateMeDto): Observable<VotingUserDto> {
-    const obs = this.authApi.updateMe(update);
-    obs.subscribe({
-      next: user =>
-        this.whoami.update(current =>
-          current === null ? null : { ...current, user }
-        ),
-    });
-    return obs;
+    return this.authApi
+      .updateMe(update)
+      .pipe(
+        tap(user =>
+          this.whoami.update(current =>
+            current === null ? null : { ...current, user }
+          )
+        )
+      );
   }
 
   logout(): Observable<void> {
-    const obs = this.authApi.logout();
-    obs.subscribe({
-      next: () => {
+    return this.authApi.logout().pipe(
+      tap(() => {
         this.whoami.set(null);
         this.loading.set(false);
-      },
-    });
-    return obs;
+      })
+    );
   }
 }
