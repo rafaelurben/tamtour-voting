@@ -29,7 +29,14 @@ public class SecurityConfig {
                     .redirectionEndpoint(redir -> redir.baseUri("/api/login/oauth2/code/*")))
         .logout(
             logout ->
-                logout.logoutUrl("/api/logout").logoutSuccessUrl("/").deleteCookies("JSESSIONID"))
+                logout
+                    .logoutUrl("/api/logout")
+                    .deleteCookies("JSESSIONID")
+                    .permitAll()
+                    .logoutSuccessHandler(
+                        (_, response, _) -> {
+                          response.setStatus(200);
+                        }))
         .exceptionHandling(
             e ->
                 e.authenticationEntryPoint(
