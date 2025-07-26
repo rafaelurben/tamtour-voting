@@ -1,9 +1,11 @@
 package ch.rafaelurben.tamtour.voting.model;
 
+import ch.rafaelurben.tamtour.voting.dto.VotingPositionMapDto;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -43,8 +45,18 @@ public class VotingSet {
   private LocalDateTime submittedAt;
 
   @Column(name = "submitted")
-  private final boolean submitted = false;
+  @Builder.Default
+  private boolean submitted = false;
 
   @Column(name = "disqualified")
-  private final boolean disqualified = false;
+  @Builder.Default
+  private boolean disqualified = false;
+
+  public VotingPositionMapDto getPositionMap() {
+    return (VotingPositionMapDto)
+        votingPositions.stream()
+            .collect(
+                Collectors.toMap(
+                    VotingPosition::getVotingCandidateId, VotingPosition::getPosition));
+  }
 }

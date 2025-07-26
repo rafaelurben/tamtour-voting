@@ -17,7 +17,10 @@ public class VotingPosition {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @ManyToOne
+  @Column(name = "candidate_id", insertable = false, updatable = false)
+  private Long votingCandidateId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "candidate_id")
   private VotingCandidate votingCandidate;
 
@@ -27,5 +30,6 @@ public class VotingPosition {
 
   @Column(name = "position")
   @Min(1)
-  private final Integer position = null;
+  @Builder.Default
+  private Integer position = null;
 }

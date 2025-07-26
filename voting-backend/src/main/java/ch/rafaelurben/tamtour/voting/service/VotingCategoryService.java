@@ -1,15 +1,20 @@
 package ch.rafaelurben.tamtour.voting.service;
 
+import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserDetailDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserOverviewDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserStateDto;
+import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
+import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
 import ch.rafaelurben.tamtour.voting.model.VotingCategory;
+import ch.rafaelurben.tamtour.voting.model.VotingPosition;
 import ch.rafaelurben.tamtour.voting.model.VotingSet;
 import ch.rafaelurben.tamtour.voting.model.VotingUser;
 import ch.rafaelurben.tamtour.voting.repository.VotingCategoryRepository;
 import ch.rafaelurben.tamtour.voting.repository.VotingSetRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +24,7 @@ public class VotingCategoryService {
   private final VotingCategoryMapper votingCategoryMapper;
   private final VotingCategoryRepository votingCategoryRepository;
   private final VotingSetRepository votingSetRepository;
+  private final VotingCandidateMapper votingCandidateMapper;
 
   public List<VotingCategoryUserOverviewDto> getCategoryOverviewForUser(VotingUser user) {
     List<VotingCategory> categories = votingCategoryRepository.findAll();
@@ -36,5 +42,41 @@ public class VotingCategoryService {
                   new VotingCategoryUserStateDto(exists, submitted));
             })
         .toList();
+  }
+
+  private VotingSet createVotingSet(VotingUser user, VotingCategory category) {
+    VotingSet votingSet =
+        VotingSet.builder()
+            .votingUser(user)
+            .votingCategory(category)
+            .votingPositions(
+                category.getVotingCandidates().stream()
+                    .map(
+                        candidate ->
+                            VotingPosition.builder()
+                                .votingCandidate(candidate)
+                                .position(null)
+                                .build())
+                    .collect(Collectors.toSet()))
+            .build();
+    return votingSetRepository.save(votingSet);
+  }
+
+  public VotingCategoryUserDetailDto getCategoryForUser(Long categoryId, VotingUser user) {
+    VotingCategory category =
+        votingCategoryRepository
+            .findById(categoryId)
+            .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
+
+    VotingSet votingSet =
+        votingSetRepository
+            .findByVotingUserAndVotingCategory(user, category)
+            .orElseGet(() -> createVotingSet(user, category));
+
+    return new VotingCategoryUserDetailDto(
+        votingCategoryMapper.toBaseDto(category),
+        new VotingCategoryUserStateDto(true, votingSet.isSubmitted()),
+        votingCandidateMapper.toDto(category.getVotingCandidates()),
+        votingSet.getPositionMap());
   }
 }
