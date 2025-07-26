@@ -59,4 +59,12 @@ public class VotingSet {
                 Collectors.toMap(
                     VotingPosition::getVotingCandidateId, VotingPosition::getPosition));
   }
+
+  public void applyPositionMap(VotingPositionMapDto positionMap) {
+    votingPositions.forEach(
+        votingPosition -> {
+          Integer position = positionMap.get(votingPosition.getVotingCandidateId());
+          votingPosition.setPosition(position);
+        });
+  }
 }

@@ -3,6 +3,7 @@ package ch.rafaelurben.tamtour.voting.service;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserDetailDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserOverviewDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserStateDto;
+import ch.rafaelurben.tamtour.voting.dto.VotingPositionMapDto;
 import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
@@ -12,6 +13,7 @@ import ch.rafaelurben.tamtour.voting.model.VotingSet;
 import ch.rafaelurben.tamtour.voting.model.VotingUser;
 import ch.rafaelurben.tamtour.voting.repository.VotingCategoryRepository;
 import ch.rafaelurben.tamtour.voting.repository.VotingSetRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,5 +80,34 @@ public class VotingCategoryService {
         new VotingCategoryUserStateDto(true, votingSet.isSubmitted()),
         votingCandidateMapper.toDto(category.getVotingCandidates()),
         votingSet.getPositionMap());
+  }
+
+  public void updateVotingPositions(
+      Long categoryId, VotingUser user, VotingPositionMapDto positionMap) {
+    VotingCategory category =
+        votingCategoryRepository
+            .findById(categoryId)
+            .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
+    if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
+      throw new IllegalArgumentException("Voting for this category has ended");
+    }
+
+    if (!positionMap.isValid(category.getVotingCandidates())) {
+      throw new IllegalArgumentException("Invalid position map");
+    }
+
+    VotingSet votingSet =
+        votingSetRepository
+            .findByVotingUserAndVotingCategory(user, category)
+            .orElseThrow(() -> new ObjectNotFoundException("Voting set not found"));
+    if (votingSet.isSubmitted()) {
+      throw new IllegalArgumentException("Voting set has already been submitted");
+    }
+    if (votingSet.isDisqualified()) {
+      throw new IllegalArgumentException("Voting set has been disqualified");
+    }
+
+    votingSet.applyPositionMap(positionMap);
+    votingSetRepository.save(votingSet);
   }
 }

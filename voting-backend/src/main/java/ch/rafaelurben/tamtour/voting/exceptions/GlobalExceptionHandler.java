@@ -9,7 +9,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ObjectNotFoundException.class)
-  public String handleException() {
-    return "Object not found";
+  public String handleObjectNotFoundException(ObjectNotFoundException e) {
+    return "Object not found" + e.getMessage();
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(IllegalArgumentException.class)
+  public String handleIllegalArgumentException(IllegalArgumentException e) {
+    return "Invalid argument provided: " + e.getMessage();
   }
 }
