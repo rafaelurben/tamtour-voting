@@ -110,4 +110,37 @@ public class VotingCategoryService {
     votingSet.applyPositionMap(positionMap);
     votingSetRepository.save(votingSet);
   }
+
+  public void submitVoting(Long categoryId, VotingUser user) {
+    VotingCategory category =
+        votingCategoryRepository
+            .findById(categoryId)
+            .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
+
+    if (category.getSubmissionStart().isAfter(LocalDateTime.now())) {
+      throw new IllegalArgumentException("Voting for this category has not started yet");
+    }
+    if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
+      throw new IllegalArgumentException("Voting for this category has already ended");
+    }
+
+    VotingSet votingSet =
+        votingSetRepository
+            .findByVotingUserAndVotingCategory(user, category)
+            .orElseThrow(() -> new ObjectNotFoundException("Voting set not found"));
+    if (votingSet.isSubmitted()) {
+      throw new IllegalArgumentException("Voting set has already been submitted");
+    }
+    if (votingSet.isDisqualified()) {
+      throw new IllegalArgumentException("Voting set has been disqualified");
+    }
+
+    if (!votingSet.getPositionMap().isSubmittable(category.getVotingCandidates())) {
+      throw new IllegalArgumentException("Voting set is not valid and cannot be submitted");
+    }
+
+    votingSet.setSubmitted(true);
+    votingSet.setSubmittedAt(LocalDateTime.now());
+    votingSetRepository.save(votingSet);
+  }
 }

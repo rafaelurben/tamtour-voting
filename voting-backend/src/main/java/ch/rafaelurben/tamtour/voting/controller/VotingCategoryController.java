@@ -42,4 +42,12 @@ public class VotingCategoryController {
 
     votingCategoryService.updateVotingPositions(id, user, positionMap);
   }
+
+  @PostMapping("{id}/submit")
+  public void submitCategoryVoting(
+      @PathVariable Long id, @AuthenticationPrincipal CustomUserPrincipal principal) {
+    VotingUser user = principal.getUser();
+
+    votingCategoryService.submitVoting(id, user);
+  }
 }
