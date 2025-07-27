@@ -7,14 +7,12 @@ import ch.rafaelurben.tamtour.voting.mapper.VotingUserMapper;
 import ch.rafaelurben.tamtour.voting.model.VotingUser;
 import ch.rafaelurben.tamtour.voting.security.CustomUserPrincipal;
 import ch.rafaelurben.tamtour.voting.service.AuthService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -33,7 +31,8 @@ public class AuthController {
 
   @PatchMapping("/me")
   public VotingUserDto me(
-      @AuthenticationPrincipal CustomUserPrincipal principal, UpdateMeDto updateMeDto) {
+      @AuthenticationPrincipal CustomUserPrincipal principal,
+      @RequestBody @Valid UpdateMeDto updateMeDto) {
     VotingUser user = principal.getUser();
     user = authService.updateUser(user, updateMeDto);
     return votingUserMapper.toDto(user);

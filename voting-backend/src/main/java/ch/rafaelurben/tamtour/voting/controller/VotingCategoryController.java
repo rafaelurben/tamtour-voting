@@ -6,6 +6,7 @@ import ch.rafaelurben.tamtour.voting.dto.VotingPositionMapDto;
 import ch.rafaelurben.tamtour.voting.model.VotingUser;
 import ch.rafaelurben.tamtour.voting.security.CustomUserPrincipal;
 import ch.rafaelurben.tamtour.voting.service.VotingCategoryService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +38,7 @@ public class VotingCategoryController {
   public void updateCategoryVotingPositions(
       @PathVariable Long id,
       @AuthenticationPrincipal CustomUserPrincipal principal,
-      @RequestBody VotingPositionMapDto positionMap) {
+      @RequestBody @Valid VotingPositionMapDto positionMap) {
     VotingUser user = principal.getUser();
 
     votingCategoryService.updateVotingPositions(id, user, positionMap);
