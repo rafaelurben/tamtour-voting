@@ -69,6 +69,9 @@ public class VotingCategoryService {
         votingCategoryRepository
             .findById(categoryId)
             .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
+    if (category.getVotingStart().isAfter(LocalDateTime.now())) {
+      throw new IllegalArgumentException("Voting for this category has not started yet");
+    }
 
     VotingSet votingSet =
         votingSetRepository
@@ -88,8 +91,11 @@ public class VotingCategoryService {
         votingCategoryRepository
             .findById(categoryId)
             .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
+    if (category.getVotingStart().isAfter(LocalDateTime.now())) {
+      throw new IllegalArgumentException("Voting for this category has not started yet");
+    }
     if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Voting for this category has ended");
+      throw new IllegalArgumentException("Submission for this category has ended");
     }
 
     if (!positionMap.isValid(category.getVotingCandidates())) {
@@ -118,10 +124,10 @@ public class VotingCategoryService {
             .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
 
     if (category.getSubmissionStart().isAfter(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Voting for this category has not started yet");
+      throw new IllegalArgumentException("Submission for this category has not started yet");
     }
     if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Voting for this category has already ended");
+      throw new IllegalArgumentException("Submission for this category has already ended");
     }
 
     VotingSet votingSet =
