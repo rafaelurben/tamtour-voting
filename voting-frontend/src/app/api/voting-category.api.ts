@@ -6,7 +6,7 @@ import { VotingCategoryUserDetailDto } from '../dto/voting-category-user-detail.
 import { VotingPositionMapDto } from '../dto/voting-position-map.dto';
 
 @Injectable({ providedIn: 'root' })
-export class AuthApi {
+export class VotingCategoryApi {
   private http = inject(HttpClient);
 
   getCategories(): Observable<VotingCategoryUserOverviewDto[]> {

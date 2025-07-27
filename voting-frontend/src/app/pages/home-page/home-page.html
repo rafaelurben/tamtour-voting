@@ -1,1 +1,10 @@
-<p>home-page works!</p>
+<h2>Kategorien</h2>
+
+@let categories = this.votingCategories();
+@if (categories === null) {
+  <p>Laden...</p>
+} @else if (categories.length === 0) {
+  <p>Derzeit gibt es keine Voting-Kategorien.</p>
+} @else {
+  <app-category-overview [votingCategories]="categories" />
+}

@@ -1,0 +1,51 @@
+<h3>Begonnen</h3>
+
+<div>
+  @for (cat of startedCategories(); track cat.category.id) {
+    <app-category-overview-item
+      [category]="cat.category"
+      [userState]="cat.userState" />
+  } @empty {
+    <p>Keine begonnenen Kategorien.</p>
+  }
+</div>
+
+<h3>Teilnahme möglich</h3>
+
+<div>
+  @for (cat of startableCategories(); track cat.category.id) {
+    <app-category-overview-item
+      [category]="cat.category"
+      [userState]="cat.userState" />
+  } @empty {
+    <p>
+      Derzeit gibt es keine Kategorien, an welchen teilgenommen werden könnte.
+    </p>
+  }
+</div>
+
+<h3>Eingereicht / Beendet</h3>
+
+<div>
+  @for (cat of endedCategories(); track cat.category.id) {
+    <app-category-overview-item
+      [category]="cat.category"
+      [userState]="cat.userState"
+      [clickable]="cat.userState.hasCreated" />
+  } @empty {
+    <p>Keine eingereichten oder beendeten Kategorien.</p>
+  }
+</div>
+
+<h3>Zukünftig</h3>
+
+<div>
+  @for (cat of futureCategories(); track cat.category.id) {
+    <app-category-overview-item
+      [category]="cat.category"
+      [userState]="cat.userState"
+      [clickable]="false" />
+  } @empty {
+    <p>Keine zukünftigen Kategorien.</p>
+  }
+</div>
