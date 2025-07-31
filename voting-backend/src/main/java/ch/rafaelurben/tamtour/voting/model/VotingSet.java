@@ -53,11 +53,11 @@ public class VotingSet {
   private boolean disqualified = false;
 
   public VotingPositionMapDto getPositionMap() {
-    return (VotingPositionMapDto)
+    return VotingPositionMapDto.fromMap(
         votingPositions.stream()
             .collect(
                 Collectors.toMap(
-                    VotingPosition::getVotingCandidateId, VotingPosition::getPosition));
+                    VotingPosition::getVotingCandidateId, VotingPosition::getPosition)));
   }
 
   public void applyPositionMap(VotingPositionMapDto positionMap) {
