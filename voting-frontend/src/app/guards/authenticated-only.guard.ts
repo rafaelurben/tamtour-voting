@@ -12,7 +12,7 @@ export const authenticatedOnlyGuard: CanActivateFn = route => {
   return whoamiObs.pipe(
     map(whoami => {
       if (whoami === null) {
-        const loginPath = router.parseUrl('/');
+        const loginPath = router.parseUrl('/login');
         return new RedirectCommand(loginPath, {
           skipLocationChange: false,
         });

@@ -12,7 +12,7 @@ export const redirectAuthenticatedGuard: CanActivateFn = () => {
   return whoamiObs.pipe(
     map(whoami => {
       if (whoami !== null && whoami.user) {
-        const appPath = router.parseUrl('/app');
+        const appPath = router.parseUrl('/');
         return new RedirectCommand(appPath, {
           skipLocationChange: false,
         });

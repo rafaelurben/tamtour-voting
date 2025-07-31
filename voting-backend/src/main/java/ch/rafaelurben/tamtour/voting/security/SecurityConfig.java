@@ -24,7 +24,7 @@ public class SecurityConfig {
                 oauth2
                     .loginPage("/api/oauth2/authorization/google")
                     .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOIDCUserService))
-                    .defaultSuccessUrl("/app", true)
+                    .defaultSuccessUrl("/", true)
                     .authorizationEndpoint(authz -> authz.baseUri("/api/oauth2/authorization"))
                     .redirectionEndpoint(redir -> redir.baseUri("/api/login/oauth2/code/*")))
         .logout(

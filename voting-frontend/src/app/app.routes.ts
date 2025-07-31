@@ -9,7 +9,7 @@ import { VotingPage } from './pages/voting-page/voting-page';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'login',
     component: LoginPage,
     canActivate: [redirectAuthenticatedGuard],
   },
@@ -24,7 +24,7 @@ export const routes: Routes = [
     canActivate: [authenticatedOnlyGuard],
   },
   {
-    path: 'app',
+    path: '',
     component: HomePage,
     canActivate: [authenticatedOnlyGuard],
   },
