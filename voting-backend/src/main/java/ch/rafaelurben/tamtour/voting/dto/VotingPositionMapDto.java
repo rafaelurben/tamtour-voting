@@ -3,16 +3,9 @@ package ch.rafaelurben.tamtour.voting.dto;
 import ch.rafaelurben.tamtour.voting.model.VotingCandidate;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class VotingPositionMapDto extends HashMap<Long, Integer> {
-  public static VotingPositionMapDto fromMap(Map<Long, Integer> src) {
-    VotingPositionMapDto dto = new VotingPositionMapDto();
-    dto.putAll(src);
-    return dto;
-  }
-
   public boolean isValid(Collection<VotingCandidate> candidates) {
     // Check if sizes match
     if (candidates.size() != this.size()) {

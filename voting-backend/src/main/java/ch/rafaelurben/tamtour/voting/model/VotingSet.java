@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -53,11 +52,11 @@ public class VotingSet {
   private boolean disqualified = false;
 
   public VotingPositionMapDto getPositionMap() {
-    return VotingPositionMapDto.fromMap(
-        votingPositions.stream()
-            .collect(
-                Collectors.toMap(
-                    VotingPosition::getVotingCandidateId, VotingPosition::getPosition)));
+    return votingPositions.stream()
+        .collect(
+            VotingPositionMapDto::new,
+            (m, v) -> m.put(v.getVotingCandidateId(), v.getPosition()),
+            VotingPositionMapDto::putAll);
   }
 
   public void applyPositionMap(VotingPositionMapDto positionMap) {

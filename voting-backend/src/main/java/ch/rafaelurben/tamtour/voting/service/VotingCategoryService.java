@@ -48,19 +48,19 @@ public class VotingCategoryService {
 
   private VotingSet createVotingSet(VotingUser user, VotingCategory category) {
     VotingSet votingSet =
-        VotingSet.builder()
-            .votingUser(user)
-            .votingCategory(category)
-            .votingPositions(
-                category.getVotingCandidates().stream()
-                    .map(
-                        candidate ->
-                            VotingPosition.builder()
-                                .votingCandidate(candidate)
-                                .position(null)
-                                .build())
-                    .collect(Collectors.toSet()))
-            .build();
+        votingSetRepository.save(
+            VotingSet.builder().votingUser(user).votingCategory(category).build());
+    votingSet.setVotingPositions(
+        category.getVotingCandidates().stream()
+            .map(
+                candidate ->
+                    VotingPosition.builder()
+                        .votingSet(votingSet)
+                        .votingCandidate(candidate)
+                        .votingCandidateId(candidate.getId())
+                        .position(null)
+                        .build())
+            .collect(Collectors.toSet()));
     return votingSetRepository.save(votingSet);
   }
 
