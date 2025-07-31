@@ -24,7 +24,7 @@ export class RegisterPage {
     const { firstName, lastName } = this.nameForm.getRawValue();
     this.authService.updateMe({ firstName, lastName }).subscribe({
       next: () => {
-        this.router.navigate(['/app']);
+        this.router.navigate(['/']);
       },
     });
   }
