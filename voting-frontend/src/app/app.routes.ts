@@ -5,6 +5,7 @@ import { HomePage } from './pages/home-page/home-page';
 import { redirectAuthenticatedGuard } from './guards/redirect-authenticated.guard';
 import { authenticatedOnlyGuard } from './guards/authenticated-only.guard';
 import { LogoutPage } from './pages/logout-page/logout-page';
+import { VotingPage } from './pages/voting-page/voting-page';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,11 @@ export const routes: Routes = [
   {
     path: 'app',
     component: HomePage,
+    canActivate: [authenticatedOnlyGuard],
+  },
+  {
+    path: 'vote/:categoryId',
+    component: VotingPage,
     canActivate: [authenticatedOnlyGuard],
   },
 ];

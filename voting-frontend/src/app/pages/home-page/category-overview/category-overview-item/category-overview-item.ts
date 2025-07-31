@@ -1,10 +1,11 @@
 import { Component, input } from '@angular/core';
 import { VotingCategoryBaseDto } from '../../../../dto/voting-category-base.dto';
 import { VotingCategoryUserStateDto } from '../../../../dto/voting-category-user-state.dto';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-category-overview-item',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './category-overview-item.html',
   styleUrl: './category-overview-item.css',
 })
