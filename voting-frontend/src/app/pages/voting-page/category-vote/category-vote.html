@@ -1,0 +1,58 @@
+<h2>{{ categoryData().category.name }}</h2>
+
+<h3>Deine Rangliste</h3>
+
+<app-voting-position-orderer
+  [candidates]="categoryData().candidates"
+  [positionMap]="categoryData().positionMap"
+  [editable]="isSubmissionPhase() && !categoryData().userState.hasSubmitted"
+  (changeMap)="updatedPositionMap.set($event)" />
+
+@if (updatedPositionMapIncludesChanges()) {
+  <button class="btn btn-primary" (click)="saveVotingPositions()">
+    Rangliste speichern
+  </button>
+}
+
+<h3>Einreichen</h3>
+
+@if (categoryData().userState.hasSubmitted) {
+  <p>Du hast deine Rangliste erfolgreich eingereicht.</p>
+} @else if (!isSubmissionStartPassed()) {
+  <p>
+    Die Einreichungsphase hat noch nicht begonnen. Sie beginnt am
+    {{
+      categoryData().category.submissionStart
+        | date: "dd. MMMM yyyy 'um' HH:mm"
+    }}.
+  </p>
+} @else if (isSubmissionEndPassed()) {
+  <p>
+    Die Einreichungsphase ist bereits vorbei und du hast deine Rangliste NICHT
+    innerhalb der Frist eingereicht.
+  </p>
+} @else {
+  @if (updatedPositionMapIncludesChanges()) {
+    <p>Speichere deine Rangliste zuerst, um sie einreichen zu können.</p>
+  } @else if (!isMapValid()) {
+    <p>
+      Du kannst die Rangliste erst einreichen, wenn du alle Kandidaten geordnet
+      hast.
+    </p>
+  } @else {
+    <p>
+      Du kannst deine Rangliste nun einreichen. Danach kannst du deine Stimme
+      nicht mehr ändern!
+    </p>
+    <button class="btn btn-primary" (click)="submitVote()">
+      Rangliste einreichen
+    </button>
+  }
+  <p>
+    Die Einreichungsphase endet am
+    {{
+      categoryData().category.submissionEnd | date: "dd. MMMM yyyy 'um' HH:mm"
+    }}. Du hast noch
+    {{ getTimeLeftDisplay(categoryData().category.submissionEnd) }}
+  </p>
+}

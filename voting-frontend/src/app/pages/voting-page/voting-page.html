@@ -1,1 +1,6 @@
-<p>voting-page works!</p>
+@let catDat = categoryData();
+@if (catDat === null) {
+  <p>Kategorie laden...</p>
+} @else {
+  <app-category-vote [categoryData]="catDat" (updateData)="fetchData()" />
+}

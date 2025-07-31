@@ -1,1 +1,1 @@
-export type VotingPositionMapDto = Record<number, number>;
+export type VotingPositionMapDto = Record<number, number | null>;

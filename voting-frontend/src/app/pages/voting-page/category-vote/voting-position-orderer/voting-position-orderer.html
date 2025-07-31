@@ -1,0 +1,34 @@
+<span>Geordnete Kandidaten</span>
+
+<div
+  class="candidate-list"
+  cdkDropList
+  #listSorted="cdkDropList"
+  cdkDropListOrientation="vertical"
+  [cdkDropListConnectedTo]="[listAvailable]"
+  [cdkDropListData]="positionedCandidates"
+  (cdkDropListDropped)="drop($event)">
+  @for (candidate of positionedCandidates; track candidate.id) {
+    <div class="candidate" cdkDrag cdkDragLockAxis="y">
+      #{{ $index + 1 }} {{ candidate.name }}
+    </div>
+  }
+</div>
+
+<span>Verfügbare Kandidaten</span>
+
+<div
+  class="candidate-list"
+  cdkDropList
+  #listAvailable="cdkDropList"
+  cdkDropListOrientation="vertical"
+  cdkDropListSortingDisabled
+  [cdkDropListConnectedTo]="[listSorted]"
+  [cdkDropListData]="unpositionedCandidates"
+  (cdkDropListDropped)="drop($event)">
+  @for (candidate of unpositionedCandidates; track candidate.id) {
+    <div class="candidate" cdkDrag cdkDragLockAxis="y">
+      {{ candidate.name }}
+    </div>
+  }
+</div>
