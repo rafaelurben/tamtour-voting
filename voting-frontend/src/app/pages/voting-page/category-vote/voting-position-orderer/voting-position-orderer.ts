@@ -39,7 +39,8 @@ export class VotingPositionOrderer {
         .map(c => c.candidate);
       this.unpositionedCandidates = mappedCandidates
         .filter(c => c.position === null)
-        .map(c => c.candidate);
+        .map(c => c.candidate)
+        .sort((a, b) => a.startNumber.localeCompare(b.startNumber));
     });
   }
 

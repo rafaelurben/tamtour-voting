@@ -19,6 +19,9 @@ public class VotingCandidate {
   @Column(name = "name")
   private String name;
 
+  @Column(name = "start_number")
+  private String startNumber;
+
   @ManyToOne
   @JoinColumn(name = "category_id")
   private VotingCategory votingCategory;

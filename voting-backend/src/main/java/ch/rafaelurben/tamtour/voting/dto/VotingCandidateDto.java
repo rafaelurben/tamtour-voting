@@ -1,3 +1,3 @@
 package ch.rafaelurben.tamtour.voting.dto;
 
-public record VotingCandidateDto(Long id, String name) {}
+public record VotingCandidateDto(Long id, String name, String startNumber) {}

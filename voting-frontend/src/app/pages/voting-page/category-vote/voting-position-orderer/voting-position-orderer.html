@@ -14,7 +14,9 @@
   (cdkDropListDropped)="drop($event)">
   @for (candidate of positionedCandidates; track candidate.id) {
     <div class="candidate" cdkDrag cdkDragLockAxis="y">
-      #{{ $index + 1 }} {{ candidate.name }}
+      <span class="candidate-position">{{ $index + 1 }}.</span>
+      <span class="candidate-name">{{ candidate.name }}</span>
+      <span class="candidate-start-number">({{ candidate.startNumber }})</span>
     </div>
   } @empty {
     @if (editable()) {
@@ -34,13 +36,17 @@
   #listAvailable="cdkDropList"
   cdkDropListOrientation="vertical"
   cdkDropListSortingDisabled
+  [ngClass]="{
+    disabled: !editable(),
+  }"
   [cdkDropListConnectedTo]="[listSorted]"
   [cdkDropListData]="unpositionedCandidates"
   (cdkDropListDropped)="drop($event)"
   [cdkDropListDisabled]="!editable()">
   @for (candidate of unpositionedCandidates; track candidate.id) {
     <div class="candidate" cdkDrag cdkDragLockAxis="y">
-      {{ candidate.name }}
+      <span class="candidate-name">{{ candidate.name }}</span>
+      <span class="candidate-start-number">({{ candidate.startNumber }})</span>
     </div>
   } @empty {
     @if (editable()) {
