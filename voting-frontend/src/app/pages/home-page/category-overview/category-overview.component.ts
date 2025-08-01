@@ -1,6 +1,8 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { VotingCategoryUserOverviewDto } from '../../../dto/voting-category-user-overview.dto';
 import { CategoryOverviewItem } from './category-overview-item/category-overview-item';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { interval, map } from 'rxjs';
 
 @Component({
   selector: 'app-category-overview',
@@ -11,7 +13,10 @@ import { CategoryOverviewItem } from './category-overview-item/category-overview
 export class CategoryOverview {
   public votingCategories = input.required<VotingCategoryUserOverviewDto[]>();
 
-  private currentTime = signal(new Date());
+  protected readonly currentTime = toSignal(
+    interval(1000).pipe(map(() => new Date())),
+    { initialValue: new Date() }
+  );
 
   protected startedCategories = computed(() =>
     this.votingCategories().filter(

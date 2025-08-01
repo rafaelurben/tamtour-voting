@@ -53,6 +53,8 @@
     {{
       categoryData().category.submissionEnd | date: "dd. MMMM yyyy 'um' HH:mm"
     }}. Du hast noch
-    {{ getTimeLeftDisplay(categoryData().category.submissionEnd) }}
+    <app-time-remaining
+      [target]="categoryData().category.submissionEnd"
+      [currentOverride]="currentTime()" />
   </p>
 }

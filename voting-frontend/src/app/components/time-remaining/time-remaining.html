@@ -1,0 +1,10 @@
+<span
+  [style.color]="
+    timeRemainingS() < 60
+      ? 'red'
+      : timeRemainingS() < 5 * 60
+        ? 'orange'
+        : 'black'
+  "
+  >{{ timeRemainingDisplay() }}</span
+>

@@ -10,7 +10,7 @@ import { CategoryOverview } from './category-overview/category-overview.componen
   styleUrl: './home-page.css',
 })
 export class HomePage implements OnInit {
-  private votingCategoryApi = inject(VotingCategoryApi);
+  private readonly votingCategoryApi = inject(VotingCategoryApi);
 
   protected votingCategories = signal<VotingCategoryUserOverviewDto[] | null>(
     null

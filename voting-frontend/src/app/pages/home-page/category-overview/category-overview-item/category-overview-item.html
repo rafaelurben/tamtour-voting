@@ -1,5 +1,17 @@
-<h4>{{ category().name }}</h4>
-
-@if (clickable()) {
-  <a [routerLink]="['/vote', category().id]"> Ansehen </a>
-}
+<a
+  class="category-item"
+  [ngClass]="{
+    clickable: clickable(),
+    disabled: !clickable(),
+  }"
+  [routerLink]="clickable() ? ['/vote', category().id] : null">
+  <h4>{{ category().name }}</h4>
+  <div>
+    @if (displayEndCountdown()) {
+      <span>Noch </span>
+      <app-time-remaining
+        [target]="category().submissionEnd"
+        [currentOverride]="currentTime()" />
+    }
+  </div>
+</a>

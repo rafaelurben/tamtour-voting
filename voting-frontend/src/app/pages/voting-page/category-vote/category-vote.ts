@@ -14,16 +14,17 @@ import { VotingPositionMapDto } from '../../../dto/voting-position-map.dto';
 import { DatePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { interval, map } from 'rxjs';
+import { TimeRemaining } from '../../../components/time-remaining/time-remaining';
 
 @Component({
   selector: 'app-category-vote',
-  imports: [VotingPositionOrderer, DatePipe],
+  imports: [VotingPositionOrderer, DatePipe, TimeRemaining],
   templateUrl: './category-vote.html',
   styleUrl: './category-vote.css',
 })
 export class CategoryVote {
   private readonly votingCategoryApi = inject(VotingCategoryApi);
-  private readonly currentTime = toSignal(
+  protected readonly currentTime = toSignal(
     interval(1000).pipe(map(() => new Date())),
     { initialValue: new Date() }
   );
@@ -94,16 +95,5 @@ export class CategoryVote {
           console.error('Error submitting vote:', error);
         },
       });
-  }
-
-  protected getTimeLeftDisplay(until: Date | string) {
-    const timeLeft = new Date(until).getTime() - this.currentTime().getTime();
-
-    const seconds = Math.floor((timeLeft / 1000) % 60);
-    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
   }
 }
