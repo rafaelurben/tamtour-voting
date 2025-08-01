@@ -3,7 +3,9 @@
 <app-voting-position-orderer
   [candidates]="categoryData().candidates"
   [positionMap]="categoryData().positionMap"
-  [editable]="isSubmissionPhase() && !categoryData().userState.hasSubmitted"
+  [editable]="
+    !isSubmissionEndPassed() && !categoryData().userState.hasSubmitted
+  "
   (changeMap)="updatedPositionMap.set($event)" />
 
 @if (updatedPositionMapIncludesChanges()) {
