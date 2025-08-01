@@ -1,0 +1,32 @@
+<header>
+  <div class="logo-section">
+    <a [routerLink]="['/']">
+      <div class="logo-container">
+        <img ngSrc="/tamtour-logo.png" alt="Logo" fill="fill" />
+      </div>
+    </a>
+  </div>
+  <h1 class="title">TamTour Voting</h1>
+  <div class="profile-section">
+    @if (authService.isLoading()) {
+      <p>Loading...</p>
+    } @else {
+      @if (authService.user()) {
+        <div class="profile-pic-container">
+          <img
+            [ngSrc]="authService.user()!.pictureLink"
+            alt="Profilbild"
+            fill="fill" />
+        </div>
+        <div>
+          {{ authService.user()?.firstName }} {{ authService.user()?.lastName }}
+          <a routerLink="/logout">Logout</a>
+        </div>
+      } @else {
+        <div>
+          <a routerLink="/login">Login</a>
+        </div>
+      }
+    }
+  </div>
+</header>

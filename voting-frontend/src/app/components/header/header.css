@@ -1,0 +1,29 @@
+header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.logo-container {
+  height: 5rem;
+  width: 5rem;
+  position: relative;
+}
+
+.profile-pic-container {
+  height: 3rem;
+  width: 3rem;
+  position: relative;
+}
