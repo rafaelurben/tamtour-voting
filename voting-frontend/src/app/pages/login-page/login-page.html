@@ -1,3 +1,32 @@
-<p>login-page works!</p>
+<div class="page-container">
+  <div class="logo-title-container">
+    <div class="logo-container">
+      <img ngSrc="/tamtour-logo.png" alt="Logo" fill="fill" />
+    </div>
+    <h1 class="logo-title">Publikumsvoting</h1>
+  </div>
 
-<a href="/api/oauth2/authorization/google"> Login with Google </a>
+  <div class="login-button-container">
+    <app-google-button />
+    <a
+      class="why-google-button"
+      (click)="toggleWhyGoogleText()"
+      (keydown)="toggleWhyGoogleText()"
+      tabindex="0">
+      Wieso Google?
+    </a>
+
+    @if (displayWhyGoogleText()) {
+      <p class="why-google-text">
+        Wir verwenden Google für die Anmeldung, damit du praktisch und sicher
+        mit deinem Google-Konto abstimmen kannst, ohne noch einen weiteren
+        Account erstellen zu müssen. Ausserdem werden durch die Anmeldung mit
+        einem Drittanbieter Mehrfachteilnahmen erschwert. Bei der Anmeldung
+        werden dein Name, deine E-Mail-Adresse und dein Profilbild von Google
+        übertragen und zum Zweck der Durchführung des Publikumsvotings
+        gespeichert. Deine Daten werden nicht an Dritte weitergegeben und nach
+        Abschluss der Veranstaltung gelöscht.
+      </p>
+    }
+  </div>
+</div>
