@@ -1,0 +1,12 @@
+<button
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  (click)="trigger.emit()"
+  class="button"
+  [class.loading]="loading()"
+  [class.disabled]="disabled()">
+  @if (loading()) {
+    <app-spinner size="1rem" />
+  }
+  <ng-content />
+</button>
