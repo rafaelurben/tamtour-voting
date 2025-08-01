@@ -39,3 +39,12 @@
 .candidate-list.cdk-drop-list-dragging .candidate:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+
+.candidate-list.disabled .candidate {
+  cursor: not-allowed;
+}
+
+.empty-list-hint {
+  color: darkgray;
+  padding: 20px 10px;
+}

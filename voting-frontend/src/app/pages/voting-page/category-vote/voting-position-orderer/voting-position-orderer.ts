@@ -8,10 +8,11 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-voting-position-orderer',
-  imports: [CdkDropList, CdkDrag],
+  imports: [CdkDropList, CdkDrag, NgClass],
   templateUrl: './voting-position-orderer.html',
   styleUrl: './voting-position-orderer.css',
 })
