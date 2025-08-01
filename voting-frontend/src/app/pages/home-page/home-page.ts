@@ -3,11 +3,10 @@ import { VotingCategoryUserOverviewDto } from '../../dto/voting-category-user-ov
 import { VotingCategoryApi } from '../../api/voting-category.api';
 import { CategoryOverview } from './category-overview/category-overview.component';
 import { Spinner } from '../../components/spinner/spinner';
-import { Button } from '../../components/button/button';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CategoryOverview, Spinner, Button],
+  imports: [CategoryOverview, Spinner],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
 })
