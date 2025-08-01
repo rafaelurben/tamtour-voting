@@ -2,10 +2,12 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { VotingCategoryUserOverviewDto } from '../../dto/voting-category-user-overview.dto';
 import { VotingCategoryApi } from '../../api/voting-category.api';
 import { CategoryOverview } from './category-overview/category-overview.component';
+import { Spinner } from '../../components/spinner/spinner';
+import { Button } from '../../components/button/button';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CategoryOverview],
+  imports: [CategoryOverview, Spinner, Button],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
 })

@@ -15,10 +15,11 @@ import { DatePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { interval, map } from 'rxjs';
 import { TimeRemaining } from '../../../components/time-remaining/time-remaining';
+import { Button } from '../../../components/button/button';
 
 @Component({
   selector: 'app-category-vote',
-  imports: [VotingPositionOrderer, DatePipe, TimeRemaining],
+  imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button],
   templateUrl: './category-vote.html',
   styleUrl: './category-vote.css',
 })
@@ -60,6 +61,9 @@ export class CategoryVote {
     return !Object.values(this.categoryData().positionMap).includes(null);
   });
 
+  protected savingMapInProgress = signal(false);
+  protected submittingVoteInProgress = signal(false);
+
   constructor() {
     effect(() => {
       this.updatedPositionMap.set(this.categoryData().positionMap);
@@ -67,6 +71,7 @@ export class CategoryVote {
   }
 
   protected saveVotingPositions() {
+    this.savingMapInProgress.set(true);
     this.votingCategoryApi
       .updateCategoryVotingPositions(
         this.categoryData().category.id,
@@ -74,24 +79,29 @@ export class CategoryVote {
       )
       .subscribe({
         next: () => {
+          this.savingMapInProgress.set(false);
           this.updateData.emit();
           // TODO: show success message
         },
         error: error => {
+          this.savingMapInProgress.set(false);
           console.error('Error updating voting positions:', error);
         },
       });
   }
 
   protected submitVote() {
+    this.submittingVoteInProgress.set(true);
     this.votingCategoryApi
       .submitCategoryVoting(this.categoryData().category.id)
       .subscribe({
         next: () => {
+          this.submittingVoteInProgress.set(false);
           this.updateData.emit();
           // TODO: show success message
         },
         error: error => {
+          this.submittingVoteInProgress.set(false);
           console.error('Error submitting vote:', error);
         },
       });

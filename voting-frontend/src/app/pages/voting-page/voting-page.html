@@ -1,6 +1,10 @@
 @let catDat = categoryData();
 @if (catDat === null) {
-  <p>Kategorie laden...</p>
+  <h2>Kategorie</h2>
+  <app-spinner>
+    <span>Kategorie laden...</span>
+  </app-spinner>
 } @else {
+  <h2>Kategorie {{ catDat.category.name }}</h2>
   <app-category-vote [categoryData]="catDat" (updateData)="fetchData()" />
 }

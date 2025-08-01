@@ -3,10 +3,11 @@ import { VotingCategoryApi } from '../../api/voting-category.api';
 import { VotingCategoryUserDetailDto } from '../../dto/voting-category-user-detail.dto';
 import { ActivatedRoute } from '@angular/router';
 import { CategoryVote } from './category-vote/category-vote';
+import { Spinner } from '../../components/spinner/spinner';
 
 @Component({
   selector: 'app-voting-page',
-  imports: [CategoryVote],
+  imports: [CategoryVote, Spinner],
   templateUrl: './voting-page.html',
   styleUrl: './voting-page.css',
 })

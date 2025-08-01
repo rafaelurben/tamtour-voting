@@ -1,4 +1,19 @@
+<h2>Registrieren</h2>
+
+<p>
+  Deine Daten wurden automatisch aus deinem Google-Konto übernommen. Bitte setze
+  hier deinen echten Namen, falls du dies nicht bereits getan hast.
+</p>
+
 <form [formGroup]="nameForm" (ngSubmit)="onSubmit()">
+  <label>
+    E-Mail:
+    <input
+      type="email"
+      [disabled]="true"
+      [value]="authService.user()?.accountEmail" />
+  </label>
+
   <label>
     Vorname:
     <input formControlName="firstName" />
@@ -17,7 +32,10 @@
     <div class="error">Nachname ist erforderlich.</div>
   }
 
-  <button type="submit" [disabled]="nameForm.invalid">
-    Registrierung abschliessen
-  </button>
+  <app-button
+    type="submit"
+    [disabled]="nameForm.invalid"
+    [loading]="requestInProgress()">
+    <span>Registrierung abschliessen</span>
+  </app-button>
 </form>

@@ -2,10 +2,11 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { AuthService } from '../../api/auth.service';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
+import { Spinner } from '../spinner/spinner';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, NgOptimizedImage],
+  imports: [RouterLink, NgOptimizedImage, Spinner],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })

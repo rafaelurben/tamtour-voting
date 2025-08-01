@@ -2,7 +2,9 @@
 
 @let categories = this.votingCategories();
 @if (categories === null) {
-  <p>Laden...</p>
+  <app-spinner>
+    <span>Kategorien laden...</span>
+  </app-spinner>
 } @else if (categories.length === 0) {
   <p>Derzeit gibt es keine Voting-Kategorien.</p>
 } @else {

@@ -1,5 +1,3 @@
-<h2>{{ categoryData().category.name }}</h2>
-
 <h3>Deine Rangliste</h3>
 
 <app-voting-position-orderer
@@ -9,9 +7,11 @@
   (changeMap)="updatedPositionMap.set($event)" />
 
 @if (updatedPositionMapIncludesChanges()) {
-  <button class="btn btn-primary" (click)="saveVotingPositions()">
-    Rangliste speichern
-  </button>
+  <app-button
+    (trigger)="saveVotingPositions()"
+    [loading]="savingMapInProgress()">
+    <span>Rangliste speichern</span>
+  </app-button>
 }
 
 <h3>Einreichen</h3>
@@ -44,9 +44,9 @@
       Du kannst deine Rangliste nun einreichen. Danach kannst du deine Stimme
       nicht mehr ändern!
     </p>
-    <button class="btn btn-primary" (click)="submitVote()">
+    <app-button (trigger)="submitVote()" [loading]="submittingVoteInProgress()">
       Rangliste einreichen
-    </button>
+    </app-button>
   }
   <p>
     Die Einreichungsphase endet am

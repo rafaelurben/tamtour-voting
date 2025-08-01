@@ -1,9 +1,14 @@
+<h2>Logout</h2>
+
 @if (isDone()) {
   <p>
     Logout erfolgreich! Bitte beachte, dass du in deinem Google-Konto nicht
     automatisch ausgeloggt wirst.
   </p>
-  <button routerLink="/">Zurück zur Startseite</button>
+
+  <app-button routerLink="/">Zurück zur Startseite</app-button>
 } @else {
-  <p>Du wirst ausgeloggt...</p>
+  <app-spinner>
+    <span>Du wirst ausgeloggt...</span>
+  </app-spinner>
 }

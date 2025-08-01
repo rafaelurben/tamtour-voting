@@ -8,10 +8,11 @@ import {
 import { AuthService } from './api/auth.service';
 import { Header } from './components/header/header';
 import { filter, map, mergeMap } from 'rxjs';
+import { Spinner } from './components/spinner/spinner';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header],
+  imports: [RouterOutlet, Header, Spinner],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

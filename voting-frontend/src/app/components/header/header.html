@@ -9,7 +9,7 @@
   </div>
   <div class="profile-section">
     @if (authService.isLoading()) {
-      <p>Loading...</p>
+      <app-spinner />
     } @else {
       @if (authService.user()) {
         <a class="profile-badge" routerLink="/logout" title="Logout">

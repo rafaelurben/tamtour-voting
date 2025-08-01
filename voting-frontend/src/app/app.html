@@ -4,7 +4,9 @@
   }
   <div class="page-padding">
     @if (authService.isLoading()) {
-      <span>Loading...</span>
+      <app-spinner>
+        <span>Benutzerdaten laden...</span>
+      </app-spinner>
     } @else {
       <router-outlet />
     }

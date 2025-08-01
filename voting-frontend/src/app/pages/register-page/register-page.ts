@@ -1,17 +1,18 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../api/auth.service';
 import { Router } from '@angular/router';
+import { Button } from '../../components/button/button';
 
 @Component({
   selector: 'app-register-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Button],
   templateUrl: './register-page.html',
   styleUrl: './register-page.css',
 })
 export class RegisterPage {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   protected nameForm = this.formBuilder.nonNullable.group({
@@ -19,12 +20,20 @@ export class RegisterPage {
     lastName: [this.authService.user()?.lastName || '', Validators.required],
   });
 
+  protected requestInProgress = signal(false);
+
   protected onSubmit() {
     if (this.nameForm.invalid) return;
     const { firstName, lastName } = this.nameForm.getRawValue();
+    this.requestInProgress.set(true);
     this.authService.updateMe({ firstName, lastName }).subscribe({
       next: () => {
+        this.requestInProgress.set(false);
         this.router.navigate(['/']);
+      },
+      error: () => {
+        this.requestInProgress.set(false);
+        // TODO: Handle error (e.g., show a notification)
       },
     });
   }
