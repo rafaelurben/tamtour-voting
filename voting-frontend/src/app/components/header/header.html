@@ -1,12 +1,12 @@
 <header>
-  <div class="logo-section">
+  <div class="logo-title-section">
     <a [routerLink]="['/']">
       <div class="logo-container">
         <img ngSrc="/tamtour-logo.png" alt="Logo" fill="fill" />
       </div>
     </a>
+    <h1 class="title">TamTour Voting</h1>
   </div>
-  <h1 class="title">TamTour Voting</h1>
   <div class="profile-section">
     @if (authService.isLoading()) {
       <p>Loading...</p>

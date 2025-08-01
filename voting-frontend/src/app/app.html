@@ -1,6 +1,12 @@
-<app-header />
-@if (authService.isLoading()) {
-  <span>Loading...</span>
-} @else {
-  <router-outlet />
-}
+<div class="container">
+  @if (showHeader) {
+    <app-header />
+  }
+  <div class="page-padding">
+    @if (authService.isLoading()) {
+      <span>Loading...</span>
+    } @else {
+      <router-outlet />
+    }
+  </div>
+</div>

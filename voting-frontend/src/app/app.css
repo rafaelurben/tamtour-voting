@@ -1,0 +1,18 @@
+.container {
+  min-height: 100dvh;
+  margin: 0 auto;
+  background-color: white;
+}
+
+.page-padding {
+  padding: 0 0.75rem 0.75rem 0.75rem;
+}
+
+@media (min-width: 576px) {
+  .container {
+    min-height: calc(100dvh - 1rem);
+    max-width: 560px;
+    border-radius: 5px;
+    margin: 0.5rem auto;
+  }
+}
