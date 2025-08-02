@@ -81,11 +81,10 @@ export class CategoryVote {
         next: () => {
           this.savingMapInProgress.set(false);
           this.updateData.emit();
-          // TODO: show success message
         },
         error: error => {
           this.savingMapInProgress.set(false);
-          console.error('Error updating voting positions:', error);
+          throw error;
         },
       });
   }
@@ -98,11 +97,10 @@ export class CategoryVote {
         next: () => {
           this.submittingVoteInProgress.set(false);
           this.updateData.emit();
-          // TODO: show success message
         },
         error: error => {
           this.submittingVoteInProgress.set(false);
-          console.error('Error submitting vote:', error);
+          throw error;
         },
       });
   }

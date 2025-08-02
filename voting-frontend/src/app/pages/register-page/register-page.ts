@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../api/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { Router } from '@angular/router';
 import { Button } from '../../components/button/button';
 
@@ -31,9 +31,9 @@ export class RegisterPage {
         this.requestInProgress.set(false);
         this.router.navigate(['/']);
       },
-      error: () => {
+      error: error => {
         this.requestInProgress.set(false);
-        // TODO: Handle error (e.g., show a notification)
+        throw error;
       },
     });
   }

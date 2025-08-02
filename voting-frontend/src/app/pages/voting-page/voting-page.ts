@@ -28,7 +28,7 @@ export class VotingPage implements OnInit {
     this.votingCategoryApi.getCategory(this.categoryId()).subscribe({
       next: data => this.categoryData.set(data),
       error: (err: HttpErrorResponse) => {
-        if (err.status === 400) {
+        if (err.status === 404) {
           this.router.navigate(['/error'], {
             skipLocationChange: true,
             queryParams: {

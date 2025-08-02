@@ -4,6 +4,7 @@ import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserDetailDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserOverviewDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryUserStateDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingPositionMapDto;
+import ch.rafaelurben.tamtour.voting.exceptions.InvalidStateException;
 import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
@@ -64,13 +65,17 @@ public class VotingCategoryService {
     return votingSetRepository.save(votingSet);
   }
 
+  private VotingCategory getCategory(Long categoryId) {
+    return votingCategoryRepository
+        .findById(categoryId)
+        .orElseThrow(
+            () -> new ObjectNotFoundException("Kategorie #" + categoryId + " nicht gefunden."));
+  }
+
   public VotingCategoryUserDetailDto getCategoryForUser(Long categoryId, VotingUser user) {
-    VotingCategory category =
-        votingCategoryRepository
-            .findById(categoryId)
-            .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
+    VotingCategory category = getCategory(categoryId);
     if (category.getVotingStart().isAfter(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Voting for this category has not started yet");
+      throw new InvalidStateException("Das Voting für diese Kategorie hat noch nicht begonnen.");
     }
 
     VotingSet votingSet =
@@ -87,30 +92,27 @@ public class VotingCategoryService {
 
   public void updateVotingPositions(
       Long categoryId, VotingUser user, VotingPositionMapDto positionMap) {
-    VotingCategory category =
-        votingCategoryRepository
-            .findById(categoryId)
-            .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
+    VotingCategory category = getCategory(categoryId);
     if (category.getVotingStart().isAfter(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Voting for this category has not started yet");
+      throw new InvalidStateException("Das Voting für diese Kategorie hat noch nicht begonnen.");
     }
     if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Submission for this category has ended");
+      throw new InvalidStateException("Die Einsendephase für diese Kategorie ist bereits beendet.");
     }
 
     if (!positionMap.isValid(category.getVotingCandidates())) {
-      throw new IllegalArgumentException("Invalid position map");
+      throw new IllegalArgumentException("Ungültige Positionen. Bitte lade die Seite neu.");
     }
 
     VotingSet votingSet =
         votingSetRepository
             .findByVotingUserAndVotingCategory(user, category)
-            .orElseThrow(() -> new ObjectNotFoundException("Voting set not found"));
+            .orElseThrow(() -> new ObjectNotFoundException("Kein Voting-Set gefunden."));
     if (votingSet.isSubmitted()) {
-      throw new IllegalArgumentException("Voting set has already been submitted");
+      throw new InvalidStateException("Deine Rangliste wurde bereits eingereicht.");
     }
     if (votingSet.isDisqualified()) {
-      throw new IllegalArgumentException("Voting set has been disqualified");
+      throw new InvalidStateException("Deine Teilnahme in dieser Kategorie wurde disqualifiziert.");
     }
 
     votingSet.applyPositionMap(positionMap);
@@ -118,31 +120,30 @@ public class VotingCategoryService {
   }
 
   public void submitVoting(Long categoryId, VotingUser user) {
-    VotingCategory category =
-        votingCategoryRepository
-            .findById(categoryId)
-            .orElseThrow(() -> new ObjectNotFoundException("Category not found"));
-
+    VotingCategory category = getCategory(categoryId);
     if (category.getSubmissionStart().isAfter(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Submission for this category has not started yet");
+      throw new InvalidStateException(
+          "Die Einsendephase für diese Kategorie hat noch nicht begonnen.");
     }
     if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Submission for this category has already ended");
+      throw new InvalidStateException("Die Einsendephase für diese Kategorie ist bereits beendet.");
     }
 
     VotingSet votingSet =
         votingSetRepository
             .findByVotingUserAndVotingCategory(user, category)
-            .orElseThrow(() -> new ObjectNotFoundException("Voting set not found"));
+            .orElseThrow(() -> new ObjectNotFoundException("Kein Voting-Set gefunden."));
     if (votingSet.isSubmitted()) {
-      throw new IllegalArgumentException("Voting set has already been submitted");
+      throw new InvalidStateException("Deine Rangliste wurde bereits eingereicht.");
     }
     if (votingSet.isDisqualified()) {
-      throw new IllegalArgumentException("Voting set has been disqualified");
+      throw new InvalidStateException("Deine Teilnahme in dieser Kategorie wurde disqualifiziert.");
     }
 
     if (!votingSet.getPositionMap().isSubmittable(category.getVotingCandidates())) {
-      throw new IllegalArgumentException("Voting set is not valid and cannot be submitted");
+      throw new InvalidStateException(
+          "Die aktuell gespeicherte Rangliste kann nicht eingereicht werden, da sie nicht gültig"
+              + " ist. Bitte lade die Seite neu.");
     }
 
     votingSet.setSubmitted(true);

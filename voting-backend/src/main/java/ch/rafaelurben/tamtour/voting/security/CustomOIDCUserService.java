@@ -37,7 +37,7 @@ public class CustomOIDCUserService implements OAuth2UserService<OidcUserRequest,
     if (emailVerified == null || !emailVerified) {
       throw new OAuth2AuthenticationException(
           new OAuth2Error("email_not_verified"),
-          "Email not verified. Please verify your Google account.");
+          "E-Mail nicht bestätigt. Bitte bestätige die E-Mail-Adresse in deinem Google-Account!");
     }
 
     // Get/create user
@@ -45,18 +45,16 @@ public class CustomOIDCUserService implements OAuth2UserService<OidcUserRequest,
         userRepository
             .findBySub(oidcUser.getSubject())
             .orElseGet(
-                () -> {
-                  // Create user on first login
-                  return userRepository.save(
-                      VotingUser.builder()
-                          .sub(oidcUser.getSubject())
-                          .accountName(oidcUser.getFullName())
-                          .accountEmail(oidcUser.getEmail())
-                          .firstName(oidcUser.getGivenName())
-                          .lastName(oidcUser.getFamilyName())
-                          .pictureLink(oidcUser.getPicture())
-                          .build());
-                });
+                () ->
+                    userRepository.save(
+                        VotingUser.builder()
+                            .sub(oidcUser.getSubject())
+                            .accountName(oidcUser.getFullName())
+                            .accountEmail(oidcUser.getEmail())
+                            .firstName(oidcUser.getGivenName())
+                            .lastName(oidcUser.getFamilyName())
+                            .pictureLink(oidcUser.getPicture())
+                            .build()));
 
     // Update last login
     user.setLastLoginAt(LocalDateTime.now());

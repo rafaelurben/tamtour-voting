@@ -5,7 +5,7 @@ import {
   Router,
   RouterOutlet,
 } from '@angular/router';
-import { AuthService } from './api/auth.service';
+import { AuthService } from './service/auth.service';
 import { Header } from './components/header/header';
 import { filter, map, mergeMap } from 'rxjs';
 import { Spinner } from './components/spinner/spinner';

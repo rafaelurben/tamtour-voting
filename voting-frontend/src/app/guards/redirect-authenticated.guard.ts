@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { AuthService } from '../api/auth.service';
+import { AuthService } from '../service/auth.service';
 import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
 import { map } from 'rxjs';
 

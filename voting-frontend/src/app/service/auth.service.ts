@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { WhoamiDto } from '../dto/whoami.dto';
 import { VotingUserDto } from '../dto/voting-user.dto';
 import { UpdateMeDto } from '../dto/update-me.dto';
-import { AuthApi } from './auth.api';
+import { AuthApi } from '../api/auth.api';
 import { catchError, filter, Observable, of, take, tap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 

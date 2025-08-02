@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { AuthService } from '../../api/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { RouterLink } from '@angular/router';
 import { Button } from '../../components/button/button';
 import { Spinner } from '../../components/spinner/spinner';

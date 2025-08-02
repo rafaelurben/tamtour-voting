@@ -1,5 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { AuthService } from '../../api/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { Spinner } from '../spinner/spinner';
