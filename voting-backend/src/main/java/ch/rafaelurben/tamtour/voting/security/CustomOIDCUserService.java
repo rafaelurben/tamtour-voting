@@ -56,6 +56,13 @@ public class CustomOIDCUserService implements OAuth2UserService<OidcUserRequest,
                             .pictureLink(oidcUser.getPicture())
                             .build()));
 
+    // Prevent sign-in if user is blocked
+    if (user.isBlocked()) {
+      throw new OAuth2AuthenticationException(
+          new OAuth2Error("blocked_user"),
+          "Dein Account ist gesperrt. Bitte kontaktiere den Administrator.");
+    }
+
     // Update last login
     user.setLastLoginAt(LocalDateTime.now());
     user = userRepository.save(user);

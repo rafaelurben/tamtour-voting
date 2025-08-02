@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +26,18 @@ public class SecurityConfig {
                     .loginPage("/api/oauth2/authorization/google")
                     .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOIDCUserService))
                     .defaultSuccessUrl("/", true)
+                    .failureHandler(
+                        (_, res, ex) -> {
+                          String url =
+                              ServletUriComponentsBuilder.fromCurrentContextPath()
+                                  .path("error")
+                                  .queryParam("errorMessage", "Login fehlgeschlagen")
+                                  .queryParam("errorDescription", ex.getMessage())
+                                  .queryParam("backUrl", "/login")
+                                  .toUriString();
+                          res.setStatus(302);
+                          res.setHeader("Location", url);
+                        })
                     .authorizationEndpoint(authz -> authz.baseUri("/api/oauth2/authorization"))
                     .redirectionEndpoint(redir -> redir.baseUri("/api/login/oauth2/code/*")))
         .logout(
@@ -33,10 +46,7 @@ public class SecurityConfig {
                     .logoutUrl("/api/logout")
                     .deleteCookies("JSESSIONID")
                     .permitAll()
-                    .logoutSuccessHandler(
-                        (_, response, _) -> {
-                          response.setStatus(200);
-                        }))
+                    .logoutSuccessHandler((_, response, _) -> response.setStatus(200)))
         .exceptionHandling(
             e ->
                 e.authenticationEntryPoint(
