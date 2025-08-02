@@ -1,58 +1,64 @@
-<span>Geordnete Kandidaten</span>
+<div class="position-orderer">
+  <span>Geordnete Kandidaten</span>
 
-<div
-  class="candidate-list"
-  cdkDropList
-  #listSorted="cdkDropList"
-  cdkDropListOrientation="vertical"
-  [ngClass]="{
-    disabled: !editable(),
-  }"
-  [cdkDropListConnectedTo]="[listAvailable]"
-  [cdkDropListData]="positionedCandidates"
-  [cdkDropListDisabled]="!editable()"
-  (cdkDropListDropped)="drop($event)">
-  @for (candidate of positionedCandidates; track candidate.id) {
-    <div class="candidate" cdkDrag cdkDragLockAxis="y">
-      <span class="candidate-position">{{ $index + 1 }}.</span>
-      <span class="candidate-name">{{ candidate.name }}</span>
-      <span class="candidate-start-number">({{ candidate.startNumber }})</span>
-    </div>
-  } @empty {
-    @if (editable()) {
-      <div class="empty-list-hint">
-        Schiebe Kandidaten aus der unteren Liste mit Drag & Drop hierhin und
-        ordne sie.
+  <div
+    class="candidate-list"
+    cdkDropList
+    #listSorted="cdkDropList"
+    cdkDropListOrientation="vertical"
+    [ngClass]="{
+      disabled: !editable(),
+    }"
+    [cdkDropListConnectedTo]="[listAvailable]"
+    [cdkDropListData]="positionedCandidates"
+    [cdkDropListDisabled]="!editable()"
+    (cdkDropListDropped)="drop($event)">
+    @for (candidate of positionedCandidates; track candidate.id) {
+      <div class="candidate" cdkDrag cdkDragLockAxis="y">
+        <span class="candidate-position">{{ $index + 1 }}.</span>
+        <span class="candidate-name">{{ candidate.name }}</span>
+        <span class="candidate-start-number"
+          >({{ candidate.startNumber }})</span
+        >
       </div>
+    } @empty {
+      @if (editable()) {
+        <div class="empty-list-hint">
+          Schiebe Kandidaten aus der unteren Liste mit Drag & Drop hierhin und
+          ordne sie.
+        </div>
+      }
     }
-  }
-</div>
+  </div>
 
-<span>Verfügbare Kandidaten</span>
+  <span>Verfügbare Kandidaten</span>
 
-<div
-  class="candidate-list"
-  cdkDropList
-  #listAvailable="cdkDropList"
-  cdkDropListOrientation="vertical"
-  cdkDropListSortingDisabled
-  [ngClass]="{
-    disabled: !editable(),
-  }"
-  [cdkDropListConnectedTo]="[listSorted]"
-  [cdkDropListData]="unpositionedCandidates"
-  (cdkDropListDropped)="drop($event)"
-  [cdkDropListDisabled]="!editable()">
-  @for (candidate of unpositionedCandidates; track candidate.id) {
-    <div class="candidate" cdkDrag cdkDragLockAxis="y">
-      <span class="candidate-name">{{ candidate.name }}</span>
-      <span class="candidate-start-number">({{ candidate.startNumber }})</span>
-    </div>
-  } @empty {
-    @if (editable()) {
-      <div class="empty-list-hint">
-        Diese Liste kannst du als temporäre Ablage für Kandidaten nutzen.
+  <div
+    class="candidate-list"
+    cdkDropList
+    #listAvailable="cdkDropList"
+    cdkDropListOrientation="vertical"
+    cdkDropListSortingDisabled
+    [ngClass]="{
+      disabled: !editable(),
+    }"
+    [cdkDropListConnectedTo]="[listSorted]"
+    [cdkDropListData]="unpositionedCandidates"
+    (cdkDropListDropped)="drop($event)"
+    [cdkDropListDisabled]="!editable()">
+    @for (candidate of unpositionedCandidates; track candidate.id) {
+      <div class="candidate" cdkDrag cdkDragLockAxis="y">
+        <span class="candidate-name">{{ candidate.name }}</span>
+        <span class="candidate-start-number"
+          >({{ candidate.startNumber }})</span
+        >
       </div>
+    } @empty {
+      @if (editable()) {
+        <div class="empty-list-hint">
+          Diese Liste kannst du als temporäre Ablage für Kandidaten nutzen.
+        </div>
+      }
     }
-  }
+  </div>
 </div>
