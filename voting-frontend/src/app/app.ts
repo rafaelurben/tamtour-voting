@@ -22,8 +22,8 @@ export class App implements OnInit {
   protected readonly router = inject(Router);
   protected readonly activatedRoute = inject(ActivatedRoute);
 
-  protected showHeader = true;
-  protected showFooter = true;
+  protected showHeader = false;
+  protected showFooter = false;
 
   constructor() {
     this.router.events

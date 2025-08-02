@@ -2,15 +2,17 @@
   @if (showHeader) {
     <app-header />
   }
-  <div class="page-padding">
-    @if (authService.isLoading()) {
+  @if (authService.isLoading()) {
+    <div class="page-padding full">
       <app-spinner>
         <span>Benutzerdaten laden...</span>
       </app-spinner>
-    } @else {
+    </div>
+  } @else {
+    <div class="page-padding">
       <router-outlet />
-    }
-  </div>
+    </div>
+  }
   @if (showFooter) {
     <app-footer />
   }
