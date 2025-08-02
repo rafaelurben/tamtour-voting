@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -17,7 +17,7 @@ import { Footer } from './components/footer/footer';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
   protected readonly activatedRoute = inject(ActivatedRoute);
@@ -40,5 +40,12 @@ export class App {
         this.showHeader = !data['hideHeader'];
         this.showFooter = !data['hideFooter'];
       });
+  }
+
+  ngOnInit(): void {
+    console.log('App initialized, loading user data...');
+    this.authService.fetchWhoami().subscribe(data => {
+      console.log('User data loaded:', data);
+    });
   }
 }

@@ -3,32 +3,35 @@ import { WhoamiDto } from '../dto/whoami.dto';
 import { VotingUserDto } from '../dto/voting-user.dto';
 import { UpdateMeDto } from '../dto/update-me.dto';
 import { AuthApi } from './auth.api';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, filter, Observable, of, take, tap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private authApi = inject(AuthApi);
+  private readonly authApi = inject(AuthApi);
 
-  private whoami = signal<WhoamiDto | null>(null);
-  private loading = signal<boolean>(true);
+  private readonly whoami = signal<WhoamiDto | null | undefined>(undefined);
 
-  public isLoading = this.loading.asReadonly();
+  public isLoading = computed(() => this.whoami() === undefined);
   public user = computed(() => this.whoami()?.user);
-  public isAdmin = computed(() => this.whoami()?.isAdmin);
 
-  getWhoami(): Observable<WhoamiDto | null> {
-    const storedVal = this.whoami();
-    if (storedVal !== null) {
-      return of(storedVal);
-    }
-
+  fetchWhoami(): Observable<WhoamiDto | null> {
     return this.authApi.whoami().pipe(
       catchError(() => of(null)),
       tap(data => {
         this.whoami.set(data);
-        this.loading.set(false);
       })
     );
+  }
+
+  getWhoami(): Observable<WhoamiDto | null> {
+    if (this.isLoading()) {
+      return toObservable(this.whoami).pipe(
+        filter(data => data !== undefined),
+        take(1)
+      );
+    }
+    return of(this.whoami()!);
   }
 
   updateMe(update: UpdateMeDto): Observable<VotingUserDto> {
@@ -36,9 +39,7 @@ export class AuthService {
       .updateMe(update)
       .pipe(
         tap(user =>
-          this.whoami.update(current =>
-            current === null ? null : { ...current, user }
-          )
+          this.whoami.update(current => (current ? { ...current, user } : null))
         )
       );
   }
@@ -47,7 +48,6 @@ export class AuthService {
     return this.authApi.logout().pipe(
       tap(() => {
         this.whoami.set(null);
-        this.loading.set(false);
       })
     );
   }
