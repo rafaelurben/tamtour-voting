@@ -18,6 +18,7 @@ export const adminOnlyGuard: CanActivateFn = () => {
               errorMessage: '403 - Zugriff verweigert',
               errorDescription:
                 'Dieser Bereich ist nur für Administratoren verfügbar.',
+              backUrl: '/',
             },
           }),
           {

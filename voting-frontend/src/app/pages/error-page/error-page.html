@@ -1,3 +1,7 @@
 <h2>{{ errorMessage() }}</h2>
 
 <p>{{ errorDescription() }}</p>
+
+@if (backUrl()) {
+  <app-button [routerLink]="backUrl()">Zurück</app-button>
+}

@@ -35,6 +35,7 @@ export class VotingPage implements OnInit {
               errorMessage: 'Kategorie nicht gefunden',
               errorDescription:
                 'Diese Kategorie existiert nicht oder ist nicht mehr verfügbar.',
+              backUrl: `/`,
             },
           });
         } else {
