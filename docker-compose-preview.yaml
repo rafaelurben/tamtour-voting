@@ -8,6 +8,9 @@ services:
       POSTGRES_USER: ${SERVICE_USER_DB}
       POSTGRES_PASSWORD: ${SERVICE_PASSWORD_DB}
       POSTGRES_DB: voting
+      ADMIN_EMAILS: ${ADMIN_EMAILS}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     volumes:
       - voting-data:/var/lib/postgresql/data
   voting-frontend:
