@@ -6,6 +6,7 @@ import { redirectAuthenticatedGuard } from './guards/redirect-authenticated.guar
 import { authenticatedOnlyGuard } from './guards/authenticated-only.guard';
 import { LogoutPage } from './pages/logout-page/logout-page';
 import { VotingPage } from './pages/voting-page/voting-page';
+import { RulesPage } from './pages/rules-page/rules-page';
 
 export const routes: Routes = [
   {
@@ -33,5 +34,9 @@ export const routes: Routes = [
     path: 'vote/:categoryId',
     component: VotingPage,
     canActivate: [authenticatedOnlyGuard],
+  },
+  {
+    path: 'rules',
+    component: RulesPage,
   },
 ];
