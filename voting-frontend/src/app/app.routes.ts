@@ -7,6 +7,7 @@ import { authenticatedOnlyGuard } from './guards/authenticated-only.guard';
 import { LogoutPage } from './pages/logout-page/logout-page';
 import { VotingPage } from './pages/voting-page/voting-page';
 import { RulesPage } from './pages/rules-page/rules-page';
+import { ErrorPage } from './pages/error-page/error-page';
 
 export const routes: Routes = [
   {
@@ -38,5 +39,18 @@ export const routes: Routes = [
   {
     path: 'rules',
     component: RulesPage,
+  },
+  {
+    path: 'error',
+    component: ErrorPage,
+  },
+  {
+    path: '**',
+    component: ErrorPage,
+    data: {
+      errorMessage: '404 - Seite nicht gefunden',
+      errorDescription:
+        'Die angeforderte Seite existiert nicht oder wurde verschoben.',
+    },
   },
 ];

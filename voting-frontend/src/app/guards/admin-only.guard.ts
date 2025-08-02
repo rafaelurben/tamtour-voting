@@ -12,10 +12,18 @@ export const adminOnlyGuard: CanActivateFn = () => {
   return whoamiObs.pipe(
     map(whoami => {
       if (whoami === null || !whoami.isAdmin) {
-        const path403 = router.parseUrl('/403');
-        return new RedirectCommand(path403, {
-          skipLocationChange: true,
-        });
+        return new RedirectCommand(
+          router.createUrlTree(['/error'], {
+            queryParams: {
+              errorMessage: '403 - Zugriff verweigert',
+              errorDescription:
+                'Dieser Bereich ist nur für Administratoren verfügbar.',
+            },
+          }),
+          {
+            skipLocationChange: true,
+          }
+        );
       }
       return true;
     })
