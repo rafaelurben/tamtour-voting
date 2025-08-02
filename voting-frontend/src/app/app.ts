@@ -9,10 +9,11 @@ import { AuthService } from './api/auth.service';
 import { Header } from './components/header/header';
 import { filter, map, mergeMap } from 'rxjs';
 import { Spinner } from './components/spinner/spinner';
+import { Footer } from './components/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Spinner],
+  imports: [RouterOutlet, Header, Spinner, Footer],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -22,6 +23,7 @@ export class App {
   protected readonly activatedRoute = inject(ActivatedRoute);
 
   protected showHeader = true;
+  protected showFooter = true;
 
   constructor() {
     this.router.events
@@ -36,6 +38,7 @@ export class App {
       )
       .subscribe(data => {
         this.showHeader = !data['hideHeader'];
+        this.showFooter = !data['hideFooter'];
       });
   }
 }
