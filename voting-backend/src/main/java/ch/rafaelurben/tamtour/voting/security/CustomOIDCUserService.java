@@ -67,13 +67,13 @@ public class CustomOIDCUserService implements OAuth2UserService<OidcUserRequest,
     user.setLastLoginAt(LocalDateTime.now());
     user = userRepository.save(user);
 
-    // Give ROLE_USER to everyone
+    // Give user role to everyone
     Set<GrantedAuthority> authorities = new HashSet<>();
-    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+    authorities.add(new SimpleGrantedAuthority(UserRoles.ROLE_USER));
 
-    // Give ROLE_ADMIN based on email
+    // Give admin role based on email
     if (adminEmails.contains(user.getAccountEmail())) {
-      authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+      authorities.add(new SimpleGrantedAuthority(UserRoles.ROLE_ADMIN));
     }
 
     return new CustomUserPrincipal(user, authorities, oidcUser.getIdToken());
