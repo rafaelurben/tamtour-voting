@@ -2,6 +2,8 @@ package ch.rafaelurben.tamtour.voting.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +15,9 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VotingUser {
+public class VotingUser implements Serializable {
+  @Serial private static final long serialVersionUID = 1L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;

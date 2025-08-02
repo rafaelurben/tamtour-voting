@@ -3,17 +3,23 @@ package ch.rafaelurben.tamtour.voting.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(jsr250Enabled = true)
 @RequiredArgsConstructor
+@EnableJdbcHttpSession
 public class SecurityConfig {
 
   private final CustomOIDCUserService customOIDCUserService;
@@ -55,5 +61,11 @@ public class SecurityConfig {
                     (_, response, _) -> response.sendError(401, "Unauthorized")))
         .csrf(AbstractHttpConfigurer::disable);
     return http.build();
+  }
+
+  @Bean
+  public OAuth2AuthorizedClientService authorizedClientService(
+      ClientRegistrationRepository clients, JdbcTemplate jdbcTemplate) {
+    return new JdbcOAuth2AuthorizedClientService(jdbcTemplate, clients);
   }
 }
