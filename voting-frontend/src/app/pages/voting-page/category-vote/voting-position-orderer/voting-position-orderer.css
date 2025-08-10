@@ -7,15 +7,19 @@
 
 .candidate-list {
   border: solid 1px #ccc;
-  min-height: 50px;
+  min-height: 2em;
   background: white;
   border-radius: 4px;
   overflow: hidden;
   display: block;
 }
 
+.candidate-list:has(.candidate) .empty-list-hint {
+  display: none;
+}
+
 .candidate {
-  padding: 20px 10px;
+  padding: 0.75rem;
   border: solid 1px #ccc;
   border-radius: 4px;
   color: rgba(0, 0, 0, 0.87);
@@ -24,7 +28,6 @@
   align-items: center;
   justify-content: start;
   box-sizing: border-box;
-  cursor: move;
   background: white;
   font-size: 14px;
   gap: 0.25rem;
@@ -37,6 +40,12 @@
 .candidate-start-number {
   font-style: italic;
   color: #3f51b5;
+}
+
+app-drag-handle {
+  width: 1.5rem;
+  margin-left: auto;
+  cursor: move;
 }
 
 .cdk-drag-preview {

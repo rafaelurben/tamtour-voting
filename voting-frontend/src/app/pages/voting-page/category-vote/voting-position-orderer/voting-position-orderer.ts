@@ -4,15 +4,17 @@ import { VotingPositionMapDto } from '../../../../dto/voting-position-map.dto';
 import {
   CdkDrag,
   CdkDragDrop,
+  CdkDragHandle,
   CdkDropList,
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { NgClass } from '@angular/common';
+import { DragHandle } from '../../../../components/drag-handle/drag-handle';
 
 @Component({
   selector: 'app-voting-position-orderer',
-  imports: [CdkDropList, CdkDrag, NgClass],
+  imports: [CdkDropList, CdkDrag, NgClass, DragHandle, CdkDragHandle],
   templateUrl: './voting-position-orderer.html',
   styleUrl: './voting-position-orderer.css',
 })
@@ -68,6 +70,9 @@ export class VotingPositionOrderer {
         event.container.data,
         event.previousIndex,
         event.currentIndex
+      );
+      this.unpositionedCandidates.sort((a, b) =>
+        a.startNumber.localeCompare(b.startNumber)
       );
     }
     this.emitUpdatedPositionMap();
