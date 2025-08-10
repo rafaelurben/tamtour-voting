@@ -20,6 +20,9 @@
         <span class="candidate-start-number"
           >({{ candidate.startNumber }})</span
         >
+        @if (editable()) {
+          <app-drag-handle cdkDragHandle />
+        }
       </div>
     } @empty {
       @if (editable()) {
@@ -52,6 +55,9 @@
         <span class="candidate-start-number"
           >({{ candidate.startNumber }})</span
         >
+        @if (editable()) {
+          <app-drag-handle cdkDragHandle />
+        }
       </div>
     } @empty {
       @if (editable()) {

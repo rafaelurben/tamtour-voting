@@ -8,6 +8,9 @@ services:
       POSTGRES_USER: ${SERVICE_USER_DB}
       POSTGRES_PASSWORD: ${SERVICE_PASSWORD_DB}
       POSTGRES_DB: voting
+      ADMIN_EMAILS: ${ADMIN_EMAILS}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     volumes:
       - voting-data:/var/lib/postgresql/data
   voting-frontend:
@@ -32,6 +35,14 @@ services:
       DATABASE_URL: jdbc:postgresql://voting-db:5432/voting
       DATABASE_USERNAME: ${SERVICE_USER_DB}
       DATABASE_PASSWORD: ${SERVICE_PASSWORD_DB}
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    depends_on:
+      - voting-db
+    environment:
+      ADMINER_DEFAULT_SERVER: voting-db:5432
+      SERVICE_FQDN_ADMINER: /
 volumes:
   voting-data:
     driver: local
