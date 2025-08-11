@@ -8,6 +8,7 @@ import { LogoutPage } from './pages/logout-page/logout-page';
 import { VotingPage } from './pages/voting-page/voting-page';
 import { RulesPage } from './pages/rules-page/rules-page';
 import { ErrorPage } from './pages/error-page/error-page';
+import { ProfilePage } from './pages/profile-page/profile-page';
 
 export const routes: Routes = [
   {
@@ -24,6 +25,11 @@ export const routes: Routes = [
   {
     path: 'register',
     component: RegisterPage,
+    canActivate: [authenticatedOnlyGuard],
+  },
+  {
+    path: 'profile',
+    component: ProfilePage,
     canActivate: [authenticatedOnlyGuard],
   },
   {
