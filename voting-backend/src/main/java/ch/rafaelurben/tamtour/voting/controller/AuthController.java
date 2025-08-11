@@ -26,7 +26,7 @@ public class AuthController {
   public WhoamiDto whoami(@AuthenticationPrincipal CustomUserPrincipal principal) {
     List<String> roles =
         principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-    VotingUser user = principal.getUser();
+    VotingUser user = authService.getUserById(principal.getUser().getId());
     return new WhoamiDto(votingUserMapper.toDto(user), roles, roles.contains(UserRoles.ROLE_ADMIN));
   }
 
