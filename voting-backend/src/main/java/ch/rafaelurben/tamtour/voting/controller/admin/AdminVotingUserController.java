@@ -19,4 +19,9 @@ public class AdminVotingUserController {
   public List<VotingUserDto> getUsers() {
     return adminVotingUserService.getAllUsers();
   }
+
+  @PostMapping("{userId}/block")
+  public VotingUserDto blockUser(@PathVariable Long userId) {
+    return adminVotingUserService.blockUser(userId);
+  }
 }
