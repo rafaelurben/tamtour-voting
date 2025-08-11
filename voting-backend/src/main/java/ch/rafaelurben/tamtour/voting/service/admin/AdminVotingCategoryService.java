@@ -32,6 +32,11 @@ public class AdminVotingCategoryService {
         .orElseThrow(() -> new ObjectNotFoundException("Category not found with id: " + id));
   }
 
+  public Object getCategoryResult(Long categoryId) {
+    VotingCategory category = getCategory(categoryId);
+    return category.calculatePoints();
+  }
+
   public Set<VotingCandidateDto> getCandidates(Long categoryId) {
     VotingCategory category = getCategory(categoryId);
     return votingCandidateMapper.toDto(category.getVotingCandidates());

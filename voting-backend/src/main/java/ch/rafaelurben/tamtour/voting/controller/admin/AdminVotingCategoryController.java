@@ -23,6 +23,11 @@ public class AdminVotingCategoryController {
     return adminVotingCategoryService.getAllCategories();
   }
 
+  @GetMapping("/{id}/result")
+  public Object getCategoryResult(@PathVariable Long id) {
+    return adminVotingCategoryService.getCategoryResult(id);
+  }
+
   @GetMapping("/{id}/candidates")
   public Set<VotingCandidateDto> getCandidates(@PathVariable Long id) {
     return adminVotingCategoryService.getCandidates(id);
