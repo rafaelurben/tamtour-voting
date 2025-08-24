@@ -36,11 +36,16 @@ public class AdminVotingUserService {
         .forEach(session -> sessionRepository.deleteById(session.getId()));
   }
 
-  public VotingUserDto blockUser(Long userId) {
+  public void blockUser(Long userId) {
     VotingUser user = getUserById(userId);
     user.setBlocked(true);
     user = votingUserRepository.save(user);
     invalidateAllUserSessions(user.getAccountEmail());
-    return votingUserMapper.toDto(user);
+  }
+
+  public void unblockUser(Long userId) {
+    VotingUser user = getUserById(userId);
+    user.setBlocked(false);
+    votingUserRepository.save(user);
   }
 }

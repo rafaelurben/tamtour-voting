@@ -21,7 +21,12 @@ public class AdminVotingUserController {
   }
 
   @PostMapping("{userId}/block")
-  public VotingUserDto blockUser(@PathVariable Long userId) {
-    return adminVotingUserService.blockUser(userId);
+  public void blockUser(@PathVariable Long userId) {
+    adminVotingUserService.blockUser(userId);
+  }
+
+  @PostMapping("{userId}/unblock")
+  public void unblockUser(@PathVariable Long userId) {
+    adminVotingUserService.unblockUser(userId);
   }
 }
