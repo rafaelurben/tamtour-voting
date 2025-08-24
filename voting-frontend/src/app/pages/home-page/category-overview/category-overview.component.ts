@@ -1,8 +1,7 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { VotingCategoryUserOverviewDto } from '../../../dto/voting-category-user-overview.dto';
 import { CategoryOverviewItem } from './category-overview-item/category-overview-item';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { interval, map } from 'rxjs';
+import { TimeService } from '../../../service/time.service';
 
 @Component({
   selector: 'app-category-overview',
@@ -13,10 +12,9 @@ import { interval, map } from 'rxjs';
 export class CategoryOverview {
   public votingCategories = input.required<VotingCategoryUserOverviewDto[]>();
 
-  protected readonly currentTime = toSignal(
-    interval(1000).pipe(map(() => new Date())),
-    { initialValue: new Date() }
-  );
+  private readonly timeService = inject(TimeService);
+
+  protected readonly currentTime = this.timeService.currentTime1s;
 
   protected startedCategories = computed(() =>
     this.votingCategories().filter(

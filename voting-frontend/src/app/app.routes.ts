@@ -8,6 +8,8 @@ import { LogoutPage } from './pages/logout-page/logout-page';
 import { VotingPage } from './pages/voting-page/voting-page';
 import { RulesPage } from './pages/rules-page/rules-page';
 import { ErrorPage } from './pages/error-page/error-page';
+import { ProfilePage } from './pages/profile-page/profile-page';
+import { adminOnlyGuard } from './guards/admin-only.guard';
 
 export const routes: Routes = [
   {
@@ -27,6 +29,11 @@ export const routes: Routes = [
     canActivate: [authenticatedOnlyGuard],
   },
   {
+    path: 'profile',
+    component: ProfilePage,
+    canActivate: [authenticatedOnlyGuard],
+  },
+  {
     path: '',
     component: HomePage,
     canActivate: [authenticatedOnlyGuard],
@@ -43,6 +50,18 @@ export const routes: Routes = [
   {
     path: 'error',
     component: ErrorPage,
+  },
+  {
+    path: 'admin',
+    canActivate: [adminOnlyGuard],
+    canActivateChild: [adminOnlyGuard],
+    loadComponent: () =>
+      import('./pages/admin-page/admin-page').then(m => m.AdminPage),
+    loadChildren: () =>
+      import('./pages/admin-page/admin.routes').then(m => m.routes),
+    data: {
+      fullWidth: true,
+    },
   },
   {
     path: '**',

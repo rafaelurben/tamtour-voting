@@ -10,10 +10,11 @@ import { Header } from './components/header/header';
 import { filter, map, mergeMap } from 'rxjs';
 import { Spinner } from './components/spinner/spinner';
 import { Footer } from './components/footer/footer';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Spinner, Footer],
+  imports: [RouterOutlet, Header, Spinner, Footer, NgClass],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -22,6 +23,7 @@ export class App implements OnInit {
   protected readonly router = inject(Router);
   protected readonly activatedRoute = inject(ActivatedRoute);
 
+  protected fullWidth = false;
   protected showHeader = false;
   protected showFooter = false;
 
@@ -37,6 +39,7 @@ export class App implements OnInit {
         mergeMap(route => route.data)
       )
       .subscribe(data => {
+        this.fullWidth = !!data['fullWidth'];
         this.showHeader = !data['hideHeader'];
         this.showFooter = !data['hideFooter'];
       });

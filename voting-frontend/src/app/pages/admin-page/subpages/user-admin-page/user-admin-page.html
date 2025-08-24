@@ -1,0 +1,62 @@
+@if (users$ | async; as users) {
+  <table class="full-width-table">
+    <tr>
+      <th>ID</th>
+      <th>Vorname</th>
+      <th>Nachname</th>
+      <th>Account-E-Mail</th>
+      <th>Account-Name</th>
+      <th>PFP</th>
+      <th>Reg.</th>
+      <th>Erstellt am</th>
+      <th>Letzter Login</th>
+      <th>Blockiert</th>
+    </tr>
+    @for (user of users; track user.id) {
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.firstName }}</td>
+        <td>{{ user.lastName }}</td>
+        <td>{{ user.accountEmail }}</td>
+        <td>{{ user.accountName }}</td>
+        <td [ngStyle]="{ width: '30px', height: '30px', position: 'relative' }">
+          @if (user.pictureLink) {
+            <img ngSrc="{{ user.pictureLink }}" alt="Profilbild" fill />
+          } @else {
+            <span>-</span>
+          }
+        </td>
+        <td>{{ user.initialRegistrationComplete ? '✅' : '❌' }}</td>
+        <td>{{ user.createdAt | date: 'short' }}</td>
+        <td>
+          @if (user.lastLoginAt) {
+            {{ user.lastLoginAt | date: 'short' }}
+          } @else {
+            <span>-</span>
+          }
+        </td>
+        <td>
+          @if (user.blocked) {
+            🔐
+            <app-button
+              (trigger)="unblockUser(user.id)"
+              [loading]="blockButtonLoadingIds.includes(user.id)"
+              >Entsperren
+            </app-button>
+          } @else {
+            🔓
+            <app-button
+              (trigger)="blockUser(user.id)"
+              [loading]="blockButtonLoadingIds.includes(user.id)"
+              >Sperren
+            </app-button>
+          }
+        </td>
+      </tr>
+    }
+  </table>
+} @else {
+  <app-spinner>
+    <span>Benutzer werden geladen...</span>
+  </app-spinner>
+}

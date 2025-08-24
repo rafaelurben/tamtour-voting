@@ -1,4 +1,5 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
+import { TimeService } from '../../service/time.service';
 
 @Component({
   selector: 'app-time-remaining',
@@ -7,11 +8,13 @@ import { Component, computed, input } from '@angular/core';
   styleUrl: './time-remaining.css',
 })
 export class TimeRemaining {
+  private readonly timeService = inject(TimeService);
+
   public target = input.required<Date | string>();
   public currentOverride = input<Date>();
 
   protected timeRemainingS = computed(() => {
-    const current = this.currentOverride() || new Date();
+    const current = this.currentOverride() || this.timeService.currentTime1s();
     return (new Date(this.target()).getTime() - current.getTime()) / 1000;
   });
 

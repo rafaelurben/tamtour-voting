@@ -32,6 +32,20 @@
     <div class="error">Nachname ist erforderlich.</div>
   }
 
+  <label>
+    <div>
+      Ich habe die <a routerLink="/rules" target="_blank">Regeln</a> gelesen und
+      akzeptiere sie:
+    </div>
+    <input type="checkbox" formControlName="confirmRules" />
+  </label>
+  @if (
+    nameForm.get('confirmRules')?.invalid &&
+    nameForm.get('confirmRules')?.touched
+  ) {
+    <div class="error">Du musst die Regeln akzeptieren.</div>
+  }
+
   <app-button
     type="submit"
     [disabled]="nameForm.invalid"

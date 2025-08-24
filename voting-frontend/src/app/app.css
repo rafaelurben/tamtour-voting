@@ -22,9 +22,16 @@
 @media (min-width: 576px) {
   .container {
     min-height: calc(100dvh - 1rem);
-    max-width: 560px;
     border-radius: 5px;
     margin: 0.5rem auto;
+
+    &.full-width {
+      width: calc(100dvw - 1rem);
+    }
+
+    &:not(.full-width) {
+      max-width: 560px;
+    }
   }
 }
 

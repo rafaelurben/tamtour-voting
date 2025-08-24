@@ -9,3 +9,17 @@ body {
   padding: 0;
   background-color: lightgray;
 }
+
+/* Admin */
+
+.full-width-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid black;
+  text-align: left;
+
+  & :is(th, td):not(.no-padding) {
+    padding: 0.25rem;
+    border: 1px solid black;
+  }
+}

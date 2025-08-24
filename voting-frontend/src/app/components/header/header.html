@@ -12,7 +12,7 @@
       <app-spinner />
     } @else {
       @if (authService.user()) {
-        <a class="profile-badge" routerLink="/logout" title="Logout">
+        <a class="profile-badge" routerLink="/profile" title="Profil">
           <div class="profile-name">
             {{ authService.user()?.firstName }}
             {{ authService.user()?.lastName }}
