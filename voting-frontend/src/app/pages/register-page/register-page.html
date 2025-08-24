@@ -39,8 +39,11 @@
     </div>
     <input type="checkbox" formControlName="confirmRules" />
   </label>
-  @if (nameForm.get('lastName')?.invalid && nameForm.get('lastName')?.touched) {
-    <div class="error">Nachname ist erforderlich.</div>
+  @if (
+    nameForm.get('confirmRules')?.invalid &&
+    nameForm.get('confirmRules')?.touched
+  ) {
+    <div class="error">Du musst die Regeln akzeptieren.</div>
   }
 
   <app-button
