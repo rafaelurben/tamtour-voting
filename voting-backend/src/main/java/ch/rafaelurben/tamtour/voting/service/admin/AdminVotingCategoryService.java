@@ -2,6 +2,7 @@ package ch.rafaelurben.tamtour.voting.service.admin;
 
 import ch.rafaelurben.tamtour.voting.dto.*;
 import ch.rafaelurben.tamtour.voting.dto.admin.VotingCandidateRequestDto;
+import ch.rafaelurben.tamtour.voting.dto.admin.VotingCategoryRequestDto;
 import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
@@ -26,10 +27,23 @@ public class AdminVotingCategoryService {
     return votingCategoryMapper.toBaseDto(votingCategoryRepository.findAll());
   }
 
+  public VotingCategoryBaseDto createCategory(VotingCategoryRequestDto category) {
+    VotingCategory votingCategory = votingCategoryMapper.toEntity(category);
+    votingCategory = votingCategoryRepository.save(votingCategory);
+    return votingCategoryMapper.toBaseDto(votingCategory);
+  }
+
   private VotingCategory getCategory(Long id) {
     return votingCategoryRepository
         .findById(id)
         .orElseThrow(() -> new ObjectNotFoundException("Category not found with id: " + id));
+  }
+
+  public VotingCategoryBaseDto updateCategory(Long categoryId, VotingCategoryRequestDto updateDto) {
+    VotingCategory existingCategory = getCategory(categoryId);
+    votingCategoryMapper.updateEntityFromDto(existingCategory, updateDto);
+    existingCategory = votingCategoryRepository.save(existingCategory);
+    return votingCategoryMapper.toBaseDto(existingCategory);
   }
 
   public Object getCategoryResult(Long categoryId) {
@@ -48,5 +62,22 @@ public class AdminVotingCategoryService {
     votingCandidate.setVotingCategory(category);
     votingCandidate = votingCandidateRepository.save(votingCandidate);
     return votingCandidateMapper.toDto(votingCandidate);
+  }
+
+  public VotingCandidateDto updateCandidate(
+      Long categoryId, Long candidateId, VotingCandidateRequestDto updateDto) {
+    VotingCandidate existingCandidate =
+        votingCandidateRepository
+            .findByVotingCategoryIdAndId(categoryId, candidateId)
+            .orElseThrow(
+                () ->
+                    new ObjectNotFoundException(
+                        "Candidate not found with id: "
+                            + candidateId
+                            + " in category with id: "
+                            + categoryId));
+    votingCandidateMapper.updateEntityFromDto(existingCandidate, updateDto);
+    existingCandidate = votingCandidateRepository.save(existingCandidate);
+    return votingCandidateMapper.toDto(existingCandidate);
   }
 }
