@@ -33,31 +33,35 @@ public class AdminVotingCategoryService {
     return votingCategoryMapper.toBaseDto(votingCategory);
   }
 
-  private VotingCategory getCategory(Long id) {
+  private VotingCategory getCategoryById(Long id) {
     return votingCategoryRepository
         .findById(id)
         .orElseThrow(() -> new ObjectNotFoundException("Category not found with id: " + id));
   }
 
+  public VotingCategoryBaseDto getCategory(Long id) {
+    return votingCategoryMapper.toBaseDto(getCategoryById(id));
+  }
+
   public VotingCategoryBaseDto updateCategory(Long categoryId, VotingCategoryRequestDto updateDto) {
-    VotingCategory existingCategory = getCategory(categoryId);
+    VotingCategory existingCategory = getCategoryById(categoryId);
     votingCategoryMapper.updateEntityFromDto(existingCategory, updateDto);
     existingCategory = votingCategoryRepository.save(existingCategory);
     return votingCategoryMapper.toBaseDto(existingCategory);
   }
 
   public Object getCategoryResult(Long categoryId) {
-    VotingCategory category = getCategory(categoryId);
+    VotingCategory category = getCategoryById(categoryId);
     return category.calculatePoints();
   }
 
   public Set<VotingCandidateDto> getCandidates(Long categoryId) {
-    VotingCategory category = getCategory(categoryId);
+    VotingCategory category = getCategoryById(categoryId);
     return votingCandidateMapper.toDto(category.getVotingCandidates());
   }
 
   public VotingCandidateDto addCandidate(Long categoryId, VotingCandidateRequestDto candidate) {
-    VotingCategory category = getCategory(categoryId);
+    VotingCategory category = getCategoryById(categoryId);
     VotingCandidate votingCandidate = votingCandidateMapper.toEntity(candidate);
     votingCandidate.setVotingCategory(category);
     votingCandidate = votingCandidateRepository.save(votingCandidate);

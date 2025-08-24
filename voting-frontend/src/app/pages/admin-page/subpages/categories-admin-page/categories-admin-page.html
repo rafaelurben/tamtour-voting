@@ -1,11 +1,12 @@
 @if (categories$ | async; as categories) {
-  <table class="categories-table">
+  <table class="full-width-table">
     <tr>
       <th>ID</th>
       <th>Name</th>
       <th>Voting Start</th>
       <th>Einreichung Start</th>
       <th>Einreichung Ende</th>
+      <th>Aktionen</th>
     </tr>
     @for (category of categories; track category.id) {
       <tr>
@@ -22,6 +23,11 @@
         <td>
           {{ category.submissionEnd | date: 'short' }} /
           <app-time-remaining [target]="category.submissionEnd" />
+        </td>
+        <td>
+          <app-button [routerLink]="['/admin', 'categories', category.id]">
+            Ansehen
+          </app-button>
         </td>
       </tr>
     }

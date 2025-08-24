@@ -1,0 +1,50 @@
+@if (category(); as category) {
+  <table class="full-width-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Voting Start</th>
+      <th>Einreichung Start</th>
+      <th>Einreichung Ende</th>
+    </tr>
+    <tr>
+      <td>{{ category.id }}</td>
+      <td>{{ category.name }}</td>
+      <td>
+        {{ category.votingStart | date: 'short' }} /
+        <app-time-remaining [target]="category.votingStart" />
+      </td>
+      <td>
+        {{ category.submissionStart | date: 'short' }} /
+        <app-time-remaining [target]="category.submissionStart" />
+      </td>
+      <td>
+        {{ category.submissionEnd | date: 'short' }} /
+        <app-time-remaining [target]="category.submissionEnd" />
+      </td>
+    </tr>
+  </table>
+} @else {
+  <app-spinner>
+    <span>Kategorie wird geladen...</span>
+  </app-spinner>
+}
+
+<hr />
+
+@if (candidates() !== null) {
+  <table class="full-width-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Startnummer</th>
+    </tr>
+    @for (candidate of candidates(); track candidate.id) {
+      <tr>
+        <td>{{ candidate.id }}</td>
+        <td>{{ candidate.name }}</td>
+        <td>{{ candidate.startNumber }}</td>
+      </tr>
+    }
+  </table>
+}

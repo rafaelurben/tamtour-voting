@@ -5,10 +5,12 @@ import { AdminVotingCategoriesApi } from '../../../../api/admin/admin-voting-cat
 import { Spinner } from '../../../../components/spinner/spinner';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { TimeRemaining } from '../../../../components/time-remaining/time-remaining';
+import { Button } from '../../../../components/button/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-categories-admin-page',
-  imports: [Spinner, AsyncPipe, DatePipe, TimeRemaining],
+  imports: [Spinner, AsyncPipe, DatePipe, TimeRemaining, Button, RouterLink],
   templateUrl: './categories-admin-page.html',
   styleUrl: './categories-admin-page.css',
 })

@@ -29,6 +29,11 @@ public class AdminVotingCategoryController {
     return adminVotingCategoryService.createCategory(category);
   }
 
+  @GetMapping("/{id}")
+  public VotingCategoryBaseDto getCategory(@PathVariable Long id) {
+    return adminVotingCategoryService.getCategory(id);
+  }
+
   @PutMapping("/{id}")
   public VotingCategoryBaseDto updateCategory(
       @PathVariable Long id, @RequestBody VotingCategoryRequestDto updateDto) {

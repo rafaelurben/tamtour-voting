@@ -24,6 +24,13 @@ export class AdminVotingCategoriesApi {
     );
   }
 
+  getCategory(categoryId: number): Observable<VotingCategoryBaseDto> {
+    return this.http.get<VotingCategoryBaseDto>(
+      `/api/admin/categories/${categoryId}`,
+      {}
+    );
+  }
+
   updateCategory(
     categoryId: number,
     category: VotingCategoryRequestDto
