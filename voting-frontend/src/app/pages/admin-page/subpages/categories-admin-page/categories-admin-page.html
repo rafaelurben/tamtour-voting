@@ -1,1 +1,33 @@
-<p>categories-admin-page works!</p>
+@if (categories$ | async; as categories) {
+  <table class="categories-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Voting Start</th>
+      <th>Einreichung Start</th>
+      <th>Einreichung Ende</th>
+    </tr>
+    @for (category of categories; track category.id) {
+      <tr>
+        <td>{{ category.id }}</td>
+        <td>{{ category.name }}</td>
+        <td>
+          {{ category.votingStart | date: 'short' }} /
+          <app-time-remaining [target]="category.votingStart" />
+        </td>
+        <td>
+          {{ category.submissionStart | date: 'short' }} /
+          <app-time-remaining [target]="category.submissionStart" />
+        </td>
+        <td>
+          {{ category.submissionEnd | date: 'short' }} /
+          <app-time-remaining [target]="category.submissionEnd" />
+        </td>
+      </tr>
+    }
+  </table>
+} @else {
+  <app-spinner>
+    <span>Kategorien werden geladen...</span>
+  </app-spinner>
+}

@@ -12,10 +12,9 @@ import { VotingCategoryApi } from '../../../api/voting-category.api';
 import { VotingPositionOrderer } from './voting-position-orderer/voting-position-orderer';
 import { VotingPositionMapDto } from '../../../dto/voting-position-map.dto';
 import { DatePipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { interval, map } from 'rxjs';
 import { TimeRemaining } from '../../../components/time-remaining/time-remaining';
 import { Button } from '../../../components/button/button';
+import { TimeService } from '../../../service/time.service';
 
 @Component({
   selector: 'app-category-vote',
@@ -25,10 +24,9 @@ import { Button } from '../../../components/button/button';
 })
 export class CategoryVote {
   private readonly votingCategoryApi = inject(VotingCategoryApi);
-  protected readonly currentTime = toSignal(
-    interval(1000).pipe(map(() => new Date())),
-    { initialValue: new Date() }
-  );
+  private readonly timeService = inject(TimeService);
+
+  protected readonly currentTime = this.timeService.currentTime1s;
 
   public categoryData = input.required<VotingCategoryUserDetailDto>();
 
