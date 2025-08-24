@@ -19,6 +19,11 @@ form input {
   border: 1px solid gray;
   border-radius: 0.25rem;
   font-size: 1rem;
+
+  &[type="checkbox"] {
+    align-self: flex-start;
+    margin-left: 0;
+  }
 }
 
 .error {
