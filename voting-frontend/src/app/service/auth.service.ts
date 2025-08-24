@@ -14,6 +14,7 @@ export class AuthService {
 
   public isLoading = computed(() => this.whoami() === undefined);
   public user = computed(() => this.whoami()?.user);
+  public isAdmin = computed(() => this.whoami()?.isAdmin);
 
   fetchWhoami(): Observable<WhoamiDto | null> {
     return this.authApi.whoami().pipe(

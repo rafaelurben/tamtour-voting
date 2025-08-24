@@ -25,4 +25,7 @@
 
 <div class="profile-actions">
   <app-button routerLink="/logout">Abmelden</app-button>
+  @if (authService.isAdmin()) {
+    <app-button routerLink="/admin">Admin-Bereich</app-button>
+  }
 </div>
