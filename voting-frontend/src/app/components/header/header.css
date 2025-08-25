@@ -5,6 +5,9 @@ header {
   gap: 1rem;
   padding: 0.75rem;
   border-bottom: 1px solid gray;
+  background-image: url('/header-background.jpg');
+  background-size: cover;
+  background-position: center center;
 }
 
 .logo-title-section {
@@ -16,6 +19,7 @@ header {
 
 .title {
   font-size: 1.8rem;
+  color: white;
 }
 
 .logo-container {
@@ -40,6 +44,7 @@ header {
   border: 1px solid gray;
   border-radius: 1.5rem;
   text-decoration: none;
+  background-color: white;
 }
 
 .profile-pic-container {
@@ -55,4 +60,10 @@ header {
 
 .profile-name {
   color: black;
+}
+
+@media (min-width: 576px) {
+  header {
+    border-radius: 5px 5px 0 0;
+  }
 }
