@@ -32,7 +32,7 @@ export class VotingPositionOrderer {
     effect(() => {
       const mappedCandidates = this.candidates().map(c => ({
         candidate: c,
-        position: this.positionMap()[c.id],
+        position: this.positionMap()[c.id] || null,
       }));
 
       this.positionedCandidates = mappedCandidates
