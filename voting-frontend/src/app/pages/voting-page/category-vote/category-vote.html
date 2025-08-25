@@ -19,44 +19,74 @@
 <h3>Einreichen</h3>
 
 @if (categoryData().userState.hasSubmitted) {
-  <p>Du hast deine Rangliste erfolgreich eingereicht.</p>
+  <app-alert
+    type="success"
+    title="Rangliste eingereicht"
+    message="Du hast deine Rangliste erfolgreich eingereicht.">
+  </app-alert>
 } @else if (!isSubmissionStartPassed()) {
-  <p>
-    Die Einreichungsphase hat noch nicht begonnen. Sie beginnt am
-    {{
-      categoryData().category.submissionStart
-        | date: "dd. MMMM yyyy 'um' HH:mm"
-    }}.
-  </p>
+  <app-alert
+    type="info"
+    title="Einreichungsphase noch nicht begonnen"
+    message="Die Einreichungsphase hat noch nicht begonnen. Kehre während der Einreichungsphase hierhin zurück, um deine Rangliste einzureichen. Bis dahin kannst du die Rangliste jederzeit anpassen und zwischenspeichern.">
+    <div>
+      Sie dauert von
+      <b>
+        {{
+          categoryData().category.submissionStart
+            | date: "dd.MM.yyyy HH:mm 'Uhr'"
+        }}
+      </b>
+      bis
+      <b>
+        {{
+          categoryData().category.submissionEnd | date: "dd.MM.yyyy HH:mm 'Uhr'"
+        }}</b
+      >.
+    </div>
+  </app-alert>
 } @else if (isSubmissionEndPassed()) {
-  <p>
-    Die Einreichungsphase ist bereits vorbei und du hast deine Rangliste NICHT
-    innerhalb der Frist eingereicht.
-  </p>
+  <app-alert
+    type="danger"
+    title="Einreichungsphase verpasst"
+    message="Die Einreichungsphase ist bereits vorbei und du hast deine Rangliste NICHT innerhalb der Frist eingereicht.">
+  </app-alert>
 } @else {
   @if (updatedPositionMapIncludesChanges()) {
-    <p>Speichere deine Rangliste zuerst, um sie einreichen zu können.</p>
+    <app-alert
+      type="warning"
+      title="Ungespeicherte Änderungen"
+      message="Bitte speichere deine Rangliste, bevor du sie einreichen kannst.">
+    </app-alert>
   } @else if (!isMapValid()) {
-    <p>
-      Du kannst die Rangliste erst einreichen, wenn du alle Kandidaten geordnet
-      hast.
-    </p>
+    <app-alert
+      type="warning"
+      title="Unvollständige Rangliste"
+      message="Du kannst deine Rangliste erst einreichen, wenn du alle Kandidaten geordnet hast.">
+    </app-alert>
   } @else {
-    <p>
-      Du kannst deine Rangliste nun einreichen. Danach kannst du deine Stimme
-      nicht mehr ändern!
-    </p>
-    <app-button (trigger)="submitVote()" [loading]="submittingVoteInProgress()">
-      Rangliste einreichen
-    </app-button>
+    <app-alert
+      type="info"
+      title="Rangliste einreichen"
+      message="Du kannst deine Ranglist nun einreichen. Danach kannst du sie nicht mehr ändern.">
+      <app-button
+        (trigger)="submitVote()"
+        [loading]="submittingVoteInProgress()">
+        Rangliste einreichen
+      </app-button>
+    </app-alert>
   }
   <p>
     Die Einreichungsphase endet am
     {{
-      categoryData().category.submissionEnd | date: "dd. MMMM yyyy 'um' HH:mm"
+      categoryData().category.submissionEnd
+        | date: "dd. MMMM yyyy 'um' HH:mm 'Uhr'"
     }}. Du hast noch
-    <app-time-remaining
-      [target]="categoryData().category.submissionEnd"
-      [currentOverride]="currentTime()" />
+    <b>
+      <app-time-remaining
+        [target]="categoryData().category.submissionEnd"
+        [currentOverride]="currentTime()" />
+    </b>
+    .
   </p>
 }

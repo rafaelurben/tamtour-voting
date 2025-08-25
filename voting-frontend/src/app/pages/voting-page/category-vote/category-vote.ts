@@ -16,10 +16,11 @@ import { TimeRemaining } from '../../../components/time-remaining/time-remaining
 import { Button } from '../../../components/button/button';
 import { TimeService } from '../../../service/time.service';
 import { UnsavedChangesService } from '../../../service/unsaved-changes.service';
+import { Alert } from '../../../components/alert/alert';
 
 @Component({
   selector: 'app-category-vote',
-  imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button],
+  imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button, Alert],
   templateUrl: './category-vote.html',
   styleUrl: './category-vote.css',
 })
