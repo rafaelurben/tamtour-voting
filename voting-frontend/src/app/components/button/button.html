@@ -2,7 +2,7 @@
   [type]="type()"
   [disabled]="disabled() || loading()"
   (click)="trigger.emit()"
-  class="button"
+  [class]="'button button-' + variant()"
   [class.loading]="loading()"
   [class.disabled]="disabled()">
   @if (loading()) {
