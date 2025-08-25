@@ -1,0 +1,51 @@
+@if (category(); as category) {
+  <table class="full-width-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Voting Start</th>
+      <th>Einreichung Start</th>
+      <th>Einreichung Ende</th>
+    </tr>
+    <tr>
+      <td>{{ category.id }}</td>
+      <td>{{ category.name }}</td>
+      <td>
+        {{ category.votingStart | date: 'short' }} /
+        <app-time-remaining [target]="category.votingStart" />
+      </td>
+      <td>
+        {{ category.submissionStart | date: 'short' }} /
+        <app-time-remaining [target]="category.submissionStart" />
+      </td>
+      <td>
+        {{ category.submissionEnd | date: 'short' }} /
+        <app-time-remaining [target]="category.submissionEnd" />
+      </td>
+    </tr>
+  </table>
+} @else {
+  <app-spinner>
+    <span>Kategorie wird geladen...</span>
+  </app-spinner>
+}
+
+<hr />
+
+@if (candidates() !== null && sets() !== null) {
+  <app-candidate-sets-table
+    [categoryId]="categoryId()"
+    [candidates]="candidates()!"
+    [sets]="sets()!"
+    (replaceSet)="replaceSet($event)" />
+} @else {
+  <app-spinner>
+    <span>Kandidaten & Sets werden geladen...</span>
+  </app-spinner>
+}
+
+<div class="button-row">
+  <app-button (trigger)="fetchSets()">
+    <span>Sets neu laden</span>
+  </app-button>
+</div>

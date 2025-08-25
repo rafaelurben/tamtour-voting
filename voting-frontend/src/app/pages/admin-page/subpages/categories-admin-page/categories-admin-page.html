@@ -6,7 +6,7 @@
       <th>Voting Start</th>
       <th>Einreichung Start</th>
       <th>Einreichung Ende</th>
-      <th>Aktionen</th>
+      <th colspan="2">Aktionen</th>
     </tr>
     @for (category of categories; track category.id) {
       <tr>
@@ -25,8 +25,15 @@
           <app-time-remaining [target]="category.submissionEnd" />
         </td>
         <td>
-          <app-button [routerLink]="['/admin', 'categories', category.id]">
-            Ansehen
+          <app-button
+            [routerLink]="['/admin', 'categories', category.id, 'edit']">
+            Bearbeiten
+          </app-button>
+        </td>
+        <td>
+          <app-button
+            [routerLink]="['/admin', 'categories', category.id, 'votes']">
+            Auswerten
           </app-button>
         </td>
       </tr>

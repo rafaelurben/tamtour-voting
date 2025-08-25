@@ -23,10 +23,10 @@ import { VotingCandidateRequestDto } from '../../../../dto/admin/voting-candidat
     CategoryForm,
     CandidateForm,
   ],
-  templateUrl: './category-admin-page.html',
-  styleUrl: './category-admin-page.css',
+  templateUrl: './category-admin-edit-page.html',
+  styleUrl: './category-admin-edit-page.css',
 })
-export class CategoryAdminPage implements OnInit {
+export class CategoryAdminEditPage implements OnInit {
   private readonly categoriesApi = inject(AdminVotingCategoriesApi);
   private readonly router = inject(Router);
 

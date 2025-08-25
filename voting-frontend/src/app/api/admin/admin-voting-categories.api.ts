@@ -6,6 +6,8 @@ import { VotingCandidateDto } from '../../dto/voting-candidate.dto';
 import { VotingCandidateRequestDto } from '../../dto/admin/voting-candidate-request.dto';
 import { VotingUserDto } from '../../dto/voting-user.dto';
 import { VotingCategoryRequestDto } from '../../dto/admin/voting-category-request.dto';
+import { VotingSetDto } from '../../dto/admin/voting-set.dto';
+import { VotingSetUpdateDto } from '../../dto/admin/voting-set-update.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AdminVotingCategoriesApi {
@@ -45,6 +47,23 @@ export class AdminVotingCategoriesApi {
     return this.http.get<object>(
       `/api/admin/categories/${categoryId}/result`,
       {}
+    );
+  }
+
+  getSets(categoryId: number): Observable<VotingSetDto[]> {
+    return this.http.get<VotingSetDto[]>(
+      `/api/admin/categories/${categoryId}/sets`
+    );
+  }
+
+  updateSet(
+    categoryId: number,
+    setId: number,
+    updateDto: VotingSetUpdateDto
+  ): Observable<VotingSetDto> {
+    return this.http.patch<VotingSetDto>(
+      `/api/admin/categories/${categoryId}/sets/${setId}`,
+      updateDto
     );
   }
 
