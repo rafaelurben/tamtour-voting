@@ -39,10 +39,11 @@ public class VotingCategoryService {
                   votingSetRepository.findByVotingUserAndVotingCategory(user, category);
               boolean exists = votingSet.isPresent();
               boolean submitted = exists && votingSet.get().isSubmitted();
+              boolean disqualified = exists && votingSet.get().isDisqualified();
 
               return new VotingCategoryUserOverviewDto(
                   votingCategoryMapper.toBaseDto(category),
-                  new VotingCategoryUserStateDto(exists, submitted));
+                  new VotingCategoryUserStateDto(exists, submitted, disqualified));
             })
         .toList();
   }
@@ -85,7 +86,7 @@ public class VotingCategoryService {
 
     return new VotingCategoryUserDetailDto(
         votingCategoryMapper.toBaseDto(category),
-        new VotingCategoryUserStateDto(true, votingSet.isSubmitted()),
+        new VotingCategoryUserStateDto(true, votingSet.isSubmitted(), votingSet.isDisqualified()),
         votingCandidateMapper.toDto(category.getVotingCandidates()),
         votingSet.getPositionMap());
   }

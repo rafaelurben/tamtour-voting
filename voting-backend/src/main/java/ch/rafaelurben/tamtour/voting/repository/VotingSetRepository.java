@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface VotingSetRepository extends JpaRepository<VotingSet, Long> {
   Optional<VotingSet> findByVotingUserAndVotingCategory(
       VotingUser votingUser, VotingCategory votingCategory);
+
+  Optional<VotingSet> findByVotingCategoryIdAndId(Long categoryId, Long id);
 }

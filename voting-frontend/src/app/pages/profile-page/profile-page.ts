@@ -20,7 +20,8 @@ export class ProfilePage {
     effect(() => {
       const user = this.authService.user();
       if (user?.pictureLink) {
-        this.profileImageUrl.set(user.pictureLink);
+        const newLink = user.pictureLink.replace('=s96-c', '=s256-c');
+        this.profileImageUrl.set(newLink);
       } else {
         this.profileImageUrl.set(this.DEFAULT_PROFILE_IMAGE);
       }

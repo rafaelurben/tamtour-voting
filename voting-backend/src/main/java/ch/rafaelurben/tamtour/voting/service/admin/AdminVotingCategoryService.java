@@ -3,13 +3,19 @@ package ch.rafaelurben.tamtour.voting.service.admin;
 import ch.rafaelurben.tamtour.voting.dto.*;
 import ch.rafaelurben.tamtour.voting.dto.admin.VotingCandidateRequestDto;
 import ch.rafaelurben.tamtour.voting.dto.admin.VotingCategoryRequestDto;
+import ch.rafaelurben.tamtour.voting.dto.admin.VotingSetDto;
+import ch.rafaelurben.tamtour.voting.dto.admin.VotingSetUpdateDto;
 import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
+import ch.rafaelurben.tamtour.voting.mapper.VotingSetMapper;
 import ch.rafaelurben.tamtour.voting.model.VotingCandidate;
 import ch.rafaelurben.tamtour.voting.model.VotingCategory;
+import ch.rafaelurben.tamtour.voting.model.VotingPosition;
+import ch.rafaelurben.tamtour.voting.model.VotingSet;
 import ch.rafaelurben.tamtour.voting.repository.VotingCandidateRepository;
 import ch.rafaelurben.tamtour.voting.repository.VotingCategoryRepository;
+import ch.rafaelurben.tamtour.voting.repository.VotingSetRepository;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +28,8 @@ public class AdminVotingCategoryService {
   private final VotingCategoryRepository votingCategoryRepository;
   private final VotingCandidateMapper votingCandidateMapper;
   private final VotingCandidateRepository votingCandidateRepository;
+  private final VotingSetMapper votingSetMapper;
+  private final VotingSetRepository votingSetRepository;
 
   public List<VotingCategoryBaseDto> getAllCategories() {
     return votingCategoryMapper.toBaseDto(votingCategoryRepository.findAll());
@@ -55,6 +63,24 @@ public class AdminVotingCategoryService {
     return category.calculatePoints();
   }
 
+  public Set<VotingSetDto> getVotingSets(Long categoryId) {
+    VotingCategory category = getCategoryById(categoryId);
+    return votingSetMapper.toDto(category.getVotingSets());
+  }
+
+  public VotingSetDto updateVotingSet(Long categoryId, Long setId, VotingSetUpdateDto updateDto) {
+    VotingSet existingSet =
+        votingSetRepository
+            .findByVotingCategoryIdAndId(categoryId, setId)
+            .orElseThrow(
+                () ->
+                    new ObjectNotFoundException(
+                        "Set not found with id: " + setId + " in category with id: " + categoryId));
+    votingSetMapper.updateEntityFromDto(existingSet, updateDto);
+    existingSet = votingSetRepository.save(existingSet);
+    return votingSetMapper.toDto(existingSet);
+  }
+
   public Set<VotingCandidateDto> getCandidates(Long categoryId) {
     VotingCategory category = getCategoryById(categoryId);
     return votingCandidateMapper.toDto(category.getVotingCandidates());
@@ -65,6 +91,19 @@ public class AdminVotingCategoryService {
     VotingCandidate votingCandidate = votingCandidateMapper.toEntity(candidate);
     votingCandidate.setVotingCategory(category);
     votingCandidate = votingCandidateRepository.save(votingCandidate);
+
+    // Add candidate to all existing voting sets in this category
+    for (VotingSet votingSet : category.getVotingSets()) {
+      VotingPosition votingPosition =
+          VotingPosition.builder()
+              .position(null)
+              .votingCandidate(votingCandidate)
+              .votingSet(votingSet)
+              .build();
+      votingSet.getVotingPositions().add(votingPosition);
+      votingSetRepository.save(votingSet);
+    }
+
     return votingCandidateMapper.toDto(votingCandidate);
   }
 

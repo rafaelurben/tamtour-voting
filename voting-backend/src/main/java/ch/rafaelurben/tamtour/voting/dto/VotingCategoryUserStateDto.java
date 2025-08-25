@@ -1,3 +1,3 @@
 package ch.rafaelurben.tamtour.voting.dto;
 
-public record VotingCategoryUserStateDto(boolean hasCreated, boolean hasSubmitted) {}
+public record VotingCategoryUserStateDto(boolean hasCreated, boolean hasSubmitted, boolean disqualified) {}

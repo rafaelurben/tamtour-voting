@@ -3,12 +3,14 @@ import { VotingCategoryApi } from '../../api/voting-category.api';
 import { VotingCategoryUserDetailDto } from '../../dto/voting-category-user-detail.dto';
 import { CategoryVote } from './category-vote/category-vote';
 import { Spinner } from '../../components/spinner/spinner';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Alert } from '../../components/alert/alert';
+import { Button } from '../../components/button/button';
 
 @Component({
   selector: 'app-voting-page',
-  imports: [CategoryVote, Spinner],
+  imports: [CategoryVote, Spinner, Alert, RouterLink, Button],
   templateUrl: './voting-page.html',
   styleUrl: './voting-page.css',
 })

@@ -1,0 +1,56 @@
+<table class="full-width-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      @for (candidate of sortedCandidates(); track candidate.id) {
+        <th class="vertical">
+          {{ candidate.name }} ({{ candidate.startNumber }})
+        </th>
+      }
+      <th>SM</th>
+      <th>DQ</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (set of sortedSets(); track set.id) {
+      <tr>
+        <td>{{ set.id }}</td>
+        <td>
+          {{ set.votingUser.firstName }} {{ set.votingUser.lastName }} (#{{
+            set.votingUser.id
+          }}
+          / {{ set.votingUser.accountEmail }})
+        </td>
+        @for (candidate of sortedCandidates(); track candidate.id) {
+          <td
+            [style.background-color]="calcColor(set.positionMap[candidate.id])">
+            {{ set.positionMap[candidate.id] }}
+          </td>
+        }
+        <td>
+          @if (set.submitted) {
+            ✅
+            <app-button (trigger)="unsubmitSet(set.id)">
+              <span>Rückgängig machen</span>
+            </app-button>
+          } @else {
+            ❌
+          }
+        </td>
+        <td>
+          @if (set.disqualified) {
+            ☠️
+            <app-button (trigger)="undisqualifySet(set.id)">
+              <span>Widerrufen</span>
+            </app-button>
+          } @else {
+            <app-button (trigger)="disqualifySet(set.id)">
+              <span>Disqualifizieren</span>
+            </app-button>
+          }
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
