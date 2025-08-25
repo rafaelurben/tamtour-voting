@@ -30,6 +30,21 @@
   </app-spinner>
 }
 
+@if (editFormVisible()) {
+  <h3>Kategorie bearbeiten</h3>
+  <app-category-form
+    [defaultValues]="category()!"
+    [loading]="editInProgress()"
+    (formSubmit)="editFormSubmit($event)"
+    (formCancel)="editFormVisible.set(false)" />
+} @else {
+  <div class="button-row">
+    <app-button (trigger)="editFormVisible.set(true)">
+      <span>Kategorie bearbeiten</span>
+    </app-button>
+  </div>
+}
+
 <hr />
 
 @if (candidates() !== null) {

@@ -19,13 +19,14 @@ export class TimeRemaining {
   });
 
   protected timeRemainingDisplay = computed(() => {
-    const timeLeft = this.timeRemainingS();
+    const isNegative = this.timeRemainingS() < 0;
+    const timeLeft = Math.abs(this.timeRemainingS());
 
     const seconds = Math.floor(timeLeft % 60);
     const minutes = Math.floor((timeLeft / 60) % 60);
     const hours = Math.floor((timeLeft / (60 * 60)) % 24);
     const days = Math.floor(timeLeft / (60 * 60 * 24));
 
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    return `${isNegative ? '-' : ''}${days}d ${hours}h ${minutes}m ${seconds}s`;
   });
 }

@@ -7,10 +7,13 @@ import { VotingCandidateDto } from '../../../../dto/voting-candidate.dto';
 import { DatePipe } from '@angular/common';
 import { TimeRemaining } from '../../../../components/time-remaining/time-remaining';
 import { Spinner } from '../../../../components/spinner/spinner';
+import { Button } from '../../../../components/button/button';
+import { CategoryForm } from '../../../../components/admin/category-form/category-form';
+import { VotingCategoryRequestDto } from '../../../../dto/admin/voting-category-request.dto';
 
 @Component({
   selector: 'app-category-admin-page',
-  imports: [DatePipe, TimeRemaining, Spinner],
+  imports: [DatePipe, TimeRemaining, Spinner, Button, CategoryForm],
   templateUrl: './category-admin-page.html',
   styleUrl: './category-admin-page.css',
 })
@@ -51,6 +54,24 @@ export class CategoryAdminPage implements OnInit {
         this.candidates.set(
           data.toSorted((a, b) => a.startNumber.localeCompare(b.startNumber))
         ),
+    });
+  }
+
+  protected editFormVisible = signal(false);
+  protected editInProgress = signal(false);
+
+  protected editFormSubmit(category: VotingCategoryRequestDto) {
+    this.editInProgress.set(true);
+    this.categoriesApi.updateCategory(this.categoryId(), category).subscribe({
+      next: () => {
+        this.editInProgress.set(false);
+        this.editFormVisible.set(false);
+        this.fetchData();
+      },
+      error: error => {
+        this.editInProgress.set(false);
+        throw error;
+      },
     });
   }
 }
