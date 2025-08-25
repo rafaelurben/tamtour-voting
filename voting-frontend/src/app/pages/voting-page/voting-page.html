@@ -6,6 +6,7 @@
   </app-spinner>
 } @else {
   <h2>Kategorie {{ catDat.category.name }}</h2>
+  <app-button routerLink="/">Zurück zur Startseite</app-button>
 
   @if (catDat.userState.disqualified) {
     <app-alert
