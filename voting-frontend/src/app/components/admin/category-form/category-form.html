@@ -1,0 +1,58 @@
+<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+  <label>
+    Name:
+    <input formControlName="name" />
+  </label>
+  @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
+    <div class="error">Name ist erforderlich.</div>
+  }
+
+  <label>
+    Voting Start:
+    <input type="datetime-local" formControlName="votingStart" />
+  </label>
+  @if (
+    categoryForm.get('votingStart')?.invalid &&
+    categoryForm.get('votingStart')?.touched
+  ) {
+    <div class="error">Voting-Start ist erforderlich.</div>
+  }
+
+  <label>
+    Einreichung Start:
+    <input type="datetime-local" formControlName="submissionStart" />
+  </label>
+  @if (
+    categoryForm.get('submissionStart')?.invalid &&
+    categoryForm.get('submissionStart')?.touched
+  ) {
+    <div class="error">
+      Einreichung Start ist erforderlich und muss nach obigem liegen.
+    </div>
+  }
+
+  <label>
+    Einreichung Ende:
+    <input type="datetime-local" formControlName="submissionEnd" />
+  </label>
+  @if (
+    categoryForm.get('submissionEnd')?.invalid &&
+    categoryForm.get('submissionEnd')?.touched
+  ) {
+    <div class="error">
+      Einreichung Ende ist erforderlich und muss nach obigen liegen.
+    </div>
+  }
+
+  <div class="button-row">
+    <app-button
+      type="submit"
+      [disabled]="categoryForm.invalid"
+      [loading]="loading()">
+      <span>Speichern</span>
+    </app-button>
+    <app-button (trigger)="formCancel.emit()" [disabled]="loading()">
+      <span>Abbrechen</span>
+    </app-button>
+  </div>
+</form>

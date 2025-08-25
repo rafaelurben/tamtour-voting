@@ -37,3 +37,17 @@
     <span>Kategorien werden geladen...</span>
   </app-spinner>
 }
+
+@if (addFormVisible()) {
+  <h3>Neue Kategorie erstellen</h3>
+  <app-category-form
+    [loading]="addInProgress()"
+    (formSubmit)="addFormSubmit($event)"
+    (formCancel)="addFormVisible.set(false)" />
+} @else {
+  <div class="button-row">
+    <app-button (trigger)="addFormVisible.set(true)">
+      <span>Neue Kategorie erstellen</span>
+    </app-button>
+  </div>
+}

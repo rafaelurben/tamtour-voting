@@ -1,0 +1,34 @@
+<form [formGroup]="candidateForm" (ngSubmit)="onSubmit()">
+  <label>
+    Name:
+    <input formControlName="name" />
+  </label>
+  @if (
+    candidateForm.get('name')?.invalid && candidateForm.get('name')?.touched
+  ) {
+    <div class="error">Name ist erforderlich.</div>
+  }
+
+  <label>
+    Startnummer:
+    <input formControlName="startNumber" placeholder="MT#01" />
+  </label>
+  @if (
+    candidateForm.get('startNumber')?.invalid &&
+    candidateForm.get('startNumber')?.touched
+  ) {
+    <div class="error">Startnummer ist erforderlich.</div>
+  }
+
+  <div class="button-row">
+    <app-button
+      type="submit"
+      [disabled]="candidateForm.invalid"
+      [loading]="loading()">
+      <span>Speichern</span>
+    </app-button>
+    <app-button (trigger)="formCancel.emit()" [disabled]="loading()">
+      <span>Abbrechen</span>
+    </app-button>
+  </div>
+</form>

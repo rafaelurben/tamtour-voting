@@ -15,16 +15,19 @@ import { DatePipe } from '@angular/common';
 import { TimeRemaining } from '../../../components/time-remaining/time-remaining';
 import { Button } from '../../../components/button/button';
 import { TimeService } from '../../../service/time.service';
+import { UnsavedChangesService } from '../../../service/unsaved-changes.service';
+import { Alert } from '../../../components/alert/alert';
 
 @Component({
   selector: 'app-category-vote',
-  imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button],
+  imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button, Alert],
   templateUrl: './category-vote.html',
   styleUrl: './category-vote.css',
 })
 export class CategoryVote {
   private readonly votingCategoryApi = inject(VotingCategoryApi);
   private readonly timeService = inject(TimeService);
+  private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   protected readonly currentTime = this.timeService.currentTime1s;
 
@@ -66,6 +69,11 @@ export class CategoryVote {
     effect(() => {
       this.updatedPositionMap.set(this.categoryData().positionMap);
     });
+    effect(() =>
+      this.unsavedChangesService.hasUnsavedChanges.set(
+        this.updatedPositionMapIncludesChanges()
+      )
+    );
   }
 
   protected saveVotingPositions() {
