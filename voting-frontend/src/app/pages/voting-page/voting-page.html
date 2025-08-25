@@ -6,5 +6,19 @@
   </app-spinner>
 } @else {
   <h2>Kategorie {{ catDat.category.name }}</h2>
-  <app-category-vote [categoryData]="catDat" (updateData)="fetchData()" />
+
+  @if (catDat.userState.disqualified) {
+    <app-alert
+      type="danger"
+      title="Disqualifiziert"
+      message="Du wurdest für diese Kategorie disqualifiziert und kannst hier nicht abstimmen.">
+      <div>
+        Ist dies unerwartet, so lies dir bitte die
+        <a routerLink="/rules">Regeln</a> durch und melde dich bei Fragen beim
+        Veranstalter.
+      </div>
+    </app-alert>
+  } @else {
+    <app-category-vote [categoryData]="catDat" (updateData)="fetchData()" />
+  }
 }
