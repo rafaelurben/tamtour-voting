@@ -25,4 +25,8 @@ export class AdminResultViewerKeysApi {
       dto
     );
   }
+
+  deleteKey(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/admin/viewer/keys/${id}`);
+  }
 }

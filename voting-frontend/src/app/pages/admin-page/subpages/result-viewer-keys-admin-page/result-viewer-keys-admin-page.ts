@@ -56,4 +56,18 @@ export class ResultViewerKeysAdminPage {
       },
     });
   }
+
+  protected deleteKey(key: ResultViewerKeyDto) {
+    if (!confirm(`Schlüssel "${key.name}" wirklich löschen?`)) {
+      return;
+    }
+    this.viewerKeysApi.deleteKey(key.id).subscribe({
+      next: () => {
+        this.loadKeys();
+      },
+      error: error => {
+        throw error;
+      },
+    });
+  }
 }

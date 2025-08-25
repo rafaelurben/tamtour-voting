@@ -30,4 +30,9 @@ public class AdminViewerKeysController {
       @PathVariable Long id, @RequestBody ResultViewerKeyRequestDto updateDto) {
     return adminViewerKeyService.updateKey(id, updateDto);
   }
+
+  @DeleteMapping("/{id}")
+  public void deleteKey(@PathVariable Long id) {
+    adminViewerKeyService.deleteKey(id);
+  }
 }

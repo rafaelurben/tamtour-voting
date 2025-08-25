@@ -1,6 +1,5 @@
 package ch.rafaelurben.tamtour.voting.service.admin;
 
-import ch.rafaelurben.tamtour.voting.dto.*;
 import ch.rafaelurben.tamtour.voting.dto.admin.ResultViewerKeyDto;
 import ch.rafaelurben.tamtour.voting.dto.admin.ResultViewerKeyRequestDto;
 import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
@@ -37,5 +36,12 @@ public class AdminViewerKeyService {
     resultViewerKey.setName(dto.name());
     resultViewerKey = resultViewerKeyRepository.save(resultViewerKey);
     return resultViewerKeyMapper.toDto(resultViewerKey);
+  }
+
+  public void deleteKey(Long id) {
+    if (!resultViewerKeyRepository.existsById(id)) {
+      throw new ObjectNotFoundException("ResultViewerKey not found");
+    }
+    resultViewerKeyRepository.deleteById(id);
   }
 }

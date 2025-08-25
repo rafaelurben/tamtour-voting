@@ -4,7 +4,7 @@
       <th>ID</th>
       <th>Name</th>
       <th>Key</th>
-      <th>Aktionen</th>
+      <th colSpan="2">Aktionen</th>
     </tr>
     @for (key of keys; track key.id) {
       <tr>
@@ -14,6 +14,11 @@
         <td>
           <app-button (trigger)="updateKey(key)">
             <span>Umbenennen</span>
+          </app-button>
+        </td>
+        <td>
+          <app-button (trigger)="deleteKey(key)" variant="danger">
+            <span>Löschen</span>
           </app-button>
         </td>
       </tr>
