@@ -10,6 +10,7 @@ import { RulesPage } from './pages/rules-page/rules-page';
 import { ErrorPage } from './pages/error-page/error-page';
 import { ProfilePage } from './pages/profile-page/profile-page';
 import { adminOnlyGuard } from './guards/admin-only.guard';
+import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
 
 export const routes: Routes = [
   {
@@ -42,6 +43,7 @@ export const routes: Routes = [
     path: 'vote/:categoryId',
     component: VotingPage,
     canActivate: [authenticatedOnlyGuard],
+    canDeactivate: [unsavedChangesGuard],
   },
   {
     path: 'rules',

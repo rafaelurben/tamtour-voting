@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -11,6 +11,7 @@ import { filter, map, mergeMap } from 'rxjs';
 import { Spinner } from './components/spinner/spinner';
 import { Footer } from './components/footer/footer';
 import { NgClass } from '@angular/common';
+import { UnsavedChangesService } from './service/unsaved-changes.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { NgClass } from '@angular/common';
 })
 export class App implements OnInit {
   protected readonly authService = inject(AuthService);
+  protected readonly unsavedChangesService = inject(UnsavedChangesService);
   protected readonly router = inject(Router);
   protected readonly activatedRoute = inject(ActivatedRoute);
 
@@ -50,5 +52,12 @@ export class App implements OnInit {
     this.authService.fetchWhoami().subscribe(data => {
       console.log('User data loaded:', data);
     });
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(event: BeforeUnloadEvent) {
+    if (this.unsavedChangesService.hasUnsavedChanges()) {
+      event.preventDefault();
+    }
   }
 }
