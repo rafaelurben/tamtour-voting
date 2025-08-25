@@ -53,13 +53,48 @@
       <th>ID</th>
       <th>Name</th>
       <th>Startnummer</th>
+      <th>Aktionen</th>
     </tr>
     @for (candidate of candidates(); track candidate.id) {
       <tr>
         <td>{{ candidate.id }}</td>
         <td>{{ candidate.name }}</td>
         <td>{{ candidate.startNumber }}</td>
+        <td>
+          <app-button
+            (trigger)="editCandidate(candidate)"
+            [disabled]="
+              editCandidateFormVisible() || addCandidateFormVisible()
+            ">
+            <span>Bearbeiten</span>
+          </app-button>
+        </td>
       </tr>
     }
   </table>
+}
+
+@if (editCandidateFormVisible()) {
+  <h3>Kandidat #{{ editedCandidate()!.id }} bearbeiten</h3>
+  <app-candidate-form
+    [defaultValues]="editedCandidate()!"
+    [loading]="editCandidateInProgress()"
+    (formSubmit)="editCandidateFormSubmit($event)"
+    (formCancel)="editCandidateFormVisible.set(false)" />
+}
+
+@if (addCandidateFormVisible()) {
+  <h3>Kandidat erstellen</h3>
+  <app-candidate-form
+    [loading]="addCandidateInProgress()"
+    (formSubmit)="addCandidateFormSubmit($event)"
+    (formCancel)="addCandidateFormVisible.set(false)" />
+} @else {
+  <div class="button-row">
+    <app-button
+      (trigger)="addCandidateFormVisible.set(true)"
+      [disabled]="editCandidateFormVisible()">
+      <span>Kandidat erstellen</span>
+    </app-button>
+  </div>
 }
