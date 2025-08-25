@@ -11,6 +11,7 @@ import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingSetMapper;
 import ch.rafaelurben.tamtour.voting.model.VotingCandidate;
 import ch.rafaelurben.tamtour.voting.model.VotingCategory;
+import ch.rafaelurben.tamtour.voting.model.VotingPosition;
 import ch.rafaelurben.tamtour.voting.model.VotingSet;
 import ch.rafaelurben.tamtour.voting.repository.VotingCandidateRepository;
 import ch.rafaelurben.tamtour.voting.repository.VotingCategoryRepository;
@@ -90,6 +91,19 @@ public class AdminVotingCategoryService {
     VotingCandidate votingCandidate = votingCandidateMapper.toEntity(candidate);
     votingCandidate.setVotingCategory(category);
     votingCandidate = votingCandidateRepository.save(votingCandidate);
+
+    // Add candidate to all existing voting sets in this category
+    for (VotingSet votingSet : category.getVotingSets()) {
+      VotingPosition votingPosition =
+          VotingPosition.builder()
+              .position(null)
+              .votingCandidate(votingCandidate)
+              .votingSet(votingSet)
+              .build();
+      votingSet.getVotingPositions().add(votingPosition);
+      votingSetRepository.save(votingSet);
+    }
+
     return votingCandidateMapper.toDto(votingCandidate);
   }
 
