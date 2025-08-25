@@ -4,6 +4,7 @@ import { CategoriesAdminPage } from './subpages/categories-admin-page/categories
 import { CategoryAdminEditPage } from './subpages/category-admin-edit-page/category-admin-edit-page';
 import { ErrorPage } from '../error-page/error-page';
 import { CategoryAdminVotesPage } from './subpages/category-admin-votes-page/category-admin-votes-page';
+import { ResultViewerKeysAdminPage } from './subpages/result-viewer-keys-admin-page/result-viewer-keys-admin-page';
 
 export const routes: Routes = [
   {
@@ -24,6 +25,11 @@ export const routes: Routes = [
   {
     path: 'categories/:categoryId/votes',
     component: CategoryAdminVotesPage,
+    data: { fullWidth: true },
+  },
+  {
+    path: 'viewer-keys',
+    component: ResultViewerKeysAdminPage,
     data: { fullWidth: true },
   },
   {

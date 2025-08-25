@@ -1,0 +1,32 @@
+@if (keys$ | async; as keys) {
+  <table class="full-width-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Key</th>
+      <th>Aktionen</th>
+    </tr>
+    @for (key of keys; track key.id) {
+      <tr>
+        <td>{{ key.id }}</td>
+        <td>{{ key.name }}</td>
+        <td>{{ key.key }}</td>
+        <td>
+          <app-button (trigger)="updateKey(key)">
+            <span>Umbenennen</span>
+          </app-button>
+        </td>
+      </tr>
+    }
+  </table>
+} @else {
+  <app-spinner>
+    <span>Kategorien werden geladen...</span>
+  </app-spinner>
+}
+
+<div class="button-row">
+  <app-button (trigger)="createKey()">
+    <span>Neuen Schlüssel erstellen</span>
+  </app-button>
+</div>
