@@ -2,6 +2,7 @@ package ch.rafaelurben.tamtour.voting.websockets;
 
 import static ch.rafaelurben.tamtour.voting.websockets.ViewerTokenHandshakeInterceptor.ATTR_KEY_ID;
 
+import ch.rafaelurben.tamtour.voting.websockets.events.ViewerEvent;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -10,7 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -19,18 +22,21 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ViewerWebSocketHandler extends TextWebSocketHandler {
   private static final String MSG_HEARTBEAT = "{\"type\":\"heartbeat\"}";
   private static final String MSG_CONNECTED = "{\"type\":\"connected\"}";
   private static final String MSG_DUPLICATE_KEY =
       "{\"type\":\"error\", \"message\":\"Another viewer has connected with the same key. This session will be closed.\"}";
 
+  private final ApplicationEventPublisher applicationEventPublisher;
+
   private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
   private final Map<Long, WebSocketSession> keyIdToSessionMap = new ConcurrentHashMap<>();
 
   @Override
-  public void afterConnectionEstablished(WebSocketSession session) {
+  public void afterConnectionEstablished(@Nonnull WebSocketSession session) {
     Long keyId = (Long) session.getAttributes().get(ATTR_KEY_ID);
     log.info("Connection established for key id: {}", keyId);
     if (keyIdToSessionMap.containsKey(keyId)) {
@@ -44,14 +50,16 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
     }
     keyIdToSessionMap.put(keyId, session);
     sendMessage(session, MSG_CONNECTED);
+    applicationEventPublisher.publishEvent(new ViewerEvent("connected", keyId));
   }
 
   @Override
   public void afterConnectionClosed(
       @Nonnull WebSocketSession session, @Nonnull CloseStatus status) {
     Long keyId = (Long) session.getAttributes().get(ATTR_KEY_ID);
-    keyIdToSessionMap.remove(keyId);
     log.info("Connection closed for key id: {} with status: {}", keyId, status);
+    keyIdToSessionMap.remove(keyId);
+    applicationEventPublisher.publishEvent(new ViewerEvent("disconnected", keyId));
   }
 
   @Override
@@ -102,6 +110,12 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
       sendMessage(session, msg);
     } else {
       log.error("No open session found for key id: {}", keyId);
+    }
+  }
+
+  public void sendMessageToViewers(Long[] keyIds, String msg) {
+    for (Long keyId : keyIds) {
+      sendMessageToViewer(keyId, msg);
     }
   }
 }
