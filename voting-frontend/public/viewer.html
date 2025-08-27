@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Voting-Result-Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+
+    <style>
+      * {
+        font-family: sans-serif;
+      }
+
+      html,
+      body {
+        background-color: transparent;
+      }
+
+      .status-bar {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        & .status-message {
+          color: red;
+        }
+
+        & .status-dot {
+          height: 10px;
+          width: 10px;
+          border-radius: 50%;
+          display: inline-block;
+
+          &.connected {
+            background-color: #4caf50;
+          }
+          &.disconnected {
+            background-color: #f44336;
+          }
+          &.connecting {
+            background-color: #ff9800;
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="status-bar">
+      <div class="status-message" id="status-message"></div>
+      <div class="status-dot disconnected" id="status-dot"></div>
+    </div>
+
+    <script>
+      const $ = document.querySelector.bind(document);
+      const token = new URLSearchParams(window.location.search).get('token');
+      let ws;
+
+      function setState(state, message = '') {
+        const statusDot = $('#status-dot');
+        statusDot.classList.remove('connected', 'disconnected', 'connecting');
+        statusDot.classList.add(state);
+        $('#status-message').innerText = message;
+      }
+
+      function handleCommand({ action, data }) {
+        // TODO
+      }
+
+      function connect() {
+        setState('connecting');
+        ws = new WebSocket(
+          `ws://${location.host}/api/viewer/ws?token=${token}`
+        );
+        ws.addEventListener('open', () => {
+          console.log('WebSocket connection opened');
+        });
+        ws.addEventListener('message', event => {
+          const data = JSON.parse(event.data);
+          console.log('Message from server:', data);
+
+          switch (data.type) {
+            case 'command':
+              handleCommand(data);
+              break;
+            case 'error':
+              console.error('Error from server:', data.message);
+              break;
+            case 'connected':
+            case 'heartbeat':
+              setState('connected');
+              break;
+            default:
+              console.warn('Unknown message type:', data.type);
+          }
+        });
+        ws.addEventListener('close', event => {
+          console.log(
+            'WebSocket connection closed! Reconnecting in 5 seconds...',
+            event
+          );
+          setState('disconnected', event.reason);
+          setTimeout(connect, 5000);
+        });
+      }
+
+      window.addEventListener('load', () => {
+        if (!token) {
+          setState('disconnected', 'No token provided');
+          return;
+        }
+        connect();
+      });
+    </script>
+  </body>
+</html>

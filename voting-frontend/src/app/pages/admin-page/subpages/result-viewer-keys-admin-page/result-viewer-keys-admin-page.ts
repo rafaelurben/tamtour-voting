@@ -5,10 +5,11 @@ import { AsyncPipe } from '@angular/common';
 import { Button } from '../../../../components/button/button';
 import { AdminResultViewerKeysApi } from '../../../../api/admin/admin-result-viewer-keys.api';
 import { ResultViewerKeyDto } from '../../../../dto/admin/result-viewer-key.dto';
+import { Alert } from '../../../../components/alert/alert';
 
 @Component({
   selector: 'app-categories-admin-page',
-  imports: [Spinner, AsyncPipe, Button],
+  imports: [Spinner, AsyncPipe, Button, Alert],
   templateUrl: './result-viewer-keys-admin-page.html',
   styleUrl: './result-viewer-keys-admin-page.css',
 })

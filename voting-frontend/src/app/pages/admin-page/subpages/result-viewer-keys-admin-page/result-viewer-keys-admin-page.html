@@ -10,7 +10,9 @@
       <tr>
         <td>{{ key.id }}</td>
         <td>{{ key.name }}</td>
-        <td>{{ key.key }}</td>
+        <td>
+          <a [href]="'/viewer.html?token=' + key.key">{{ key.key }}</a>
+        </td>
         <td>
           <app-button (trigger)="updateKey(key)">
             <span>Umbenennen</span>
@@ -35,3 +37,8 @@
     <span>Neuen Schlüssel erstellen</span>
   </app-button>
 </div>
+
+<app-alert
+  type="warning"
+  title="Achtung"
+  message="Ein Schlüssel kann nicht mehrfach gleichzeitig verwendet werden!" />
