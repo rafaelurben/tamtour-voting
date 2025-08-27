@@ -51,7 +51,8 @@ public class ResultCalculatorService {
                       currentPoints + getPointsForPosition(position.getPosition()));
             });
 
-    List<Long> pointsList = candidatePointsMap.values().stream().sorted(Comparator.reverseOrder()).toList();
+    List<Long> pointsList =
+        candidatePointsMap.values().stream().sorted(Comparator.reverseOrder()).toList();
     // TODO: Handle ties in ranking
     VotingCategoryResultItemDto[] items =
         candidates.stream()
@@ -66,6 +67,6 @@ public class ResultCalculatorService {
             .toArray(VotingCategoryResultItemDto[]::new);
 
     return new VotingCategoryResultDto(
-        category.getSubmissionEnd().isBefore(LocalDateTime.now()), items);
+        category.getSubmissionEnd().isBefore(LocalDateTime.now()), category.getName(), items);
   }
 }
