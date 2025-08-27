@@ -1,6 +1,8 @@
 package ch.rafaelurben.tamtour.voting.websockets;
 
 import ch.rafaelurben.tamtour.voting.websockets.events.AdminCommandEvent;
+import ch.rafaelurben.tamtour.voting.websockets.events.AdminConnectedEvent;
+import ch.rafaelurben.tamtour.voting.websockets.events.ConnectedViewersEvent;
 import ch.rafaelurben.tamtour.voting.websockets.events.ViewerEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,5 +44,12 @@ public class EventRouterService {
   @EventListener
   public void handleAdminCommandEvent(AdminCommandEvent event) {
     sendToViewers(event.viewerIds(), toJson(event));
+  }
+
+  @EventListener
+  public void handleAdminConnectedEvent(AdminConnectedEvent event) {
+    ConnectedViewersEvent connectedViewersEvent =
+        new ConnectedViewersEvent(viewerHandler.getCurrentViewerIds());
+    adminHandler.sendMessage(event.session(), toJson(connectedViewersEvent));
   }
 }

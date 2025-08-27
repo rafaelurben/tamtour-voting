@@ -1,6 +1,7 @@
 package ch.rafaelurben.tamtour.voting.websockets;
 
 import ch.rafaelurben.tamtour.voting.websockets.events.AdminCommandEvent;
+import ch.rafaelurben.tamtour.voting.websockets.events.AdminConnectedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
@@ -42,6 +43,7 @@ public class AdminWebSocketHandler extends TextWebSocketHandler {
     log.info("Connection established for admin.");
     sessions.add(session);
     sendMessage(session, MSG_CONNECTED);
+    applicationEventPublisher.publishEvent(new AdminConnectedEvent(session));
   }
 
   @Override
@@ -90,7 +92,7 @@ public class AdminWebSocketHandler extends TextWebSocketHandler {
         TimeUnit.SECONDS);
   }
 
-  private void sendMessage(WebSocketSession session, String msg) {
+  public void sendMessage(WebSocketSession session, String msg) {
     try {
       session.sendMessage(new TextMessage(msg));
     } catch (IOException e) {

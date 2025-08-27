@@ -118,4 +118,8 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
       sendMessageToViewer(keyId, msg);
     }
   }
+
+  public Long[] getCurrentViewerIds() {
+    return keyIdToSessionMap.keySet().toArray(new Long[0]);
+  }
 }
