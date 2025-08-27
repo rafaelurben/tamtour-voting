@@ -3,8 +3,6 @@ package ch.rafaelurben.tamtour.voting.model;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import lombok.*;
 
@@ -37,19 +35,4 @@ public class VotingCategory {
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "votingCategory")
   private Set<VotingSet> votingSets;
-
-  public Map<Long, Integer> calculatePoints() {
-    Map<Long, Integer> candidatePointsMap = new HashMap<>();
-    votingCandidates.forEach(candidate -> candidatePointsMap.put(candidate.getId(), 0));
-    votingSets.stream()
-        .filter(votingSet -> votingSet.isSubmitted() && !votingSet.isDisqualified())
-        .flatMap(votingSet -> votingSet.getVotingPositions().stream())
-        .forEach(
-            position -> {
-              Long candidateId = position.getVotingCandidateId();
-              candidatePointsMap.compute(
-                  candidateId, (_, currentPoints) -> currentPoints + position.getPoints());
-            });
-    return candidatePointsMap;
-  }
 }

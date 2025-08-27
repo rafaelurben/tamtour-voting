@@ -1,10 +1,7 @@
 package ch.rafaelurben.tamtour.voting.service.admin;
 
 import ch.rafaelurben.tamtour.voting.dto.*;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingCandidateRequestDto;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingCategoryRequestDto;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingSetDto;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingSetUpdateDto;
+import ch.rafaelurben.tamtour.voting.dto.admin.*;
 import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
@@ -30,6 +27,7 @@ public class AdminVotingCategoryService {
   private final VotingCandidateRepository votingCandidateRepository;
   private final VotingSetMapper votingSetMapper;
   private final VotingSetRepository votingSetRepository;
+  private final ResultCalculatorService resultCalculatorService;
 
   public List<VotingCategoryBaseDto> getAllCategories() {
     return votingCategoryMapper.toBaseDto(votingCategoryRepository.findAll());
@@ -58,9 +56,9 @@ public class AdminVotingCategoryService {
     return votingCategoryMapper.toBaseDto(existingCategory);
   }
 
-  public Object getCategoryResult(Long categoryId) {
+  public VotingCategoryResultDto getCategoryResult(Long categoryId) {
     VotingCategory category = getCategoryById(categoryId);
-    return category.calculatePoints();
+    return resultCalculatorService.calculateResult(category);
   }
 
   public Set<VotingSetDto> getVotingSets(Long categoryId) {
