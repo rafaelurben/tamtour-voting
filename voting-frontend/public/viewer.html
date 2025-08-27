@@ -37,9 +37,11 @@
           &.connected {
             background-color: #4caf50;
           }
+
           &.disconnected {
             background-color: #f44336;
           }
+
           &.connecting {
             background-color: #ff9800;
           }
@@ -51,6 +53,10 @@
     <div class="status-bar">
       <div class="status-message" id="status-message"></div>
       <div class="status-dot disconnected" id="status-dot"></div>
+    </div>
+
+    <div id="content">
+      <!-- Dynamic content will be rendered here -->
     </div>
 
     <script>
@@ -65,8 +71,27 @@
         $('#status-message').innerText = message;
       }
 
+      function loadResultData(data) {
+        // TODO: Render title, hide result
+        // TODO: use templates to render rows (https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/template)
+        let content = $('#content');
+        content.innerHTML = '';
+        for (const item of data.items) {
+          const div = document.createElement('div');
+          div.innerText = `${item.candidate.name}: ${item.points} points / rank ${item.rank}`;
+          content.appendChild(div);
+        }
+      }
+
       function handleCommand({ action, data }) {
-        // TODO
+        switch (action) {
+          case 'load_result_data':
+            loadResultData(data);
+            break;
+          // TODO: add more
+          default:
+            console.warn('Unknown command action:', action);
+        }
       }
 
       function connect() {
