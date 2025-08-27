@@ -7,48 +7,51 @@
   }
 </div>
 
-@if (viewerKeys() === null) {
-  <app-spinner>Keys werden geladen...</app-spinner>
-} @else {
-  <table class="full-width-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Ausgewählt</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (key of viewerKeys(); track key.id) {
+<div class="section-container">
+  <h3>Viewers</h3>
+  @if (viewerKeys() === null) {
+    <app-spinner>Keys werden geladen...</app-spinner>
+  } @else {
+    <table class="full-width-table">
+      <thead>
         <tr>
-          <td>{{ key.id }}</td>
-          <td>{{ key.name }}</td>
-          <td>{{ connectedViewerIds().includes(key.id) ? '✅' : '❌' }}</td>
-          <td>
-            {{ selectedViewerIds().includes(key.id) ? '✅' : '❌' }}
-            <input
-              type="checkbox"
-              [checked]="selectedViewerIds().includes(key.id)"
-              [disabled]="!connectedViewerIds().includes(key.id)"
-              (change)="toggleViewerSelection(key.id)" />
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Ausgewählt</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (key of viewerKeys(); track key.id) {
+          <tr>
+            <td>{{ key.id }}</td>
+            <td>{{ key.name }}</td>
+            <td>{{ connectedViewerIds().includes(key.id) ? '✅' : '❌' }}</td>
+            <td>
+              {{ effectiveSelectedViewerIds().includes(key.id) ? '✅' : '❌' }}
+              <input
+                type="checkbox"
+                [checked]="selectedViewerIds().includes(key.id)"
+                [disabled]="!connectedViewerIds().includes(key.id)"
+                (change)="toggleViewerSelection(key.id)" />
+            </td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4">
+            Insgesamt {{ viewerKeys()?.length }} Viewer,
+            {{ connectedViewerIds().length }} verbunden,
+            {{ selectedViewerIds().length }} ausgewählt
           </td>
         </tr>
-      }
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="4">
-          Insgesamt {{ viewerKeys()?.length }} Viewer,
-          {{ connectedViewerIds().length }} verbunden,
-          {{ selectedViewerIds().length }} ausgewählt
-        </td>
-      </tr>
-    </tfoot>
-  </table>
-}
+      </tfoot>
+    </table>
+  }
+</div>
 
-<div class="command-container">
+<div class="section-container">
   <h3>Befehle</h3>
   <form [formGroup]="commandForm" (ngSubmit)="submitForm()">
     <label>
@@ -87,4 +90,43 @@
       >Reset</app-button
     >
   </div>
+</div>
+
+<div class="section-container">
+  <h3>Kategorien (Datenquellen)</h3>
+  @if (categories() === null) {
+    <app-spinner>Kategorien werden geladen...</app-spinner>
+  } @else if (categories().length === 0) {
+    <p>Keine Kategorien gefunden.</p>
+  } @else {
+    <table class="full-width-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Resultate laden</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (category of categories(); track category.id) {
+          <tr>
+            <td>{{ category.id }}</td>
+            <td>{{ category.name }}</td>
+            <td>
+              <app-button
+                (trigger)="loadResults(category.id)"
+                [loading]="
+                  resultsLoading() && resultsLoadingId() === category.id
+                "
+                [disabled]="
+                  resultsLoading() && resultsLoadingId() !== category.id
+                ">
+                <span>Laden</span>
+              </app-button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 </div>
