@@ -5,6 +5,7 @@ import { CategoryAdminEditPage } from './subpages/category-admin-edit-page/categ
 import { ErrorPage } from '../error-page/error-page';
 import { CategoryAdminVotesPage } from './subpages/category-admin-votes-page/category-admin-votes-page';
 import { ResultViewerKeysAdminPage } from './subpages/result-viewer-keys-admin-page/result-viewer-keys-admin-page';
+import { ViewerRealtimePage } from './subpages/viewer-realtime-page/viewer-realtime-page';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,11 @@ export const routes: Routes = [
   {
     path: 'viewer-keys',
     component: ResultViewerKeysAdminPage,
+    data: { fullWidth: true },
+  },
+  {
+    path: 'viewer-realtime',
+    component: ViewerRealtimePage,
     data: { fullWidth: true },
   },
   {

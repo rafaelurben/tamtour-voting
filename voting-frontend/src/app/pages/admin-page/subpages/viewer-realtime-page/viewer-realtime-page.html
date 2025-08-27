@@ -1,0 +1,90 @@
+<div>
+  <b>WebSocket: </b>
+  @if (connected()) {
+    <span style="color: green">Verbunden</span>
+  } @else {
+    <span style="color: red">Nicht verbunden</span>
+  }
+</div>
+
+@if (viewerKeys() === null) {
+  <app-spinner>Keys werden geladen...</app-spinner>
+} @else {
+  <table class="full-width-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Ausgewählt</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (key of viewerKeys(); track key.id) {
+        <tr>
+          <td>{{ key.id }}</td>
+          <td>{{ key.name }}</td>
+          <td>{{ connectedViewerIds().includes(key.id) ? '✅' : '❌' }}</td>
+          <td>
+            {{ selectedViewerIds().includes(key.id) ? '✅' : '❌' }}
+            <input
+              type="checkbox"
+              [checked]="selectedViewerIds().includes(key.id)"
+              [disabled]="!connectedViewerIds().includes(key.id)"
+              (change)="toggleViewerSelection(key.id)" />
+          </td>
+        </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">
+          Insgesamt {{ viewerKeys()?.length }} Viewer,
+          {{ connectedViewerIds().length }} verbunden,
+          {{ selectedViewerIds().length }} ausgewählt
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+}
+
+<div class="command-container">
+  <h3>Befehle</h3>
+  <form [formGroup]="commandForm" (ngSubmit)="submitForm()">
+    <label>
+      Aktion:
+      <input formControlName="action" />
+    </label>
+
+    <label>
+      Daten:
+      <textarea formControlName="dataStr" rows="6"></textarea>
+    </label>
+
+    <app-button
+      type="submit"
+      [disabled]="
+        commandForm.invalid || effectiveSelectedViewerIds().length === 0
+      ">
+      <span>Senden</span>
+    </app-button>
+  </form>
+
+  <div class="button-row">
+    <app-button
+      [disabled]="effectiveSelectedViewerIds().length === 0"
+      (trigger)="sendCommand('start')"
+      >Start</app-button
+    >
+    <app-button
+      [disabled]="effectiveSelectedViewerIds().length === 0"
+      (trigger)="sendCommand('stop')"
+      >Stop</app-button
+    >
+    <app-button
+      [disabled]="effectiveSelectedViewerIds().length === 0"
+      (trigger)="sendCommand('reset')"
+      >Reset</app-button
+    >
+  </div>
+</div>

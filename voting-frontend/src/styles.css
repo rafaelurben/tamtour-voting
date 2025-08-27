@@ -34,7 +34,7 @@ form {
     gap: 0.25rem;
   }
 
-  & input {
+  & input, & select, & textarea {
     padding: 0.5rem;
     border: 1px solid gray;
     border-radius: 0.25rem;
@@ -44,6 +44,10 @@ form {
       align-self: flex-start;
       margin-left: 0;
     }
+  }
+
+  & textarea {
+    resize: vertical;
   }
 
   & .error {
