@@ -7,6 +7,22 @@
     <meta name="robots" content="noindex,nofollow" />
 
     <style>
+      :root {
+        --row-height: 3rem;
+        --row-gap: 0.5rem;
+
+        --animate-points-duration: 5s;
+        --animate-swap-duration: 1s;
+
+        /* These will be set dynamically */
+        --max-points: 1;
+        --current-position: 0;
+        --target-points: 0;
+        --target-points-display: '';
+        --row-name-display: '';
+        --row-rank-display: '';
+      }
+
       * {
         font-family: sans-serif;
       }
@@ -47,6 +63,79 @@
           }
         }
       }
+
+      .hidden {
+        display: none;
+      }
+
+      .rows {
+        position: relative;
+      }
+
+      .row {
+        position: absolute;
+        left: 0;
+        top: calc(
+          var(--current-position) * (var(--row-height) + var(--row-gap))
+        );
+        height: var(--row-height);
+        width: 100%;
+        transition: top var(--animate-swap-duration) ease-in-out;
+
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+
+        & .rank-container,
+        & .points-container {
+          width: 5rem;
+        }
+
+        & .name-and-point-bar-container {
+          position: relative;
+          flex-grow: 1;
+          flex-basis: 50%;
+          display: flex;
+          flex-direction: row;
+          background-color: blue;
+
+          & .points-bar {
+            position: relative;
+            height: 100%;
+            width: calc((var(--target-points) / var(--max-points)) * 100%);
+
+            background-color: lightblue;
+            transition: width var(--animate-points-duration) linear;
+          }
+
+          & .name-container {
+            position: absolute;
+            left: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+          }
+        }
+
+        & .name::after {
+          content: var(--row-name-display);
+        }
+
+        &.revealed .rank::after {
+          content: var(--row-rank-display) '.';
+        }
+
+        & .points::after {
+          content: var(--target-points-display);
+        }
+
+        &.revealed {
+          background-color: gray;
+        }
+      }
     </style>
   </head>
   <body>
@@ -55,14 +144,168 @@
       <div class="status-dot disconnected" id="status-dot"></div>
     </div>
 
-    <div id="content">
-      <!-- Dynamic content will be rendered here -->
+    <div id="content" class="hidden">
+      <div class="title" id="title"></div>
+      <div class="rows" id="rows">
+        <!-- Dynamic content will be rendered here -->
+      </div>
     </div>
+
+    <template id="template-row">
+      <div class="row">
+        <div class="rank-container">
+          <span class="rank"></span>
+        </div>
+        <div class="name-and-point-bar-container">
+          <div class="points-bar"></div>
+          <div class="name-container">
+            <span class="name"></span>
+          </div>
+        </div>
+        <div class="points-container">
+          <span class="points"></span>
+        </div>
+      </div>
+    </template>
 
     <script>
       const $ = document.querySelector.bind(document);
       const token = new URLSearchParams(window.location.search).get('token');
       let ws;
+
+      class ResultRenderer {
+        constructor() {
+          this.container = $('#content');
+          this.rowsContainer = $('#rows');
+          this.titleContainer = $('#title');
+          this.templateRow = $('#template-row');
+
+          this.clear();
+        }
+
+        show() {
+          this.container.classList.remove('hidden');
+        }
+
+        hide() {
+          this.container.classList.add('hidden');
+        }
+
+        clear() {
+          this.hide();
+          this.rowsContainer.innerHTML = '';
+          this.titleContainer.innerHTML = '';
+
+          this.maxPoints = 0;
+          this.items = [];
+          this.candidateIdRowMap = new Map();
+          this.itemsSortedByStartNumbers = [];
+          this.itemsSortedByPointsDesc = [];
+        }
+
+        render(data) {
+          this.clear();
+          this.titleContainer.innerText = data.title;
+          this.items = data.items;
+
+          this.itemsSortedByStartNumbers = this.items.toSorted((a, b) =>
+            ('' + a.candidate.startNumber).localeCompare(
+              b.candidate.startNumber,
+              undefined,
+              { numeric: true }
+            )
+          );
+          this.itemsSortedByPointsDesc = this.items.toSorted(
+            (a, b) => b.points - a.points
+          );
+
+          this.maxPoints = Math.max(...this.items.map(item => item.points), 1);
+          this.rowsContainer.style.setProperty('--max-points', this.maxPoints);
+
+          for (const item of this.items) {
+            const row =
+              this.templateRow.content.cloneNode(true).firstElementChild;
+
+            row.style.setProperty(
+              '--current-position',
+              this.itemsSortedByStartNumbers.indexOf(item)
+            );
+            row.style.setProperty('--target-points', 0);
+            row.style.setProperty('--target-points-display', `"0"`);
+            row.style.setProperty(
+              '--row-name-display',
+              `"${item.candidate.name}"`
+            );
+            row.style.setProperty('--row-rank-display', `"${item.rank}"`);
+
+            this.rowsContainer.appendChild(row);
+            this.candidateIdRowMap.set(item.candidate.id, row);
+          }
+        }
+
+        revealLower() {
+          const TOTAL_DURATION = this.items.length * 1_500; // ms
+
+          const currMaxPoints = Math.max(
+            ...this.itemsSortedByPointsDesc.slice(3).map(i => i.points),
+            1
+          );
+
+          for (let i = this.itemsSortedByPointsDesc.length - 1; i >= 3; i--) {
+            const item = this.itemsSortedByPointsDesc[i];
+            const row = this.candidateIdRowMap.get(item.candidate.id);
+
+            const initialPosition =
+              this.itemsSortedByStartNumbers.indexOf(item);
+
+            const duration = TOTAL_DURATION * (item.points / currMaxPoints);
+
+            setTimeout(() => {
+              row.classList.add('revealed');
+              row.style.setProperty('--current-position', item.rank - 1);
+
+              for (let searchIndex = 0; searchIndex < i; searchIndex++) {
+                const searchItem = this.itemsSortedByPointsDesc[searchIndex];
+                const searchItemInitialPosition =
+                  this.itemsSortedByStartNumbers.indexOf(searchItem);
+
+                if (searchItemInitialPosition > initialPosition) {
+                  const searchRow = this.candidateIdRowMap.get(
+                    searchItem.candidate.id
+                  );
+                  const searchItemCurrentPosition = parseInt(
+                    getComputedStyle(searchRow).getPropertyValue(
+                      '--current-position'
+                    )
+                  );
+                  searchRow.style.setProperty(
+                    '--current-position',
+                    searchItemCurrentPosition - 1
+                  );
+                }
+              }
+            }, duration + 100); // Slightly after animation ends
+
+            row.style.setProperty(
+              '--animate-points-duration',
+              Math.round(duration) + 'ms'
+            );
+            row.style.setProperty('--target-points', item.points);
+          }
+
+          for (let i = 0; i < 3; i++) {
+            const item = this.itemsSortedByPointsDesc[i];
+            const row = this.candidateIdRowMap.get(item.candidate.id);
+            row.style.setProperty(
+              '--animate-points-duration',
+              TOTAL_DURATION + 'ms'
+            );
+            row.style.setProperty('--target-points', currMaxPoints);
+          }
+        }
+      }
+
+      let resultRenderer = new ResultRenderer();
 
       function setState(state, message = '') {
         const statusDot = $('#status-dot');
@@ -71,24 +314,25 @@
         $('#status-message').innerText = message;
       }
 
-      function loadResultData(data) {
-        // TODO: Render title, hide result
-        // TODO: use templates to render rows (https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/template)
-        let content = $('#content');
-        content.innerHTML = '';
-        for (const item of data.items) {
-          const div = document.createElement('div');
-          div.innerText = `${item.candidate.name}: ${item.points} points / rank ${item.rank}`;
-          content.appendChild(div);
-        }
-      }
-
       function handleCommand({ action, data }) {
         switch (action) {
           case 'load_result_data':
-            loadResultData(data);
+            resultRenderer.render(data);
             break;
-          // TODO: add more
+          case 'reveal_lower':
+            resultRenderer.revealLower();
+            break;
+          case 'reveal_podium':
+            break;
+          case 'show':
+            resultRenderer.show();
+            break;
+          case 'hide':
+            resultRenderer.hide();
+            break;
+          case 'clear':
+            resultRenderer.clear();
+            break;
           default:
             console.warn('Unknown command action:', action);
         }

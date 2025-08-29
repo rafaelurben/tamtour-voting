@@ -76,18 +76,28 @@
   <div class="button-row">
     <app-button
       [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('start')"
-      >Start</app-button
+      (trigger)="sendCommand('show')"
+      >Show</app-button
     >
     <app-button
       [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('stop')"
-      >Stop</app-button
+      (trigger)="sendCommand('hide')"
+      >Hide</app-button
     >
     <app-button
       [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('reset')"
-      >Reset</app-button
+      (trigger)="sendCommand('clear')"
+      >Clear</app-button
+    >
+    <app-button
+      [disabled]="effectiveSelectedViewerIds().length === 0"
+      (trigger)="sendCommand('reveal_lower')"
+      >Reveal 4.-n.</app-button
+    >
+    <app-button
+      [disabled]="effectiveSelectedViewerIds().length === 0"
+      (trigger)="sendCommand('reveal_podium')"
+      >Reveal Podium</app-button
     >
   </div>
 </div>
