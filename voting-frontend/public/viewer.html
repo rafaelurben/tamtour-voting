@@ -13,6 +13,7 @@
         --font-size: 1.1em;
 
         --animate-swap-duration: 0.75s;
+        --animate-points-function: linear;
 
         --winner-fill-color: #d5b40c;
         --points-bar-empty-color: #26466d;
@@ -164,7 +165,8 @@
             width: calc((var(--target-points) / var(--max-points)) * 100%);
 
             background-color: var(--points-bar-fill-color);
-            transition: width var(--animate-points-duration) linear;
+            transition: width var(--animate-points-duration)
+              var(--animate-points-function);
           }
 
           & .name-container {
@@ -242,7 +244,8 @@
 
       const config = {
         animationMsPerCandidateLower: 1500,
-        animationMsTotalPodium: 6000,
+        animationMsReveal3And2: 6000,
+        animationMsWinnerAnimation: 1000,
       };
 
       class ResultRenderer {
@@ -403,7 +406,7 @@
               setTimeout(() => {
                 row.classList.add('revealed');
                 this._animatePositionReveal(item, row);
-              }, duration + 100)
+              }, duration)
             );
 
             this._animatePoints(row, 0, item.points, duration);
@@ -416,11 +419,12 @@
             this._animatePoints(row, 0, currMaxPoints, TOTAL_DURATION);
           }
 
+          // State
           this.state = 'revealing_lower';
           this.timeoutHandles.push(
             setTimeout(() => {
               this.state = 'lower_revealed';
-            }, TOTAL_DURATION + 200)
+            }, TOTAL_DURATION)
           );
         }
 
@@ -434,69 +438,86 @@
             return;
           }
 
-          const TOTAL_DURATION = config.animationMsTotalPodium;
-
           const first = this.itemsSortedByRank[0];
+          const firstRow = this.candidateIdRowMap.get(first.candidate.id);
           const second = this.itemsSortedByRank[1];
+          const secondRow = this.candidateIdRowMap.get(second.candidate.id);
           const third = this.itemsSortedByRank[2];
+          const thirdRow = this.candidateIdRowMap.get(third.candidate.id);
 
-          const podium = [first, second, third];
+          const fourthPoints =
+            this.items.length > 3 ? this.itemsSortedByRank[3].points : 0;
 
-          // Animate points
-          const currentPoints = parseInt(
-            getComputedStyle(
-              this.candidateIdRowMap.get(first.candidate.id)
-            ).getPropertyValue('--target-points')
+          const timeToThird =
+            config.animationMsReveal3And2 *
+            ((third.points - fourthPoints) / (second.points - fourthPoints));
+
+          // Animate points until second place points
+          this._animatePoints(
+            firstRow,
+            fourthPoints,
+            second.points,
+            config.animationMsReveal3And2
           );
-          for (let item of podium) {
-            const row = this.candidateIdRowMap.get(item.candidate.id);
-            const duration =
-              TOTAL_DURATION *
-              ((item.points - currentPoints) /
-                (this.maxPoints - currentPoints));
+          this._animatePoints(
+            secondRow,
+            fourthPoints,
+            second.points,
+            config.animationMsReveal3And2
+          );
+          this._animatePoints(
+            thirdRow,
+            fourthPoints,
+            third.points,
+            timeToThird
+          );
 
-            this._animatePoints(row, currentPoints, item.points, duration);
-          }
-
-          // Third place
+          // Third place switch
           this.timeoutHandles.push(
-            setTimeout(
-              () => {
-                const thirdRow = this.candidateIdRowMap.get(third.candidate.id);
-                thirdRow.classList.add('revealed');
-                this._animatePositionReveal(third, thirdRow);
-              },
-              TOTAL_DURATION *
-                ((third.points - currentPoints) /
-                  (this.maxPoints - currentPoints))
-            )
+            setTimeout(() => {
+              const thirdRow = this.candidateIdRowMap.get(third.candidate.id);
+              thirdRow.classList.add('revealed');
+              this._animatePositionReveal(third, thirdRow);
+            }, timeToThird)
           );
 
-          // Second place and First place
+          // Second place switch and animation start for first place points
           this.timeoutHandles.push(
-            setTimeout(
-              () => {
-                const secondRow = this.candidateIdRowMap.get(
-                  second.candidate.id
-                );
-                secondRow.classList.add('revealed');
-                this._animatePositionReveal(second, secondRow);
+            setTimeout(() => {
+              const secondRow = this.candidateIdRowMap.get(second.candidate.id);
+              secondRow.classList.add('revealed');
+              this._animatePositionReveal(second, secondRow);
 
-                const firstRow = this.candidateIdRowMap.get(first.candidate.id);
-                firstRow.classList.add('revealed');
-                // No need to call _animatePositionReveal for first place, it's already at the top
-              },
-              TOTAL_DURATION *
-                ((second.points - currentPoints) /
-                  (this.maxPoints - currentPoints))
-            )
+              const firstRow = this.candidateIdRowMap.get(first.candidate.id);
+              firstRow.classList.add('revealed');
+              // No need to call _animatePositionReveal for first place, it's already at the top
+
+              firstRow.style.setProperty(
+                '--animate-points-function',
+                'ease-out'
+              );
+              this._animatePoints(
+                firstRow,
+                second.points,
+                first.points,
+                config.animationMsWinnerAnimation
+              );
+            }, config.animationMsReveal3And2)
           );
 
+          // First place party
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              // TODO: Add some party effect
+            }, config.animationMsReveal3And2 + config.animationMsWinnerAnimation)
+          );
+
+          // State
           this.state = 'revealing_podium';
           this.timeoutHandles.push(
             setTimeout(() => {
               this.state = 'podium_revealed';
-            }, TOTAL_DURATION)
+            }, config.animationMsReveal3And2 + config.animationMsWinnerAnimation)
           );
         }
       }
