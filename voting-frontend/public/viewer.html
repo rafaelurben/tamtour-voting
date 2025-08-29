@@ -8,13 +8,26 @@
 
     <style>
       :root {
-        --row-height: 3rem;
-        --row-gap: 0.5rem;
+        --row-height: 3.8rem;
+        --row-gap: 0.8rem;
+        --font-size: 1.1em;
 
-        --animate-points-duration: 5s;
-        --animate-swap-duration: 1s;
+        --animate-swap-duration: 0.75s;
+
+        --winner-fill-color: #d5b40c;
+        --points-bar-empty-color: #26466d;
+        --points-bar-fill-color: #738ba5;
+        --points-bar-revealed-empty-color: #19395c;
+        --points-bar-revealed-fill-color: #738ba5;
+        --container-rank-bg-color: #26466d;
+        --container-rank-fg-color: #ffffff;
+        --container-rank-revealed-bg-color: #19395c;
+        --container-points-bg-color: #26466d;
+        --container-points-fg-color: #ffffff;
+        --container-points-revealed-bg-color: #19395c;
 
         /* These will be set dynamically */
+        --animate-points-duration: 0;
         --max-points: 1;
         --current-position: 0;
         --target-points: 0;
@@ -25,11 +38,23 @@
 
       * {
         font-family: sans-serif;
+        font-size: var(--font-size);
+        font-weight: bold;
+        color: white;
+        transition: background-color 0.25s ease-in-out;
+        box-sizing: border-box;
       }
 
       html,
       body {
-        background-color: transparent;
+        width: 100vw;
+        height: 100dvh;
+        background-color: black;
+        background-image: url('/viewer-background.png');
+        background-position: center center;
+        background-size: cover;
+        margin: 0;
+        padding: 0;
       }
 
       .status-bar {
@@ -64,8 +89,26 @@
         }
       }
 
-      .hidden {
-        display: none;
+      #content {
+        width: 100%;
+        height: 100%;
+
+        padding: 3rem 5rem;
+
+        backdrop-filter: blur(7px);
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+
+        &.hidden {
+          opacity: 0;
+        }
+      }
+
+      .title-row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        font-size: 2em;
       }
 
       .rows {
@@ -88,7 +131,22 @@
 
         & .rank-container,
         & .points-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.25rem;
+        }
+
+        & .rank-container {
           width: 5rem;
+          background-color: var(--container-rank-bg-color);
+          color: var(--container-rank-fg-color);
+        }
+
+        & .points-container {
+          width: 7.5rem;
+          background-color: var(--container-points-bg-color);
+          color: var(--container-points-fg-color);
         }
 
         & .name-and-point-bar-container {
@@ -97,25 +155,21 @@
           flex-basis: 50%;
           display: flex;
           flex-direction: row;
-          background-color: blue;
+          align-items: center;
+          background-color: var(--points-bar-empty-color);
 
           & .points-bar {
-            position: relative;
+            position: absolute;
             height: 100%;
             width: calc((var(--target-points) / var(--max-points)) * 100%);
 
-            background-color: lightblue;
+            background-color: var(--points-bar-fill-color);
             transition: width var(--animate-points-duration) linear;
           }
 
           & .name-container {
-            position: absolute;
-            left: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-
-            color: white;
-            font-weight: bold;
+            margin-left: 1rem;
+            z-index: 10;
             text-shadow: 1px 1px 2px black;
           }
         }
@@ -133,7 +187,18 @@
         }
 
         &.revealed {
-          background-color: gray;
+          --points-bar-fill-color: var(--points-bar-revealed-fill-color);
+          --points-bar-empty-color: var(--points-bar-revealed-empty-color);
+          --container-rank-bg-color: var(--container-rank-revealed-bg-color);
+          --container-points-bg-color: var(
+            --container-points-revealed-bg-color
+          );
+
+          &[data-rank='1'] {
+            --points-bar-fill-color: var(--winner-fill-color);
+            --container-rank-bg-color: var(--winner-fill-color);
+            --container-points-bg-color: var(--winner-fill-color);
+          }
         }
       }
     </style>
@@ -145,7 +210,9 @@
     </div>
 
     <div id="content" class="hidden">
-      <div class="title" id="title"></div>
+      <div class="title-row">
+        <div class="title" id="title"></div>
+      </div>
       <div class="rows" id="rows">
         <!-- Dynamic content will be rendered here -->
       </div>
@@ -232,13 +299,14 @@
             (a, b) => a.rank - b.rank
           );
 
-          this.maxPoints = Math.max(...this.items.map(item => item.points), 1);
+          this.maxPoints = Math.max(...this.items.map(item => item.points), 0);
           this.rowsContainer.style.setProperty('--max-points', this.maxPoints);
 
           for (const item of this.items) {
             const row =
               this.templateRow.content.cloneNode(true).firstElementChild;
 
+            row.dataset.rank = item.rank;
             row.style.setProperty(
               '--current-position',
               this.itemsSortedByStartNumbers.indexOf(item)
@@ -258,9 +326,6 @@
         }
 
         _animatePoints(elem, from, to, duration) {
-          console.log(
-            `Animating points from ${from} to ${to} in ${duration}ms`
-          );
           elem.style.setProperty(
             '--animate-points-duration',
             Math.round(duration) + 'ms'
@@ -325,7 +390,7 @@
 
           const currMaxPoints = Math.max(
             ...this.itemsSortedByRank.slice(3).map(i => i.points),
-            1
+            0
           );
 
           for (let i = this.itemsSortedByRank.length - 1; i >= 3; i--) {
