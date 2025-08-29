@@ -173,6 +173,11 @@
       const token = new URLSearchParams(window.location.search).get('token');
       let ws;
 
+      const config = {
+        animationMsPerCandidateLower: 1500,
+        animationMsTotalPodium: 6000,
+      };
+
       class ResultRenderer {
         constructor() {
           this.container = $('#content');
@@ -203,6 +208,7 @@
           this.candidateIdRowMap = new Map();
           this.itemsSortedByStartNumbers = [];
           this.itemsSortedByRank = [];
+          this.state = 'initial';
 
           for (const handle of this.timeoutHandles) {
             clearTimeout(handle);
@@ -244,6 +250,7 @@
               `"${item.candidate.name}"`
             );
             row.style.setProperty('--row-rank-display', `"${item.rank}"`);
+            row.style.zIndex = 1000 - item.rank;
 
             this.rowsContainer.appendChild(row);
             this.candidateIdRowMap.set(item.candidate.id, row);
@@ -251,6 +258,9 @@
         }
 
         _animatePoints(elem, from, to, duration) {
+          console.log(
+            `Animating points from ${from} to ${to} in ${duration}ms`
+          );
           elem.style.setProperty(
             '--animate-points-duration',
             Math.round(duration) + 'ms'
@@ -258,18 +268,60 @@
           elem.style.setProperty('--target-points', to);
 
           for (let i = from; i <= to; i++) {
-            const timeoutHandle = setTimeout(
-              () => {
-                elem.style.setProperty('--current-points-display', `"${i}"`);
-              },
-              (duration / (to - from)) * (i - from)
+            this.timeoutHandles.push(
+              setTimeout(
+                () => {
+                  elem.style.setProperty('--current-points-display', `"${i}"`);
+                },
+                (duration / (to - from)) * (i - from)
+              )
             );
-            this.timeoutHandles.push(timeoutHandle);
+          }
+        }
+
+        _animatePositionReveal(item, row) {
+          const initialPosition = this.itemsSortedByStartNumbers.indexOf(item);
+
+          row.style.setProperty('--current-position', item.rank - 1);
+
+          for (
+            let searchIndex = 0;
+            searchIndex < item.rank - 1;
+            searchIndex++
+          ) {
+            const searchItem = this.itemsSortedByRank[searchIndex];
+            const searchItemInitialPosition =
+              this.itemsSortedByStartNumbers.indexOf(searchItem);
+
+            if (searchItemInitialPosition > initialPosition) {
+              const searchRow = this.candidateIdRowMap.get(
+                searchItem.candidate.id
+              );
+              const searchItemCurrentPosition = parseInt(
+                getComputedStyle(searchRow).getPropertyValue(
+                  '--current-position'
+                )
+              );
+              searchRow.style.setProperty(
+                '--current-position',
+                searchItemCurrentPosition - 1
+              );
+            }
           }
         }
 
         revealLower() {
-          const TOTAL_DURATION = this.items.length * 1_500; // ms
+          if (this.state !== 'initial') {
+            console.warn(
+              'Cannot reveal lower items in state',
+              this.state,
+              'only in initial state'
+            );
+            return;
+          }
+
+          const TOTAL_DURATION =
+            this.items.length * config.animationMsPerCandidateLower;
 
           const currMaxPoints = Math.max(
             ...this.itemsSortedByRank.slice(3).map(i => i.points),
@@ -280,37 +332,14 @@
             const item = this.itemsSortedByRank[i];
             const row = this.candidateIdRowMap.get(item.candidate.id);
 
-            const initialPosition =
-              this.itemsSortedByStartNumbers.indexOf(item);
-
             const duration = TOTAL_DURATION * (item.points / currMaxPoints);
 
-            const timeoutHandle = setTimeout(() => {
-              row.classList.add('revealed');
-              row.style.setProperty('--current-position', item.rank - 1);
-
-              for (let searchIndex = 0; searchIndex < i; searchIndex++) {
-                const searchItem = this.itemsSortedByRank[searchIndex];
-                const searchItemInitialPosition =
-                  this.itemsSortedByStartNumbers.indexOf(searchItem);
-
-                if (searchItemInitialPosition > initialPosition) {
-                  const searchRow = this.candidateIdRowMap.get(
-                    searchItem.candidate.id
-                  );
-                  const searchItemCurrentPosition = parseInt(
-                    getComputedStyle(searchRow).getPropertyValue(
-                      '--current-position'
-                    )
-                  );
-                  searchRow.style.setProperty(
-                    '--current-position',
-                    searchItemCurrentPosition - 1
-                  );
-                }
-              }
-            }, duration + 100); // Slightly after animation ends
-            this.timeoutHandles.push(timeoutHandle);
+            this.timeoutHandles.push(
+              setTimeout(() => {
+                row.classList.add('revealed');
+                this._animatePositionReveal(item, row);
+              }, duration + 100)
+            );
 
             this._animatePoints(row, 0, item.points, duration);
           }
@@ -321,6 +350,89 @@
 
             this._animatePoints(row, 0, currMaxPoints, TOTAL_DURATION);
           }
+
+          this.state = 'revealing_lower';
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              this.state = 'lower_revealed';
+            }, TOTAL_DURATION + 200)
+          );
+        }
+
+        revealPodium() {
+          if (this.state !== 'lower_revealed' && this.items.length > 3) {
+            console.warn(
+              'Cannot reveal podium in state',
+              this.state,
+              'only in lower_revealed state'
+            );
+            return;
+          }
+
+          const TOTAL_DURATION = config.animationMsTotalPodium;
+
+          const first = this.itemsSortedByRank[0];
+          const second = this.itemsSortedByRank[1];
+          const third = this.itemsSortedByRank[2];
+
+          const podium = [first, second, third];
+
+          // Animate points
+          const currentPoints = parseInt(
+            getComputedStyle(
+              this.candidateIdRowMap.get(first.candidate.id)
+            ).getPropertyValue('--target-points')
+          );
+          for (let item of podium) {
+            const row = this.candidateIdRowMap.get(item.candidate.id);
+            const duration =
+              TOTAL_DURATION *
+              ((item.points - currentPoints) /
+                (this.maxPoints - currentPoints));
+
+            this._animatePoints(row, currentPoints, item.points, duration);
+          }
+
+          // Third place
+          this.timeoutHandles.push(
+            setTimeout(
+              () => {
+                const thirdRow = this.candidateIdRowMap.get(third.candidate.id);
+                thirdRow.classList.add('revealed');
+                this._animatePositionReveal(third, thirdRow);
+              },
+              TOTAL_DURATION *
+                ((third.points - currentPoints) /
+                  (this.maxPoints - currentPoints))
+            )
+          );
+
+          // Second place and First place
+          this.timeoutHandles.push(
+            setTimeout(
+              () => {
+                const secondRow = this.candidateIdRowMap.get(
+                  second.candidate.id
+                );
+                secondRow.classList.add('revealed');
+                this._animatePositionReveal(second, secondRow);
+
+                const firstRow = this.candidateIdRowMap.get(first.candidate.id);
+                firstRow.classList.add('revealed');
+                // No need to call _animatePositionReveal for first place, it's already at the top
+              },
+              TOTAL_DURATION *
+                ((second.points - currentPoints) /
+                  (this.maxPoints - currentPoints))
+            )
+          );
+
+          this.state = 'revealing_podium';
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              this.state = 'podium_revealed';
+            }, TOTAL_DURATION)
+          );
         }
       }
 
@@ -342,6 +454,7 @@
             resultRenderer.revealLower();
             break;
           case 'reveal_podium':
+            resultRenderer.revealPodium();
             break;
           case 'show':
             resultRenderer.show();
