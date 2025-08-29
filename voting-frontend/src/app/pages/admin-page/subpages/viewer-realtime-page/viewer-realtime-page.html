@@ -76,29 +76,36 @@
   <div class="button-row">
     <app-button
       [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('show')"
-      >Show</app-button
-    >
+      (trigger)="sendCommand('show')">
+      Anzeigen
+    </app-button>
     <app-button
       [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('hide')"
-      >Hide</app-button
-    >
+      (trigger)="sendCommand('hide')">
+      Verstecken
+    </app-button>
+    <app-button
+      variant="danger"
+      [disabled]="effectiveSelectedViewerIds().length === 0"
+      (trigger)="sendCommand('clear')">
+      Seite leeren
+    </app-button>
+    <app-button
+      variant="danger"
+      [disabled]="effectiveSelectedViewerIds().length === 0"
+      (trigger)="sendCommand('reload_page')">
+      Seite neu laden
+    </app-button>
     <app-button
       [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('clear')"
-      >Clear</app-button
-    >
+      (trigger)="sendCommand('reveal_lower')">
+      Ränge 4+ animieren
+    </app-button>
     <app-button
       [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('reveal_lower')"
-      >Reveal 4.-n.</app-button
-    >
-    <app-button
-      [disabled]="effectiveSelectedViewerIds().length === 0"
-      (trigger)="sendCommand('reveal_podium')"
-      >Reveal Podium</app-button
-    >
+      (trigger)="sendCommand('reveal_podium')">
+      Ränge 1-3 animieren
+    </app-button>
   </div>
 </div>
 

@@ -530,6 +530,9 @@
           case 'clear':
             resultRenderer.clear();
             break;
+          case 'reload_page':
+            window.location.reload();
+            break;
           default:
             console.warn('Unknown command action:', action);
         }
