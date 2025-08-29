@@ -96,7 +96,7 @@ public class AdminWebSocketHandler extends TextWebSocketHandler {
     try {
       session.sendMessage(new TextMessage(msg));
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Failed to send message to admin WebSocket session", e);
     }
   }
 

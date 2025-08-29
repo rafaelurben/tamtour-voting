@@ -45,7 +45,7 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
       try {
         existingSession.close(new CloseStatus(1000, "Duplicate connection"));
       } catch (IOException e) {
-        e.printStackTrace();
+        log.error("Failed to close existing session for duplicate connection", e);
       }
     }
     keyIdToSessionMap.put(keyId, session);
@@ -78,7 +78,6 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
             try {
               if (session.isOpen()) {
                 session.sendMessage(new TextMessage(MSG_HEARTBEAT));
-                return;
               }
             } catch (IOException _) {
               try {
@@ -100,7 +99,7 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
     try {
       session.sendMessage(new TextMessage(msg));
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Failed to send message to viewer WebSocket session", e);
     }
   }
 

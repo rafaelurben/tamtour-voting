@@ -74,7 +74,7 @@ export class ViewerRealtimePage implements OnInit {
       },
       error: () => {
         this.resultsLoading.set(false);
-        alert('Failed to load results');
+        alert('Resultate konnten nicht geladen werden!');
       },
     });
   }
@@ -101,9 +101,16 @@ export class ViewerRealtimePage implements OnInit {
     }
 
     const action = this.commandForm.value.action!;
-    const data = this.commandForm.value.dataStr
-      ? JSON.parse(this.commandForm.value.dataStr)
-      : {};
+    let data = {};
+    if (this.commandForm.value.dataStr) {
+      try {
+        data = JSON.parse(this.commandForm.value.dataStr);
+      } catch (e) {
+        alert('Ungültige JSON-Daten');
+        console.error('Failed to parse JSON data', e);
+        return;
+      }
+    }
 
     this.sendCommand(action, data);
   }
