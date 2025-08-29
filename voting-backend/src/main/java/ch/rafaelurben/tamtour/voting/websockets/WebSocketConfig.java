@@ -19,6 +19,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
         .addHandler(viewerHandler, "/api/viewer/ws")
         .setAllowedOrigins("*")
         .addInterceptors(viewerTokenHandshakeInterceptor);
-    registry.addHandler(adminHandler, "/api/admin/viewer/ws");
+    registry.addHandler(adminHandler, "/api/admin/viewer/ws").setAllowedOrigins("*");
   }
 }
