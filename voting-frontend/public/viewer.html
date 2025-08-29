@@ -18,7 +18,7 @@
         --max-points: 1;
         --current-position: 0;
         --target-points: 0;
-        --target-points-display: '';
+        --current-points-display: '';
         --row-name-display: '';
         --row-rank-display: '';
       }
@@ -129,7 +129,7 @@
         }
 
         & .points::after {
-          content: var(--target-points-display);
+          content: var(--current-points-display);
         }
 
         &.revealed {
@@ -180,6 +180,8 @@
           this.titleContainer = $('#title');
           this.templateRow = $('#template-row');
 
+          this.timeoutHandles = [];
+
           this.clear();
         }
 
@@ -200,7 +202,12 @@
           this.items = [];
           this.candidateIdRowMap = new Map();
           this.itemsSortedByStartNumbers = [];
-          this.itemsSortedByPointsDesc = [];
+          this.itemsSortedByRank = [];
+
+          for (const handle of this.timeoutHandles) {
+            clearTimeout(handle);
+          }
+          this.timeoutHandles = [];
         }
 
         render(data) {
@@ -215,8 +222,8 @@
               { numeric: true }
             )
           );
-          this.itemsSortedByPointsDesc = this.items.toSorted(
-            (a, b) => b.points - a.points
+          this.itemsSortedByRank = this.items.toSorted(
+            (a, b) => a.rank - b.rank
           );
 
           this.maxPoints = Math.max(...this.items.map(item => item.points), 1);
@@ -231,7 +238,7 @@
               this.itemsSortedByStartNumbers.indexOf(item)
             );
             row.style.setProperty('--target-points', 0);
-            row.style.setProperty('--target-points-display', `"0"`);
+            row.style.setProperty('--current-points-display', `"0"`);
             row.style.setProperty(
               '--row-name-display',
               `"${item.candidate.name}"`
@@ -243,16 +250,34 @@
           }
         }
 
+        _animatePoints(elem, from, to, duration) {
+          elem.style.setProperty(
+            '--animate-points-duration',
+            Math.round(duration) + 'ms'
+          );
+          elem.style.setProperty('--target-points', to);
+
+          for (let i = from; i <= to; i++) {
+            const timeoutHandle = setTimeout(
+              () => {
+                elem.style.setProperty('--current-points-display', `"${i}"`);
+              },
+              (duration / (to - from)) * (i - from)
+            );
+            this.timeoutHandles.push(timeoutHandle);
+          }
+        }
+
         revealLower() {
           const TOTAL_DURATION = this.items.length * 1_500; // ms
 
           const currMaxPoints = Math.max(
-            ...this.itemsSortedByPointsDesc.slice(3).map(i => i.points),
+            ...this.itemsSortedByRank.slice(3).map(i => i.points),
             1
           );
 
-          for (let i = this.itemsSortedByPointsDesc.length - 1; i >= 3; i--) {
-            const item = this.itemsSortedByPointsDesc[i];
+          for (let i = this.itemsSortedByRank.length - 1; i >= 3; i--) {
+            const item = this.itemsSortedByRank[i];
             const row = this.candidateIdRowMap.get(item.candidate.id);
 
             const initialPosition =
@@ -260,12 +285,12 @@
 
             const duration = TOTAL_DURATION * (item.points / currMaxPoints);
 
-            setTimeout(() => {
+            const timeoutHandle = setTimeout(() => {
               row.classList.add('revealed');
               row.style.setProperty('--current-position', item.rank - 1);
 
               for (let searchIndex = 0; searchIndex < i; searchIndex++) {
-                const searchItem = this.itemsSortedByPointsDesc[searchIndex];
+                const searchItem = this.itemsSortedByRank[searchIndex];
                 const searchItemInitialPosition =
                   this.itemsSortedByStartNumbers.indexOf(searchItem);
 
@@ -285,22 +310,16 @@
                 }
               }
             }, duration + 100); // Slightly after animation ends
+            this.timeoutHandles.push(timeoutHandle);
 
-            row.style.setProperty(
-              '--animate-points-duration',
-              Math.round(duration) + 'ms'
-            );
-            row.style.setProperty('--target-points', item.points);
+            this._animatePoints(row, 0, item.points, duration);
           }
 
           for (let i = 0; i < 3; i++) {
-            const item = this.itemsSortedByPointsDesc[i];
+            const item = this.itemsSortedByRank[i];
             const row = this.candidateIdRowMap.get(item.candidate.id);
-            row.style.setProperty(
-              '--animate-points-duration',
-              TOTAL_DURATION + 'ms'
-            );
-            row.style.setProperty('--target-points', currMaxPoints);
+
+            this._animatePoints(row, 0, currMaxPoints, TOTAL_DURATION);
           }
         }
       }
