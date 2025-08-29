@@ -561,9 +561,10 @@
 
       function connect() {
         setState('connecting');
-        ws = new WebSocket(
-          `ws://${location.host}/api/viewer/ws?token=${token}`
-        );
+        const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host;
+        const path = '/api/viewer/ws';
+        ws = new WebSocket(`${proto}//${host}${path}?token=${token}`);
         ws.addEventListener('open', () => {
           console.log('WebSocket connection opened');
         });
