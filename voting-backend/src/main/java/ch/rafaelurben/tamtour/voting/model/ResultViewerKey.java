@@ -21,8 +21,4 @@ public class ResultViewerKey {
 
   @Column(name = "key", unique = true)
   private UUID key;
-
-  @ManyToOne
-  @JoinColumn(name = "category_id")
-  private VotingCategory votingCategory;
 }

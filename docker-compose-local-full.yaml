@@ -1,0 +1,31 @@
+name: tamtour-voting
+services:
+  voting-db:
+    image: postgres:latest
+    container_name: voting-db
+    environment:
+      POSTGRES_USER: tamtour
+      POSTGRES_PASSWORD: trophy
+      POSTGRES_DB: voting
+    ports:
+      - "5555:5432"
+    volumes:
+      - voting-data:/var/lib/postgresql/data
+  voting-frontend:
+    build:
+      context: voting-frontend
+      dockerfile: Dockerfile
+    container_name: voting-frontend
+    ports:
+      - "4200:80"
+  voting-backend:
+    build:
+      context: voting-backend
+      dockerfile: Dockerfile
+    container_name: voting-backend
+    env_file: "env/backend.env"
+    environment:
+      DATABASE_URL: jdbc:postgresql://voting-db:5432/voting
+volumes:
+  voting-data:
+    driver: local

@@ -32,20 +32,4 @@ public class VotingPosition {
   @Min(1)
   @Builder.Default
   private Integer position = null;
-
-  public int getPoints() {
-    return switch (position) {
-      case 1 -> 12;
-      case 2 -> 10;
-      case 3 -> 8;
-      case 4 -> 7;
-      case 5 -> 6;
-      case 6 -> 5;
-      case 7 -> 4;
-      case 8 -> 3;
-      case 9 -> 2;
-      case 10 -> 1;
-      default -> 0;
-    };
-  }
 }

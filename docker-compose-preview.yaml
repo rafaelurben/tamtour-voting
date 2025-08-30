@@ -1,4 +1,4 @@
-# This file is made to work within Coolify and is not meant to be used with Docker Compose directly.
+# This file is made to work within Coolify.
 name: tamtour-voting
 services:
   voting-db:
@@ -8,9 +8,6 @@ services:
       POSTGRES_USER: ${SERVICE_USER_DB}
       POSTGRES_PASSWORD: ${SERVICE_PASSWORD_DB}
       POSTGRES_DB: voting
-      ADMIN_EMAILS: ${ADMIN_EMAILS}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     volumes:
       - voting-data:/var/lib/postgresql/data
   voting-frontend:
@@ -22,7 +19,7 @@ services:
     depends_on:
       - voting-db
     environment:
-      SERVICE_FQDN_VOTING: /
+      SERVICE_FQDN_VOTING_FRONTEND: /
   voting-backend:
     image: ch.rafaelurben.tamtour/voting-backend:latest
     build:
@@ -35,6 +32,9 @@ services:
       DATABASE_URL: jdbc:postgresql://voting-db:5432/voting
       DATABASE_USERNAME: ${SERVICE_USER_DB}
       DATABASE_PASSWORD: ${SERVICE_PASSWORD_DB}
+      ADMIN_EMAILS: ${ADMIN_EMAILS}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
   adminer:
     image: adminer:latest
     container_name: adminer

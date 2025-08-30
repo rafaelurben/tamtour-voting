@@ -11,7 +11,13 @@ export const adminOnlyGuard: CanActivateFn = () => {
 
   return whoamiObs.pipe(
     map(whoami => {
-      if (whoami === null || !whoami.isAdmin) {
+      if (whoami === null) {
+        const loginPath = router.parseUrl('/login');
+        return new RedirectCommand(loginPath, {
+          skipLocationChange: false,
+        });
+      }
+      if (!whoami.isAdmin) {
         return new RedirectCommand(
           router.createUrlTree(['/error'], {
             queryParams: {

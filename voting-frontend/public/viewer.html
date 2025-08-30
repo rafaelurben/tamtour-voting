@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Voting-Result-Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+
+    <style>
+      :root {
+        --row-height: 3.8rem;
+        --row-gap: 0.8rem;
+        --font-size: 1.1em;
+
+        --animate-swap-duration: 0.75s;
+        --animate-points-function: linear;
+
+        --winner-fill-color: #d5b40c;
+        --points-bar-empty-color: #26466d;
+        --points-bar-fill-color: #738ba5;
+        --points-bar-revealed-empty-color: #19395c;
+        --points-bar-revealed-fill-color: #738ba5;
+        --container-rank-bg-color: #26466d;
+        --container-rank-fg-color: #ffffff;
+        --container-rank-revealed-bg-color: #19395c;
+        --container-points-bg-color: #26466d;
+        --container-points-fg-color: #ffffff;
+        --container-points-revealed-bg-color: #19395c;
+
+        /* These will be set dynamically */
+        --animate-points-duration: 0;
+        --max-points: 1;
+        --current-position: 0;
+        --target-points: 0;
+        --current-points-display: '';
+        --row-name-display: '';
+        --row-rank-display: '';
+      }
+
+      * {
+        font-family: sans-serif;
+        font-size: var(--font-size);
+        font-weight: bold;
+        color: white;
+        transition: background-color 0.25s ease-in-out;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100vw;
+        height: 100dvh;
+        background-color: black;
+        background-image: url('/viewer-background.png');
+        background-position: center center;
+        background-size: cover;
+        margin: 0;
+        padding: 0;
+      }
+
+      .status-bar {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        & .status-message {
+          color: red;
+        }
+
+        & .status-dot {
+          height: 10px;
+          width: 10px;
+          border-radius: 50%;
+          display: inline-block;
+
+          &.connected {
+            background-color: #4caf50;
+          }
+
+          &.disconnected {
+            background-color: #f44336;
+          }
+
+          &.connecting {
+            background-color: #ff9800;
+          }
+        }
+      }
+
+      #content {
+        width: 100%;
+        height: 100%;
+
+        padding: 3rem 5rem;
+
+        backdrop-filter: blur(7px);
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+
+        &.hidden {
+          opacity: 0;
+        }
+      }
+
+      .title-row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        font-size: 2em;
+      }
+
+      .rows {
+        position: relative;
+      }
+
+      .row {
+        position: absolute;
+        left: 0;
+        top: calc(
+          var(--current-position) * (var(--row-height) + var(--row-gap))
+        );
+        height: var(--row-height);
+        width: 100%;
+        transition: top var(--animate-swap-duration) ease-in-out;
+
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+
+        & .rank-container,
+        & .points-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.25rem;
+        }
+
+        & .rank-container {
+          width: 5rem;
+          background-color: var(--container-rank-bg-color);
+          color: var(--container-rank-fg-color);
+        }
+
+        & .points-container {
+          width: 7.5rem;
+          background-color: var(--container-points-bg-color);
+          color: var(--container-points-fg-color);
+        }
+
+        & .name-and-point-bar-container {
+          position: relative;
+          flex-grow: 1;
+          flex-basis: 50%;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          background-color: var(--points-bar-empty-color);
+
+          & .points-bar {
+            position: absolute;
+            height: 100%;
+            width: calc((var(--target-points) / var(--max-points)) * 100%);
+
+            background-color: var(--points-bar-fill-color);
+            transition: width var(--animate-points-duration)
+              var(--animate-points-function);
+          }
+
+          & .name-container {
+            margin-left: 1rem;
+            z-index: 10;
+            text-shadow: 1px 1px 2px black;
+          }
+        }
+
+        & .name::after {
+          content: var(--row-name-display);
+        }
+
+        &.revealed .rank::after {
+          content: var(--row-rank-display) '.';
+        }
+
+        & .points::after {
+          content: var(--current-points-display);
+        }
+
+        &.revealed {
+          --points-bar-fill-color: var(--points-bar-revealed-fill-color);
+          --points-bar-empty-color: var(--points-bar-revealed-empty-color);
+          --container-rank-bg-color: var(--container-rank-revealed-bg-color);
+          --container-points-bg-color: var(
+            --container-points-revealed-bg-color
+          );
+
+          &[data-rank='1'] {
+            --points-bar-fill-color: var(--winner-fill-color);
+            --container-rank-bg-color: var(--winner-fill-color);
+            --container-points-bg-color: var(--winner-fill-color);
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="status-bar">
+      <div class="status-message" id="status-message"></div>
+      <div class="status-dot disconnected" id="status-dot"></div>
+    </div>
+
+    <div id="content" class="hidden">
+      <div class="title-row">
+        <div class="title" id="title"></div>
+      </div>
+      <div class="rows" id="rows">
+        <!-- Dynamic content will be rendered here -->
+      </div>
+    </div>
+
+    <template id="template-row">
+      <div class="row">
+        <div class="rank-container">
+          <span class="rank"></span>
+        </div>
+        <div class="name-and-point-bar-container">
+          <div class="points-bar"></div>
+          <div class="name-container">
+            <span class="name"></span>
+          </div>
+        </div>
+        <div class="points-container">
+          <span class="points"></span>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      const $ = document.querySelector.bind(document);
+      const token = new URLSearchParams(window.location.search).get('token');
+      let ws;
+
+      const config = {
+        animationMsPerCandidateLower: 1500,
+        animationMsReveal3And2: 6000,
+        animationMsWinnerAnimation: 1000,
+      };
+
+      class ResultRenderer {
+        constructor() {
+          this.container = $('#content');
+          this.rowsContainer = $('#rows');
+          this.titleContainer = $('#title');
+          this.templateRow = $('#template-row');
+
+          this.timeoutHandles = [];
+
+          this.clear();
+        }
+
+        show() {
+          this.container.classList.remove('hidden');
+        }
+
+        hide() {
+          this.container.classList.add('hidden');
+        }
+
+        clear() {
+          this.hide();
+          this.rowsContainer.innerHTML = '';
+          this.titleContainer.innerHTML = '';
+
+          this.maxPoints = 0;
+          this.items = [];
+          this.candidateIdRowMap = new Map();
+          this.itemsSortedByStartNumbers = [];
+          this.itemsSortedByRank = [];
+          this.state = 'initial';
+
+          for (const handle of this.timeoutHandles) {
+            clearTimeout(handle);
+          }
+          this.timeoutHandles = [];
+        }
+
+        render(data) {
+          this.clear();
+          this.titleContainer.innerText = data.title;
+          this.items = data.items;
+
+          this.itemsSortedByStartNumbers = this.items.toSorted((a, b) =>
+            ('' + a.candidate.startNumber).localeCompare(
+              b.candidate.startNumber,
+              undefined,
+              { numeric: true }
+            )
+          );
+          this.itemsSortedByRank = this.items.toSorted(
+            (a, b) => a.rank - b.rank
+          );
+
+          this.maxPoints = Math.max(...this.items.map(item => item.points), 0);
+          this.rowsContainer.style.setProperty('--max-points', this.maxPoints);
+
+          for (const item of this.items) {
+            const row =
+              this.templateRow.content.cloneNode(true).firstElementChild;
+
+            row.dataset.rank = item.rank;
+            row.style.setProperty(
+              '--current-position',
+              this.itemsSortedByStartNumbers.indexOf(item)
+            );
+            row.style.setProperty('--target-points', 0);
+            row.style.setProperty('--current-points-display', `"0"`);
+            row.style.setProperty(
+              '--row-name-display',
+              `"${item.candidate.name}"`
+            );
+            row.style.setProperty('--row-rank-display', `"${item.rank}"`);
+            row.style.zIndex = 1000 - item.rank;
+
+            this.rowsContainer.appendChild(row);
+            this.candidateIdRowMap.set(item.candidate.id, row);
+          }
+        }
+
+        _animatePoints(elem, from, to, duration) {
+          elem.style.setProperty(
+            '--animate-points-duration',
+            Math.round(duration) + 'ms'
+          );
+          elem.style.setProperty('--target-points', to);
+
+          for (let i = from; i <= to; i++) {
+            this.timeoutHandles.push(
+              setTimeout(
+                () => {
+                  elem.style.setProperty('--current-points-display', `"${i}"`);
+                },
+                (duration / (to - from)) * (i - from)
+              )
+            );
+          }
+        }
+
+        _animatePositionReveal(item, row) {
+          const initialPosition = this.itemsSortedByStartNumbers.indexOf(item);
+
+          row.style.setProperty('--current-position', item.rank - 1);
+
+          for (
+            let searchIndex = 0;
+            searchIndex < item.rank - 1;
+            searchIndex++
+          ) {
+            const searchItem = this.itemsSortedByRank[searchIndex];
+            const searchItemInitialPosition =
+              this.itemsSortedByStartNumbers.indexOf(searchItem);
+
+            if (searchItemInitialPosition > initialPosition) {
+              const searchRow = this.candidateIdRowMap.get(
+                searchItem.candidate.id
+              );
+              const searchItemCurrentPosition = parseInt(
+                getComputedStyle(searchRow).getPropertyValue(
+                  '--current-position'
+                )
+              );
+              searchRow.style.setProperty(
+                '--current-position',
+                searchItemCurrentPosition - 1
+              );
+            }
+          }
+        }
+
+        revealLower() {
+          if (this.state !== 'initial') {
+            console.warn(
+              'Cannot reveal lower items in state',
+              this.state,
+              'only in initial state'
+            );
+            return;
+          }
+
+          const TOTAL_DURATION =
+            this.items.length * config.animationMsPerCandidateLower;
+
+          const currMaxPoints = Math.max(
+            ...this.itemsSortedByRank.slice(3).map(i => i.points),
+            0
+          );
+
+          for (let i = this.itemsSortedByRank.length - 1; i >= 3; i--) {
+            const item = this.itemsSortedByRank[i];
+            const row = this.candidateIdRowMap.get(item.candidate.id);
+
+            const duration = TOTAL_DURATION * (item.points / currMaxPoints);
+
+            this.timeoutHandles.push(
+              setTimeout(() => {
+                row.classList.add('revealed');
+                this._animatePositionReveal(item, row);
+              }, duration)
+            );
+
+            this._animatePoints(row, 0, item.points, duration);
+          }
+
+          for (let i = 0; i < 3; i++) {
+            const item = this.itemsSortedByRank[i];
+            const row = this.candidateIdRowMap.get(item.candidate.id);
+
+            this._animatePoints(row, 0, currMaxPoints, TOTAL_DURATION);
+          }
+
+          // State
+          this.state = 'revealing_lower';
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              this.state = 'lower_revealed';
+            }, TOTAL_DURATION)
+          );
+        }
+
+        revealPodium() {
+          if (this.state !== 'lower_revealed' && this.items.length > 3) {
+            console.warn(
+              'Cannot reveal podium in state',
+              this.state,
+              'only in lower_revealed state'
+            );
+            return;
+          }
+
+          const first = this.itemsSortedByRank[0];
+          const firstRow = this.candidateIdRowMap.get(first.candidate.id);
+          const second = this.itemsSortedByRank[1];
+          const secondRow = this.candidateIdRowMap.get(second.candidate.id);
+          const third = this.itemsSortedByRank[2];
+          const thirdRow = this.candidateIdRowMap.get(third.candidate.id);
+
+          const fourthPoints =
+            this.items.length > 3 ? this.itemsSortedByRank[3].points : 0;
+
+          const timeToThird =
+            config.animationMsReveal3And2 *
+            ((third.points - fourthPoints) / (second.points - fourthPoints));
+
+          // Animate points until second place points
+          this._animatePoints(
+            firstRow,
+            fourthPoints,
+            second.points,
+            config.animationMsReveal3And2
+          );
+          this._animatePoints(
+            secondRow,
+            fourthPoints,
+            second.points,
+            config.animationMsReveal3And2
+          );
+          this._animatePoints(
+            thirdRow,
+            fourthPoints,
+            third.points,
+            timeToThird
+          );
+
+          // Third place switch
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              const thirdRow = this.candidateIdRowMap.get(third.candidate.id);
+              thirdRow.classList.add('revealed');
+              this._animatePositionReveal(third, thirdRow);
+            }, timeToThird)
+          );
+
+          // Second place switch and animation start for first place points
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              const secondRow = this.candidateIdRowMap.get(second.candidate.id);
+              secondRow.classList.add('revealed');
+              this._animatePositionReveal(second, secondRow);
+
+              const firstRow = this.candidateIdRowMap.get(first.candidate.id);
+              firstRow.classList.add('revealed');
+              // No need to call _animatePositionReveal for first place, it's already at the top
+
+              firstRow.style.setProperty(
+                '--animate-points-function',
+                'ease-out'
+              );
+              this._animatePoints(
+                firstRow,
+                second.points,
+                first.points,
+                config.animationMsWinnerAnimation
+              );
+            }, config.animationMsReveal3And2)
+          );
+
+          // First place party
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              // TODO: Add some party effect
+            }, config.animationMsReveal3And2 + config.animationMsWinnerAnimation)
+          );
+
+          // State
+          this.state = 'revealing_podium';
+          this.timeoutHandles.push(
+            setTimeout(() => {
+              this.state = 'podium_revealed';
+            }, config.animationMsReveal3And2 + config.animationMsWinnerAnimation)
+          );
+        }
+      }
+
+      let resultRenderer = new ResultRenderer();
+
+      function setState(state, message = '') {
+        const statusDot = $('#status-dot');
+        statusDot.classList.remove('connected', 'disconnected', 'connecting');
+        statusDot.classList.add(state);
+        $('#status-message').innerText = message;
+      }
+
+      function handleCommand({ action, data }) {
+        switch (action) {
+          case 'load_result_data':
+            resultRenderer.render(data);
+            break;
+          case 'reveal_lower':
+            resultRenderer.revealLower();
+            break;
+          case 'reveal_podium':
+            resultRenderer.revealPodium();
+            break;
+          case 'show':
+            resultRenderer.show();
+            break;
+          case 'hide':
+            resultRenderer.hide();
+            break;
+          case 'clear':
+            resultRenderer.clear();
+            break;
+          case 'reload_page':
+            window.location.reload();
+            break;
+          default:
+            console.warn('Unknown command action:', action);
+        }
+      }
+
+      function connect() {
+        setState('connecting');
+        const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host;
+        const path = '/api/viewer/ws';
+        ws = new WebSocket(`${proto}//${host}${path}?token=${token}`);
+        ws.addEventListener('open', () => {
+          console.log('WebSocket connection opened');
+        });
+        ws.addEventListener('message', event => {
+          const data = JSON.parse(event.data);
+          console.log('Message from server:', data);
+
+          switch (data.type) {
+            case 'command':
+              handleCommand(data);
+              break;
+            case 'error':
+              console.error('Error from server:', data.message);
+              break;
+            case 'connected':
+            case 'heartbeat':
+              setState('connected');
+              break;
+            default:
+              console.warn('Unknown message type:', data.type);
+          }
+        });
+        ws.addEventListener('close', event => {
+          console.log(
+            'WebSocket connection closed! Reconnecting in 5 seconds...',
+            event
+          );
+          setState('disconnected', event.reason);
+          setTimeout(connect, 5000);
+        });
+      }
+
+      window.addEventListener('load', () => {
+        if (!token) {
+          setState('disconnected', 'No token provided');
+          return;
+        }
+        connect();
+      });
+    </script>
+  </body>
+</html>

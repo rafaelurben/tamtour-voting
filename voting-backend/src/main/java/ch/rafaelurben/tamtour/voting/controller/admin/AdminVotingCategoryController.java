@@ -2,10 +2,7 @@ package ch.rafaelurben.tamtour.voting.controller.admin;
 
 import ch.rafaelurben.tamtour.voting.dto.VotingCandidateDto;
 import ch.rafaelurben.tamtour.voting.dto.VotingCategoryBaseDto;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingCandidateRequestDto;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingCategoryRequestDto;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingSetDto;
-import ch.rafaelurben.tamtour.voting.dto.admin.VotingSetUpdateDto;
+import ch.rafaelurben.tamtour.voting.dto.admin.*;
 import ch.rafaelurben.tamtour.voting.security.UserRoles;
 import ch.rafaelurben.tamtour.voting.service.admin.AdminVotingCategoryService;
 import jakarta.annotation.security.RolesAllowed;
@@ -43,7 +40,7 @@ public class AdminVotingCategoryController {
   }
 
   @GetMapping("/{id}/result")
-  public Object getCategoryResult(@PathVariable Long id) {
+  public VotingCategoryResultDto getCategoryResult(@PathVariable Long id) {
     return adminVotingCategoryService.getCategoryResult(id);
   }
 

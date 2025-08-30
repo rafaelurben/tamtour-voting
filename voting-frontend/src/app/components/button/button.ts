@@ -9,6 +9,7 @@ import { Spinner } from '../spinner/spinner';
 })
 export class Button {
   public type = input<'button' | 'submit' | 'reset'>('button');
+  public variant = input<'primary' | 'danger'>('primary');
   public loading = input<boolean>(false);
   public disabled = input<boolean>(false);
 
