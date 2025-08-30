@@ -1,9 +1,9 @@
 package ch.rafaelurben.tamtour.voting.dto.admin;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record VotingCategoryRequestDto(
     String name,
-    LocalDateTime votingStart,
-    LocalDateTime submissionStart,
-    LocalDateTime submissionEnd) {}
+    OffsetDateTime votingStart,
+    OffsetDateTime submissionStart,
+    OffsetDateTime submissionEnd) {}

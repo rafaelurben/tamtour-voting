@@ -14,7 +14,7 @@ import ch.rafaelurben.tamtour.voting.model.VotingSet;
 import ch.rafaelurben.tamtour.voting.model.VotingUser;
 import ch.rafaelurben.tamtour.voting.repository.VotingCategoryRepository;
 import ch.rafaelurben.tamtour.voting.repository.VotingSetRepository;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,12 +75,12 @@ public class VotingCategoryService {
 
   public VotingCategoryUserDetailDto getCategoryForUser(Long categoryId, VotingUser user) {
     VotingCategory category = getCategory(categoryId);
-    if (category.getVotingStart().isAfter(LocalDateTime.now())) {
+    if (category.getVotingStart().isAfter(OffsetDateTime.now())) {
       throw new InvalidStateException("Das Voting für diese Kategorie hat noch nicht begonnen.");
     }
 
     VotingSet votingSet;
-    if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
+    if (category.getSubmissionEnd().isBefore(OffsetDateTime.now())) {
       votingSet =
           votingSetRepository
               .findByVotingUserAndVotingCategory(user, category)
@@ -102,10 +102,10 @@ public class VotingCategoryService {
   public void updateVotingPositions(
       Long categoryId, VotingUser user, VotingPositionMapDto positionMap) {
     VotingCategory category = getCategory(categoryId);
-    if (category.getVotingStart().isAfter(LocalDateTime.now())) {
+    if (category.getVotingStart().isAfter(OffsetDateTime.now())) {
       throw new InvalidStateException("Das Voting für diese Kategorie hat noch nicht begonnen.");
     }
-    if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
+    if (category.getSubmissionEnd().isBefore(OffsetDateTime.now())) {
       throw new InvalidStateException("Die Einsendephase für diese Kategorie ist bereits beendet.");
     }
 
@@ -130,11 +130,11 @@ public class VotingCategoryService {
 
   public void submitVoting(Long categoryId, VotingUser user) {
     VotingCategory category = getCategory(categoryId);
-    if (category.getSubmissionStart().isAfter(LocalDateTime.now())) {
+    if (category.getSubmissionStart().isAfter(OffsetDateTime.now())) {
       throw new InvalidStateException(
           "Die Einsendephase für diese Kategorie hat noch nicht begonnen.");
     }
-    if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
+    if (category.getSubmissionEnd().isBefore(OffsetDateTime.now())) {
       throw new InvalidStateException("Die Einsendephase für diese Kategorie ist bereits beendet.");
     }
 
@@ -156,7 +156,7 @@ public class VotingCategoryService {
     }
 
     votingSet.setSubmitted(true);
-    votingSet.setSubmittedAt(LocalDateTime.now());
+    votingSet.setSubmittedAt(OffsetDateTime.now());
     votingSetRepository.save(votingSet);
   }
 }

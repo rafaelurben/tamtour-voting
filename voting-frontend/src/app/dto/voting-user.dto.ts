@@ -6,7 +6,7 @@ export interface VotingUserDto {
   accountName: string;
   pictureLink: string;
   initialRegistrationComplete: boolean;
-  createdAt: string;
-  lastLoginAt: string | null;
+  createdAt: string; // ISO datetime string including timezone
+  lastLoginAt: string | null; // ISO datetime string including timezone
   blocked: boolean;
 }

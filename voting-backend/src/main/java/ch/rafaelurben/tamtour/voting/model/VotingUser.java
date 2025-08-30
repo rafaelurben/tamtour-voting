@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -52,10 +52,10 @@ public class VotingUser implements Serializable {
 
   @Column(name = "created_at")
   @CreationTimestamp
-  private LocalDateTime createdAt;
+  private OffsetDateTime createdAt;
 
   @Column(name = "last_login_at")
-  private LocalDateTime lastLoginAt;
+  private OffsetDateTime lastLoginAt;
 
   @Column(name = "blocked")
   @Builder.Default

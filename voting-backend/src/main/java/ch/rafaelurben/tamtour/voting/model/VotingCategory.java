@@ -2,7 +2,7 @@ package ch.rafaelurben.tamtour.voting.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import lombok.*;
 
@@ -22,13 +22,13 @@ public class VotingCategory {
   private String name;
 
   @Column(name = "voting_start")
-  private LocalDateTime votingStart;
+  private OffsetDateTime votingStart;
 
   @Column(name = "submission_start")
-  private LocalDateTime submissionStart;
+  private OffsetDateTime submissionStart;
 
   @Column(name = "submission_end")
-  private LocalDateTime submissionEnd;
+  private OffsetDateTime submissionEnd;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "votingCategory")
   private Set<VotingCandidate> votingCandidates;
