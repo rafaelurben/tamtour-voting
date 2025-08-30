@@ -79,10 +79,18 @@ public class VotingCategoryService {
       throw new InvalidStateException("Das Voting für diese Kategorie hat noch nicht begonnen.");
     }
 
-    VotingSet votingSet =
-        votingSetRepository
-            .findByVotingUserAndVotingCategory(user, category)
-            .orElseGet(() -> createVotingSet(user, category));
+    VotingSet votingSet;
+    if (category.getSubmissionEnd().isBefore(LocalDateTime.now())) {
+      votingSet =
+          votingSetRepository
+              .findByVotingUserAndVotingCategory(user, category)
+              .orElseThrow(() -> new InvalidStateException("Voting bereits beendet."));
+    } else {
+      votingSet =
+          votingSetRepository
+              .findByVotingUserAndVotingCategory(user, category)
+              .orElseGet(() -> createVotingSet(user, category));
+    }
 
     return new VotingCategoryUserDetailDto(
         votingCategoryMapper.toBaseDto(category),
