@@ -1,5 +1,5 @@
 import { Component, inject, input, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AdminVotingCategoriesApi } from '../../../../api/admin/admin-voting-categories.api';
 import { VotingCategoryBaseDto } from '../../../../dto/voting-category-base.dto';
@@ -22,6 +22,7 @@ import { VotingCandidateRequestDto } from '../../../../dto/admin/voting-candidat
     Button,
     CategoryForm,
     CandidateForm,
+    RouterLink,
   ],
   templateUrl: './category-admin-edit-page.html',
 })
