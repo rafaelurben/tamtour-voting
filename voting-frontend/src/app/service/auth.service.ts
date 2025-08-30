@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { WhoamiDto } from '../dto/whoami.dto';
 import { VotingUserDto } from '../dto/voting-user.dto';
 import { UpdateMeDto } from '../dto/update-me.dto';
@@ -7,7 +7,7 @@ import { catchError, filter, Observable, of, take, tap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class AuthService implements OnDestroy {
   private readonly authApi = inject(AuthApi);
 
   private readonly whoami = signal<WhoamiDto | null | undefined>(undefined);
@@ -15,6 +15,22 @@ export class AuthService {
   public isLoading = computed(() => this.whoami() === undefined);
   public user = computed(() => this.whoami()?.user);
   public isAdmin = computed(() => this.whoami()?.isAdmin);
+
+  private readonly intervalId: number;
+
+  constructor() {
+    // Refresh every 5 minutes to keep session alive
+    this.intervalId = setInterval(
+      () => {
+        this.fetchWhoami().subscribe();
+      },
+      5 * 60 * 1000
+    );
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
+  }
 
   fetchWhoami(): Observable<WhoamiDto | null> {
     return this.authApi.whoami().pipe(

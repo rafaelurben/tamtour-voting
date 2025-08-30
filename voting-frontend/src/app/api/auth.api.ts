@@ -7,7 +7,7 @@ import { UpdateMeDto } from '../dto/update-me.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApi {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
   whoami(): Observable<WhoamiDto> {
     return this.http.get<WhoamiDto>('/api/whoami');
