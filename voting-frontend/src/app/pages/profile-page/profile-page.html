@@ -1,32 +1,33 @@
 <h2>Profil</h2>
 <app-button routerLink="/">Zurück zur Startseite</app-button>
 
-<div class="profile-container">
-  <div class="profile-pic-container">
-    <img
-      class="profile-pic"
-      [ngSrc]="profileImageUrl()"
-      (error)="onProfileImageError($event)"
-      alt="Profilbild"
-      fill />
-  </div>
-  <div class="profile-info">
-    <h3>
-      {{ authService.user()?.firstName }} {{ authService.user()?.lastName }}
-    </h3>
-    <p>
-      <strong>Google-Account:</strong>
-      <br />
-      {{ authService.user()?.accountName }} ({{
-        authService.user()?.accountEmail
-      }})
-    </p>
-  </div>
-</div>
+<div class="main-content">
+  <div class="profile-container">
+    <div class="profile-pic-container">
+      <img
+        class="profile-pic"
+        [ngSrc]="profileImageUrl()"
+        (error)="onProfileImageError($event)"
+        alt="Profilbild"
+        fill />
+    </div>
+    <div class="profile-info">
+      <h3>
+        {{ authService.user()?.firstName }} {{ authService.user()?.lastName }}
+      </h3>
 
-<div class="profile-actions">
-  <app-button routerLink="/logout">Abmelden</app-button>
-  @if (authService.isAdmin()) {
-    <app-button routerLink="/admin">Admin-Bereich</app-button>
-  }
+      <strong>Google-Account:</strong>
+      <span>{{ authService.user()?.accountName }}</span>
+      <a [href]="'mailto:' + authService.user()?.accountEmail">
+        {{ authService.user()?.accountEmail }}
+      </a>
+    </div>
+  </div>
+
+  <div class="button-row">
+    <app-button variant="danger" routerLink="/logout">Abmelden</app-button>
+    @if (authService.isAdmin()) {
+      <app-button routerLink="/admin">Admin-Bereich</app-button>
+    }
+  </div>
 </div>
