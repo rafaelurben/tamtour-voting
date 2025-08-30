@@ -20,6 +20,7 @@ header {
 .title {
   font-size: 1.8rem;
   color: white;
+  display: none;
 }
 
 .logo-container {
@@ -51,6 +52,7 @@ header {
   height: 3rem;
   width: 3rem;
   position: relative;
+  flex-shrink: 0;
 }
 
 .profile-pic {
@@ -65,5 +67,11 @@ header {
 @media (min-width: 576px) {
   header {
     border-radius: 5px 5px 0 0;
+  }
+}
+
+@media (min-width: 450px) {
+  .title {
+    display: block;
   }
 }
