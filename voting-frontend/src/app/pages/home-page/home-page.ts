@@ -8,7 +8,6 @@ import { Spinner } from '../../components/spinner/spinner';
   selector: 'app-home-page',
   imports: [CategoryOverview, Spinner],
   templateUrl: './home-page.html',
-  styleUrl: './home-page.css',
 })
 export class HomePage implements OnInit {
   private readonly votingCategoryApi = inject(VotingCategoryApi);

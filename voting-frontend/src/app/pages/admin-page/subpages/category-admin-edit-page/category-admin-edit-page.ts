@@ -24,7 +24,6 @@ import { VotingCandidateRequestDto } from '../../../../dto/admin/voting-candidat
     CandidateForm,
   ],
   templateUrl: './category-admin-edit-page.html',
-  styleUrl: './category-admin-edit-page.css',
 })
 export class CategoryAdminEditPage implements OnInit {
   private readonly categoriesApi = inject(AdminVotingCategoriesApi);

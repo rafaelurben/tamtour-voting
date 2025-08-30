@@ -13,7 +13,6 @@ import { VotingCandidateRequestDto } from '../../../dto/admin/voting-candidate-r
   selector: 'app-candidate-form',
   imports: [Button, FormsModule, ReactiveFormsModule],
   templateUrl: './candidate-form.html',
-  styleUrl: './candidate-form.css',
 })
 export class CandidateForm implements OnInit {
   public defaultValues = input<VotingCandidateDto>();

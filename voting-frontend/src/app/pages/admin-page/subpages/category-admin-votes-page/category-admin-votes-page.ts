@@ -16,7 +16,6 @@ import { VotingCategoryResultDto } from '../../../../dto/admin/voting-category-r
   selector: 'app-category-admin-votes-page',
   imports: [DatePipe, Spinner, TimeRemaining, CandidateSetsTable, Button],
   templateUrl: './category-admin-votes-page.html',
-  styleUrl: './category-admin-votes-page.css',
 })
 export class CategoryAdminVotesPage implements OnInit {
   private readonly categoriesApi = inject(AdminVotingCategoriesApi);

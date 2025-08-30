@@ -13,7 +13,6 @@ import { Button } from '../../button/button';
   selector: 'app-category-form',
   imports: [Button, FormsModule, ReactiveFormsModule],
   templateUrl: './category-form.html',
-  styleUrl: './category-form.css',
 })
 export class CategoryForm implements OnInit {
   public defaultValues = input<VotingCategoryBaseDto>();

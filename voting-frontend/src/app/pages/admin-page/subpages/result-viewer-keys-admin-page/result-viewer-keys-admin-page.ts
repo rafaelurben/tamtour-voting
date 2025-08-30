@@ -11,7 +11,6 @@ import { Alert } from '../../../../components/alert/alert';
   selector: 'app-categories-admin-page',
   imports: [Spinner, AsyncPipe, Button, Alert],
   templateUrl: './result-viewer-keys-admin-page.html',
-  styleUrl: './result-viewer-keys-admin-page.css',
 })
 export class ResultViewerKeysAdminPage {
   protected keys$!: Observable<ResultViewerKeyDto[]>;

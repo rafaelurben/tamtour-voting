@@ -8,7 +8,6 @@ import { Spinner } from '../../components/spinner/spinner';
   selector: 'app-logout-page',
   imports: [RouterLink, Button, Spinner],
   templateUrl: './logout-page.html',
-  styleUrl: './logout-page.css',
 })
 export class LogoutPage implements OnInit {
   private readonly authService = inject(AuthService);

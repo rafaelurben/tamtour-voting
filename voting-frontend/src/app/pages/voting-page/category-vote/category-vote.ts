@@ -22,7 +22,6 @@ import { Alert } from '../../../components/alert/alert';
   selector: 'app-category-vote',
   imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button, Alert],
   templateUrl: './category-vote.html',
-  styleUrl: './category-vote.css',
 })
 export class CategoryVote {
   private readonly votingCategoryApi = inject(VotingCategoryApi);

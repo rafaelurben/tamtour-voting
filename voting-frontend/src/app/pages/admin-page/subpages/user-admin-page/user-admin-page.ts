@@ -15,7 +15,6 @@ import { Button } from '../../../../components/button/button';
   selector: 'app-user-admin-page',
   imports: [Spinner, AsyncPipe, DatePipe, NgOptimizedImage, NgStyle, Button],
   templateUrl: './user-admin-page.html',
-  styleUrl: './user-admin-page.css',
 })
 export class UserAdminPage {
   protected users$!: Observable<VotingUserDto[]>;
