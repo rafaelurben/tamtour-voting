@@ -1,5 +1,7 @@
+<span>Wähle eine Kategorie aus, um am Voting teilzunehmen.</span>
+
 @if (startedCategories().length > 0) {
-  <h3>Begonnen</h3>
+  <h3>Teilnahme begonnen</h3>
 
   <div class="category-list">
     @for (cat of startedCategories(); track cat.category.id) {
@@ -34,7 +36,8 @@
       <app-category-overview-item
         [category]="cat.category"
         [userState]="cat.userState"
-        [clickable]="cat.userState.hasCreated" />
+        [clickable]="cat.userState.hasCreated"
+        [displayState]="true" />
     } @empty {
       <p>Keine eingereichten oder beendeten Kategorien.</p>
     }

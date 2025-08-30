@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { VotingCategoryBaseDto } from '../../../../dto/voting-category-base.dto';
 import { VotingCategoryUserStateDto } from '../../../../dto/voting-category-user-state.dto';
 import { RouterLink } from '@angular/router';
@@ -16,5 +16,13 @@ export class CategoryOverviewItem {
   public userState = input.required<VotingCategoryUserStateDto>();
   public clickable = input<boolean>(true);
   public displayEndCountdown = input<boolean>(false);
+  public displayState = input<boolean>(false);
   public currentTime = input<Date>();
+
+  protected readonly submissionEnded = computed(() => {
+    return (
+      new Date(this.category().submissionEnd) <=
+      (this.currentTime() ?? new Date())
+    );
+  });
 }

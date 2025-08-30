@@ -22,3 +22,17 @@
 .category-item h4 {
   margin: 0;
 }
+
+.status {
+  &.bad {
+    color: red;
+  }
+
+  &.good {
+    color: green;
+  }
+
+  &.neutral {
+    color: black;
+  }
+}
