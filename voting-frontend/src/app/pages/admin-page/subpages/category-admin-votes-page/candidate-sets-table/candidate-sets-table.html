@@ -4,8 +4,10 @@
       <th scope="col">ID</th>
       <th scope="col">User</th>
       @for (candidate of sortedCandidates(); track candidate.id) {
-        <th scope="col" class="vertical">
-          {{ candidate.name }} ({{ candidate.startNumber }})
+        <th scope="col" class="vertical-cell">
+          <div class="vertical">
+            {{ candidate.name }} ({{ candidate.startNumber }})
+          </div>
         </th>
       }
       <th scope="col">Eingereicht</th>
