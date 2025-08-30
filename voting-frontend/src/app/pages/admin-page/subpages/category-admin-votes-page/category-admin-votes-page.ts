@@ -76,6 +76,10 @@ export class CategoryAdminVotesPage implements OnInit {
         this.sets.set(data);
         this.isFetchingSets.set(false);
       },
+      error: err => {
+        this.isFetchingSets.set(false);
+        throw err;
+      },
     });
   }
 
@@ -85,6 +89,10 @@ export class CategoryAdminVotesPage implements OnInit {
       next: data => {
         this.result.set(data);
         this.isFetchingResult.set(false);
+      },
+      error: err => {
+        this.isFetchingResult.set(false);
+        throw err;
       },
     });
   }
