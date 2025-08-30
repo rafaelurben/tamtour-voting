@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Button } from '../../button/button';
+import { TimeService } from '../../../service/time.service';
 
 @Component({
   selector: 'app-category-form',
@@ -15,6 +16,8 @@ import { Button } from '../../button/button';
   templateUrl: './category-form.html',
 })
 export class CategoryForm implements OnInit {
+  private readonly timeService = inject(TimeService);
+
   public defaultValues = input<VotingCategoryBaseDto>();
   public loading = input(false);
 
@@ -35,9 +38,13 @@ export class CategoryForm implements OnInit {
     if (values) {
       this.categoryForm.setValue({
         name: values.name,
-        votingStart: values.votingStart,
-        submissionStart: values.submissionStart,
-        submissionEnd: values.submissionEnd,
+        votingStart: this.timeService.toDateTimeInputFormat(values.votingStart),
+        submissionStart: this.timeService.toDateTimeInputFormat(
+          values.submissionStart
+        ),
+        submissionEnd: this.timeService.toDateTimeInputFormat(
+          values.submissionEnd
+        ),
       });
     }
   }
@@ -46,8 +53,11 @@ export class CategoryForm implements OnInit {
     const category: VotingCategoryRequestDto = this.categoryForm.getRawValue();
 
     const votingStart = new Date(category.votingStart);
+    category.votingStart = votingStart.toISOString();
     const submissionStart = new Date(category.submissionStart);
+    category.submissionStart = submissionStart.toISOString();
     const submissionEnd = new Date(category.submissionEnd);
+    category.submissionEnd = submissionEnd.toISOString();
 
     if (submissionEnd <= submissionStart) {
       this.categoryForm

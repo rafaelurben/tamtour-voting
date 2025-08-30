@@ -1,6 +1,6 @@
 package ch.rafaelurben.tamtour.voting.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record VotingUserDto(
     Long id,
@@ -10,6 +10,6 @@ public record VotingUserDto(
     String accountName,
     String pictureLink,
     boolean initialRegistrationComplete,
-    LocalDateTime createdAt,
-    LocalDateTime lastLoginAt,
+    OffsetDateTime createdAt,
+    OffsetDateTime lastLoginAt,
     boolean blocked) {}

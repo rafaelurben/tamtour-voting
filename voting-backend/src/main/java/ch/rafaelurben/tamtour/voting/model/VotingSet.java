@@ -3,7 +3,7 @@ package ch.rafaelurben.tamtour.voting.model;
 import ch.rafaelurben.tamtour.voting.dto.VotingPositionMapDto;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,14 +34,14 @@ public class VotingSet {
 
   @Column(name = "created_at")
   @CreationTimestamp
-  private LocalDateTime createdAt;
+  private OffsetDateTime createdAt;
 
   @Column(name = "modified_at")
   @UpdateTimestamp
-  private LocalDateTime modifiedAt;
+  private OffsetDateTime modifiedAt;
 
   @Column(name = "submitted_at")
-  private LocalDateTime submittedAt;
+  private OffsetDateTime submittedAt;
 
   @Column(name = "submitted")
   @Builder.Default

@@ -6,7 +6,7 @@ import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.model.VotingCandidate;
 import ch.rafaelurben.tamtour.voting.model.VotingCategory;
 import ch.rafaelurben.tamtour.voting.model.VotingSet;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -67,6 +67,6 @@ public class ResultCalculatorService {
             .toArray(VotingCategoryResultItemDto[]::new);
 
     return new VotingCategoryResultDto(
-        category.getSubmissionEnd().isBefore(LocalDateTime.now()), category.getName(), items);
+        category.getSubmissionEnd().isBefore(OffsetDateTime.now()), category.getName(), items);
   }
 }
