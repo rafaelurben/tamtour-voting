@@ -79,11 +79,12 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
               if (session.isOpen()) {
                 session.sendMessage(new TextMessage(MSG_HEARTBEAT));
               }
-            } catch (IOException _) {
+            } catch (IOException e) {
+              log.warn("Heartbeat failed, closing viewer WebSocket session", e);
               try {
                 session.close();
-              } catch (IOException _) {
-                // Ignore
+              } catch (IOException e2) {
+                log.error("Failed to close viewer WebSocket session during heartbeat cleanup", e2);
               }
               Long keyId = (Long) session.getAttributes().get(ATTR_KEY_ID);
               keyIdToSessionMap.remove(keyId);

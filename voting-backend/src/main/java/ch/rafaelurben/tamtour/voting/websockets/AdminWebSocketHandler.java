@@ -75,13 +75,13 @@ public class AdminWebSocketHandler extends TextWebSocketHandler {
             try {
               if (session.isOpen()) {
                 session.sendMessage(new TextMessage(MSG_HEARTBEAT));
-                return;
               }
-            } catch (IOException _) {
+            } catch (IOException e) {
+              log.warn("Heartbeat failed, closing admin WebSocket session", e);
               try {
                 session.close();
-              } catch (IOException _) {
-                // Ignore
+              } catch (IOException e2) {
+                log.error("Failed to close admin WebSocket session during heartbeat cleanup", e2);
               }
               sessions.remove(session);
             }
