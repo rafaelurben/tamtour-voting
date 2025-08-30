@@ -19,7 +19,7 @@ services:
     depends_on:
       - voting-db
     environment:
-      SERVICE_FQDN_VOTING_FRONTEND: /
+      SERVICE_FQDN_VOTING: /
   voting-backend:
     image: ch.rafaelurben.tamtour/voting-backend:latest
     build:
