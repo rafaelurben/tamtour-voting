@@ -10,6 +10,7 @@ import { Spinner } from '../../../../components/spinner/spinner';
 import { TimeRemaining } from '../../../../components/time-remaining/time-remaining';
 import { CandidateSetsTable } from './candidate-sets-table/candidate-sets-table';
 import { Button } from '../../../../components/button/button';
+import { VotingCategoryResultDto } from '../../../../dto/admin/voting-category-result.dto';
 
 @Component({
   selector: 'app-category-admin-votes-page',
@@ -26,11 +27,16 @@ export class CategoryAdminVotesPage implements OnInit {
   protected category = signal<VotingCategoryBaseDto | null>(null);
   protected candidates = signal<VotingCandidateDto[] | null>(null);
   protected sets = signal<VotingSetDto[] | null>(null);
+  protected result = signal<VotingCategoryResultDto | null>(null);
+
+  protected isFetchingSets = signal(false);
+  protected isFetchingResult = signal(false);
 
   ngOnInit(): void {
     this.fetchCategory();
     this.fetchCandidates();
     this.fetchSets();
+    this.fetchResult();
   }
 
   protected fetchCategory() {
@@ -64,8 +70,22 @@ export class CategoryAdminVotesPage implements OnInit {
   }
 
   protected fetchSets() {
+    this.isFetchingSets.set(true);
     this.categoriesApi.getSets(this.categoryId()).subscribe({
-      next: data => this.sets.set(data),
+      next: data => {
+        this.sets.set(data);
+        this.isFetchingSets.set(false);
+      },
+    });
+  }
+
+  protected fetchResult() {
+    this.isFetchingResult.set(true);
+    this.categoriesApi.getCategoryResult(this.categoryId()).subscribe({
+      next: data => {
+        this.result.set(data);
+        this.isFetchingResult.set(false);
+      },
     });
   }
 

@@ -10,23 +10,21 @@
   <div class="profile-section">
     @if (authService.isLoading()) {
       <app-spinner />
-    } @else {
-      @if (authService.user()) {
-        <a class="profile-badge" routerLink="/profile" title="Profil">
-          <div class="profile-name">
-            {{ authService.user()?.firstName }}
-            {{ authService.user()?.lastName }}
-          </div>
-          <div class="profile-pic-container">
-            <img
-              class="profile-pic"
-              [ngSrc]="profileImageUrl()"
-              (error)="onProfileImageError($event)"
-              alt="Profilbild"
-              fill />
-          </div>
-        </a>
-      }
+    } @else if (authService.user()) {
+      <a class="profile-badge" routerLink="/profile" title="Profil">
+        <div class="profile-name">
+          {{ authService.user()?.firstName }}
+          {{ authService.user()?.lastName }}
+        </div>
+        <div class="profile-pic-container">
+          <img
+            class="profile-pic"
+            [ngSrc]="profileImageUrl()"
+            (error)="onProfileImageError($event)"
+            alt="Profilbild"
+            fill />
+        </div>
+      </a>
     }
   </div>
 </header>

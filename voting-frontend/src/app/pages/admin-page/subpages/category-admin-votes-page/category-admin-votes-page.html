@@ -32,11 +32,12 @@
 
 <hr />
 
-@if (candidates() !== null && sets() !== null) {
+@if (candidates() !== null && sets() !== null && result() !== null) {
   <app-candidate-sets-table
     [categoryId]="categoryId()"
     [candidates]="candidates()!"
     [sets]="sets()!"
+    [result]="result()!"
     (replaceSet)="replaceSet($event)" />
 } @else {
   <app-spinner>
@@ -45,7 +46,9 @@
 }
 
 <div class="button-row">
-  <app-button (trigger)="fetchSets()">
-    <span>Sets neu laden</span>
+  <app-button
+    (trigger)="fetchSets(); fetchResult()"
+    [loading]="isFetchingSets() || isFetchingResult()">
+    <span>Sets & Resultate neu laden</span>
   </app-button>
 </div>

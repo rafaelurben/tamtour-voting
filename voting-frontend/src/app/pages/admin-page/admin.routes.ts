@@ -39,6 +39,11 @@ export const routes: Routes = [
     data: { fullWidth: true },
   },
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'users',
+  },
+  {
     path: '**',
     component: ErrorPage,
     data: {

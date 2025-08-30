@@ -1,13 +1,18 @@
-.page-container {
+:host {
+  flex-grow: 1;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
-  gap: 3rem;
-  padding: 5rem 2.5rem;
+
+  padding: 0 2.5rem;
 }
 
 .logo-title-container {
+  width: 100%;
+
+  padding: 3rem;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,6 +23,19 @@
   width: 10rem;
   height: 10rem;
   position: relative;
+}
+
+.title {
+  color: black;
+}
+
+.after-header {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: space-around;
+  gap: 3rem;
 }
 
 .login-button-container {
