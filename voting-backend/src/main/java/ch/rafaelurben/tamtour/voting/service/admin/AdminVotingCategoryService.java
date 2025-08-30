@@ -57,6 +57,11 @@ public class AdminVotingCategoryService {
     return votingCategoryMapper.toBaseDto(existingCategory);
   }
 
+  public void deleteCategory(Long categoryId) {
+    VotingCategory existingCategory = getCategoryById(categoryId);
+    votingCategoryRepository.delete(existingCategory);
+  }
+
   public VotingCategoryResultDto getCategoryResult(Long categoryId) {
     VotingCategory category = getCategoryById(categoryId);
     return resultCalculatorService.calculateResult(category);
@@ -137,5 +142,27 @@ public class AdminVotingCategoryService {
     votingCandidateMapper.updateEntityFromDto(existingCandidate, updateDto);
     existingCandidate = votingCandidateRepository.save(existingCandidate);
     return votingCandidateMapper.toDto(existingCandidate);
+  }
+
+  public void deleteCandidate(Long categoryId, Long candidateId) {
+    VotingCategory category = getCategoryById(categoryId);
+    VotingCandidate existingCandidate =
+        votingCandidateRepository
+            .findByVotingCategoryIdAndId(categoryId, candidateId)
+            .orElseThrow(
+                () ->
+                    new ObjectNotFoundException(
+                        "Candidate not found with id: "
+                            + candidateId
+                            + " in category with id: "
+                            + categoryId));
+
+    // Prevent deletion if sets already exist
+    if (!category.getVotingSets().isEmpty()) {
+      throw new InvalidStateException(
+          "Impossible to delete candidate from category with already existing sets!");
+    }
+
+    votingCandidateRepository.delete(existingCandidate);
   }
 }
