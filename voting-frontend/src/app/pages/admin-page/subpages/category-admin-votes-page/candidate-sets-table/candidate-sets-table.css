@@ -1,4 +1,8 @@
-th.vertical {
+.vertical-cell {
+  vertical-align: bottom;
+}
+
+.vertical {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   white-space: nowrap;

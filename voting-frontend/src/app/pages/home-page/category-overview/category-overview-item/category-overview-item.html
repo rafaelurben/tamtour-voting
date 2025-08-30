@@ -13,5 +13,16 @@
         [target]="category().submissionEnd"
         [currentOverride]="currentTime()" />
     }
+    @if (displayState()) {
+      @if (userState().disqualified) {
+        <span class="status bad">Disqualifiziert</span>
+      } @else if (userState().hasSubmitted) {
+        <span class="status good">Eingereicht</span>
+      } @else if (userState().hasCreated && submissionEnded()) {
+        <span class="status bad">Frist verpasst</span>
+      } @else if (!userState().hasCreated) {
+        <span class="status neutral">Nicht teilgenommen</span>
+      }
+    }
   </div>
 </a>

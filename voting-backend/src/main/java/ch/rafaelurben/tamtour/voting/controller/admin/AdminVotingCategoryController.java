@@ -39,6 +39,11 @@ public class AdminVotingCategoryController {
     return adminVotingCategoryService.updateCategory(id, updateDto);
   }
 
+  @DeleteMapping("/{id}")
+  public void deleteCategory(@PathVariable Long id) {
+    adminVotingCategoryService.deleteCategory(id);
+  }
+
   @GetMapping("/{id}/result")
   public VotingCategoryResultDto getCategoryResult(@PathVariable Long id) {
     return adminVotingCategoryService.getCategoryResult(id);
@@ -72,5 +77,10 @@ public class AdminVotingCategoryController {
       @PathVariable Long candidateId,
       @RequestBody VotingCandidateRequestDto candidate) {
     return adminVotingCategoryService.updateCandidate(id, candidateId, candidate);
+  }
+
+  @DeleteMapping("/{id}/candidates/{candidateId}")
+  public void deleteCandidate(@PathVariable Long id, @PathVariable Long candidateId) {
+    adminVotingCategoryService.deleteCandidate(id, candidateId);
   }
 }

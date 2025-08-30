@@ -5,7 +5,6 @@ import { TimeService } from '../../service/time.service';
   selector: 'app-time-remaining',
   imports: [],
   templateUrl: './time-remaining.html',
-  styleUrl: './time-remaining.css',
 })
 export class TimeRemaining {
   private readonly timeService = inject(TimeService);

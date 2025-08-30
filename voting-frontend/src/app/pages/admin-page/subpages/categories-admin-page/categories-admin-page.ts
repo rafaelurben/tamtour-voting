@@ -22,7 +22,6 @@ import { VotingCategoryRequestDto } from '../../../../dto/admin/voting-category-
     CategoryForm,
   ],
   templateUrl: './categories-admin-page.html',
-  styleUrl: './categories-admin-page.css',
 })
 export class CategoriesAdminPage {
   protected categories$!: Observable<VotingCategoryBaseDto[]>;

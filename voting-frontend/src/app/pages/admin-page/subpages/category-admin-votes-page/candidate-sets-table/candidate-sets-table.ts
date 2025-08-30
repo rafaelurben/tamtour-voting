@@ -66,6 +66,10 @@ export class CandidateSetsTable {
           this.replaceSet.emit(newSet);
           this.updatingSetIds.update(ids => ids.filter(id => id !== setId));
         },
+        error: err => {
+          this.updatingSetIds.update(ids => ids.filter(id => id !== setId));
+          throw err;
+        },
       });
   }
 

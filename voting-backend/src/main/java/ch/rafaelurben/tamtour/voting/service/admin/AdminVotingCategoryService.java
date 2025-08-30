@@ -2,6 +2,7 @@ package ch.rafaelurben.tamtour.voting.service.admin;
 
 import ch.rafaelurben.tamtour.voting.dto.*;
 import ch.rafaelurben.tamtour.voting.dto.admin.*;
+import ch.rafaelurben.tamtour.voting.exceptions.InvalidStateException;
 import ch.rafaelurben.tamtour.voting.exceptions.ObjectNotFoundException;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCandidateMapper;
 import ch.rafaelurben.tamtour.voting.mapper.VotingCategoryMapper;
@@ -56,6 +57,11 @@ public class AdminVotingCategoryService {
     return votingCategoryMapper.toBaseDto(existingCategory);
   }
 
+  public void deleteCategory(Long categoryId) {
+    VotingCategory existingCategory = getCategoryById(categoryId);
+    votingCategoryRepository.delete(existingCategory);
+  }
+
   public VotingCategoryResultDto getCategoryResult(Long categoryId) {
     VotingCategory category = getCategoryById(categoryId);
     return resultCalculatorService.calculateResult(category);
@@ -67,6 +73,7 @@ public class AdminVotingCategoryService {
   }
 
   public VotingSetDto updateVotingSet(Long categoryId, Long setId, VotingSetUpdateDto updateDto) {
+    VotingCategory category = getCategoryById(categoryId);
     VotingSet existingSet =
         votingSetRepository
             .findByVotingCategoryIdAndId(categoryId, setId)
@@ -74,6 +81,13 @@ public class AdminVotingCategoryService {
                 () ->
                     new ObjectNotFoundException(
                         "Set not found with id: " + setId + " in category with id: " + categoryId));
+
+    // Prevent submission of invalid sets
+    if (updateDto.submitted()
+        && !existingSet.getPositionMap().isSubmittable(category.getVotingCandidates())) {
+      throw new InvalidStateException("Set is not valid and cannot be submitted!");
+    }
+
     votingSetMapper.updateEntityFromDto(existingSet, updateDto);
     existingSet = votingSetRepository.save(existingSet);
     return votingSetMapper.toDto(existingSet);
@@ -86,6 +100,14 @@ public class AdminVotingCategoryService {
 
   public VotingCandidateDto addCandidate(Long categoryId, VotingCandidateRequestDto candidate) {
     VotingCategory category = getCategoryById(categoryId);
+
+    // Prevent add if sets have already been submitted
+    if (category.getVotingSets().stream().anyMatch(VotingSet::isSubmitted)) {
+      throw new InvalidStateException(
+          "Impossible to add candidate to category with already submitted sets!");
+    }
+
+    // Create and save candidate
     VotingCandidate votingCandidate = votingCandidateMapper.toEntity(candidate);
     votingCandidate.setVotingCategory(category);
     votingCandidate = votingCandidateRepository.save(votingCandidate);
@@ -120,5 +142,27 @@ public class AdminVotingCategoryService {
     votingCandidateMapper.updateEntityFromDto(existingCandidate, updateDto);
     existingCandidate = votingCandidateRepository.save(existingCandidate);
     return votingCandidateMapper.toDto(existingCandidate);
+  }
+
+  public void deleteCandidate(Long categoryId, Long candidateId) {
+    VotingCategory category = getCategoryById(categoryId);
+    VotingCandidate existingCandidate =
+        votingCandidateRepository
+            .findByVotingCategoryIdAndId(categoryId, candidateId)
+            .orElseThrow(
+                () ->
+                    new ObjectNotFoundException(
+                        "Candidate not found with id: "
+                            + candidateId
+                            + " in category with id: "
+                            + categoryId));
+
+    // Prevent deletion if sets already exist
+    if (!category.getVotingSets().isEmpty()) {
+      throw new InvalidStateException(
+          "Impossible to delete candidate from category with already existing sets!");
+    }
+
+    votingCandidateRepository.delete(existingCandidate);
   }
 }

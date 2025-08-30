@@ -74,3 +74,9 @@ app-drag-handle {
   color: darkgray;
   padding: 20px 10px;
 }
+
+.button-row {
+  margin-left: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+}

@@ -8,7 +8,6 @@ import { Button } from '../../components/button/button';
   selector: 'app-register-page',
   imports: [ReactiveFormsModule, Button, RouterLink],
   templateUrl: './register-page.html',
-  styleUrl: './register-page.css',
 })
 export class RegisterPage {
   private readonly formBuilder = inject(FormBuilder);

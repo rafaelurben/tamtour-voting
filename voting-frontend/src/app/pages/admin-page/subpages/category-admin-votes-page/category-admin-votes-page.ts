@@ -1,6 +1,6 @@
 import { Component, inject, input, signal, OnInit } from '@angular/core';
 import { AdminVotingCategoriesApi } from '../../../../api/admin/admin-voting-categories.api';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { VotingCategoryBaseDto } from '../../../../dto/voting-category-base.dto';
 import { VotingCandidateDto } from '../../../../dto/voting-candidate.dto';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -14,9 +14,15 @@ import { VotingCategoryResultDto } from '../../../../dto/admin/voting-category-r
 
 @Component({
   selector: 'app-category-admin-votes-page',
-  imports: [DatePipe, Spinner, TimeRemaining, CandidateSetsTable, Button],
+  imports: [
+    DatePipe,
+    Spinner,
+    TimeRemaining,
+    CandidateSetsTable,
+    Button,
+    RouterLink,
+  ],
   templateUrl: './category-admin-votes-page.html',
-  styleUrl: './category-admin-votes-page.css',
 })
 export class CategoryAdminVotesPage implements OnInit {
   private readonly categoriesApi = inject(AdminVotingCategoriesApi);
@@ -76,6 +82,10 @@ export class CategoryAdminVotesPage implements OnInit {
         this.sets.set(data);
         this.isFetchingSets.set(false);
       },
+      error: err => {
+        this.isFetchingSets.set(false);
+        throw err;
+      },
     });
   }
 
@@ -85,6 +95,10 @@ export class CategoryAdminVotesPage implements OnInit {
       next: data => {
         this.result.set(data);
         this.isFetchingResult.set(false);
+      },
+      error: err => {
+        this.isFetchingResult.set(false);
+        throw err;
       },
     });
   }

@@ -12,7 +12,6 @@ import { Button } from '../../components/button/button';
   selector: 'app-voting-page',
   imports: [CategoryVote, Spinner, Alert, RouterLink, Button],
   templateUrl: './voting-page.html',
-  styleUrl: './voting-page.css',
 })
 export class VotingPage implements OnInit {
   private readonly votingCategoryApi = inject(VotingCategoryApi);

@@ -1,4 +1,31 @@
 <div class="position-orderer">
+  @if (editable()) {
+    <app-alert
+      type="info"
+      title="Infos: Stimme abgeben"
+      message="Um deine Stimme abzugeben, musst du alle Kandidaten in eine Reihenfolge bringen, die Rangliste speichern und anschliessend einreichen.">
+      <details>
+        <summary>How-to: Kandidaten ordnen</summary>
+        <div>
+          Alle Kandidaten müssen in der Liste 'Geordnete Kandidaten' in die
+          gewünschte Reihenfolge gebracht werden. Zu Beginn sind alle Kandidaten
+          in der unteren Liste 'Verfügbare Kandidaten'. Diese Liste dient als
+          temporäre Zwischenablage. Verwende Drag & Drop oder die Pfeiltasten,
+          um die Kandidaten in die obere Liste zu verschieben und dort zu
+          ordnen.
+        </div>
+      </details>
+      <span
+        >Du kannst die Rangliste jederzeit zwischenspeichern und später
+        fortfahren.</span
+      >
+      <label>
+        <input type="checkbox" [(ngModel)]="useManualPositioningButtons" />
+        Pfeiltasten statt Drag & Drop verwenden
+      </label>
+    </app-alert>
+  }
+
   <span>Geordnete Kandidaten</span>
 
   <div
@@ -11,7 +38,7 @@
     }"
     [cdkDropListConnectedTo]="[listAvailable]"
     [cdkDropListData]="positionedCandidates"
-    [cdkDropListDisabled]="!editable()"
+    [cdkDropListDisabled]="!editable() || useManualPositioningButtons()"
     (cdkDropListDropped)="drop($event)">
     @for (candidate of positionedCandidates; track candidate.id) {
       <div class="candidate" cdkDrag cdkDragLockAxis="y">
@@ -21,14 +48,39 @@
           >({{ candidate.startNumber }})</span
         >
         @if (editable()) {
-          <app-drag-handle cdkDragHandle />
+          @if (useManualPositioningButtons()) {
+            <div class="button-row">
+              @if ($index > 0) {
+                <app-button
+                  (trigger)="moveUp($index)"
+                  title="Nach oben verschieben"
+                  >🔼</app-button
+                >
+              }
+              @if ($index < positionedCandidates.length - 1) {
+                <app-button
+                  (trigger)="moveDown($index)"
+                  title="Nach unten verschieben"
+                  >🔽</app-button
+                >
+              }
+              @if ($index === positionedCandidates.length - 1) {
+                <app-button
+                  (trigger)="moveToUnpositioned($index)"
+                  title="In die untere Liste verschieben">
+                  ⏬
+                </app-button>
+              }
+            </div>
+          } @else {
+            <app-drag-handle cdkDragHandle />
+          }
         }
       </div>
     } @empty {
       @if (editable()) {
         <div class="empty-list-hint">
-          Schiebe Kandidaten aus der unteren Liste mit Drag & Drop hierhin und
-          ordne sie.
+          Schiebe Kandidaten aus der unteren Liste hierhin und ordne sie.
         </div>
       }
     }
@@ -48,7 +100,7 @@
     [cdkDropListConnectedTo]="[listSorted]"
     [cdkDropListData]="unpositionedCandidates"
     (cdkDropListDropped)="drop($event)"
-    [cdkDropListDisabled]="!editable()">
+    [cdkDropListDisabled]="!editable() || useManualPositioningButtons()">
     @for (candidate of unpositionedCandidates; track candidate.id) {
       <div class="candidate" cdkDrag cdkDragLockAxis="y">
         <span class="candidate-name">{{ candidate.name }}</span>
@@ -56,7 +108,17 @@
           >({{ candidate.startNumber }})</span
         >
         @if (editable()) {
-          <app-drag-handle cdkDragHandle />
+          @if (useManualPositioningButtons()) {
+            <div class="button-row">
+              <app-button
+                (trigger)="moveToPositioned($index)"
+                title="In die obere Liste verschieben"
+                >⏫️</app-button
+              >
+            </div>
+          } @else {
+            <app-drag-handle cdkDragHandle />
+          }
         }
       </div>
     } @empty {
