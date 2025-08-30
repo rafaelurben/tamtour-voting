@@ -1,15 +1,15 @@
 <table class="full-width-table">
   <thead>
     <tr>
-      <th>ID</th>
-      <th>User</th>
+      <th scope="col">ID</th>
+      <th scope="col">User</th>
       @for (candidate of sortedCandidates(); track candidate.id) {
-        <th class="vertical">
+        <th scope="col" class="vertical">
           {{ candidate.name }} ({{ candidate.startNumber }})
         </th>
       }
-      <th>SM</th>
-      <th>DQ</th>
+      <th scope="col">Eingereicht</th>
+      <th scope="col">Disqualifiziert</th>
     </tr>
   </thead>
   <tbody>
@@ -31,21 +31,32 @@
         <td>
           @if (set.submitted) {
             ✅
-            <app-button (trigger)="unsubmitSet(set.id)">
-              <span>Rückgängig machen</span>
+            <app-button
+              (trigger)="unsubmitSet(set.id)"
+              [loading]="updatingSetIds().includes(set.id)">
+              <span>Zurückziehen</span>
             </app-button>
           } @else {
             ❌
+            <app-button
+              (trigger)="submitSet(set.id)"
+              [loading]="updatingSetIds().includes(set.id)">
+              <span>Einreichen</span>
+            </app-button>
           }
         </td>
         <td>
           @if (set.disqualified) {
             ☠️
-            <app-button (trigger)="undisqualifySet(set.id)">
+            <app-button
+              (trigger)="undisqualifySet(set.id)"
+              [loading]="updatingSetIds().includes(set.id)">
               <span>Widerrufen</span>
             </app-button>
           } @else {
-            <app-button (trigger)="disqualifySet(set.id)">
+            <app-button
+              (trigger)="disqualifySet(set.id)"
+              [loading]="updatingSetIds().includes(set.id)">
               <span>Disqualifizieren</span>
             </app-button>
           }
@@ -53,4 +64,27 @@
       </tr>
     }
   </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="2" scope="row">Total Punkte</th>
+      @for (candidate of sortedCandidates(); track candidate.id) {
+        <td>
+          {{ candidateResultMap().get(candidate.id)?.points }}
+        </td>
+      }
+      <td colspan="2"></td>
+    </tr>
+    <tr>
+      <th colspan="2" scope="row">Rang</th>
+      @for (candidate of sortedCandidates(); track candidate.id) {
+        <td
+          [style.background-color]="
+            calcColor(candidateResultMap().get(candidate.id)?.rank)
+          ">
+          {{ candidateResultMap().get(candidate.id)?.rank }}
+        </td>
+      }
+      <td colspan="2"></td>
+    </tr>
+  </tfoot>
 </table>

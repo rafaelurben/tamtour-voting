@@ -8,6 +8,7 @@ import { VotingUserDto } from '../../dto/voting-user.dto';
 import { VotingCategoryRequestDto } from '../../dto/admin/voting-category-request.dto';
 import { VotingSetDto } from '../../dto/admin/voting-set.dto';
 import { VotingSetUpdateDto } from '../../dto/admin/voting-set-update.dto';
+import { VotingCategoryResultDto } from '../../dto/admin/voting-category-result.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AdminVotingCategoriesApi {
@@ -43,8 +44,8 @@ export class AdminVotingCategoriesApi {
     );
   }
 
-  getCategoryResult(categoryId: number): Observable<object> {
-    return this.http.get<object>(
+  getCategoryResult(categoryId: number): Observable<VotingCategoryResultDto> {
+    return this.http.get<VotingCategoryResultDto>(
       `/api/admin/categories/${categoryId}/result`,
       {}
     );

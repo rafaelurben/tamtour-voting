@@ -1,9 +1,17 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { VotingCandidateDto } from '../../../../../dto/voting-candidate.dto';
 import { VotingSetDto } from '../../../../../dto/admin/voting-set.dto';
 import { AdminVotingCategoriesApi } from '../../../../../api/admin/admin-voting-categories.api';
 import { VotingSetUpdateDto } from '../../../../../dto/admin/voting-set-update.dto';
 import { Button } from '../../../../../components/button/button';
+import { VotingCategoryResultDto } from '../../../../../dto/admin/voting-category-result.dto';
 
 @Component({
   selector: 'app-candidate-sets-table',
@@ -17,8 +25,11 @@ export class CandidateSetsTable {
   public categoryId = input.required<number>();
   public candidates = input.required<VotingCandidateDto[]>();
   public sets = input.required<VotingSetDto[]>();
+  public result = input.required<VotingCategoryResultDto>();
 
   public replaceSet = output<VotingSetDto>();
+
+  protected readonly updatingSetIds = signal<number[]>([]);
 
   protected sortedCandidates = computed(() =>
     this.candidates().toSorted((a, b) =>
@@ -38,12 +49,22 @@ export class CandidateSetsTable {
     })
   );
 
+  protected candidateResultMap = computed(() => {
+    const map = new Map<number, { points: number; rank: number }>();
+    for (const item of this.result().items) {
+      map.set(item.candidate.id, { points: item.points, rank: item.rank });
+    }
+    return map;
+  });
+
   private updateSet(setId: number, update: VotingSetUpdateDto) {
+    this.updatingSetIds.update(ids => [...ids, setId]);
     this.adminCategoriesApi
       .updateSet(this.categoryId(), setId, update)
       .subscribe({
         next: newSet => {
           this.replaceSet.emit(newSet);
+          this.updatingSetIds.update(ids => ids.filter(id => id !== setId));
         },
       });
   }
@@ -56,18 +77,21 @@ export class CandidateSetsTable {
     this.updateSet(setId, { disqualified: false });
   }
 
+  protected submitSet(setId: number) {
+    this.updateSet(setId, { submitted: true });
+  }
+
   protected unsubmitSet(setId: number) {
     this.updateSet(setId, { submitted: false });
   }
 
-  protected calcColor(rank: number | null): string {
+  protected calcColor(rank: number | null | undefined): string {
     const maxRank = this.candidates().length;
-    if (rank === null) {
+    if (rank === null || rank === undefined) {
       return '#ffffff';
     }
-    const r = Math.round(rank * (255 / maxRank));
-    const g = 255 - Math.round(rank * (255 / maxRank));
-    const b = 0;
-    return `rgb(${r}, ${g}, ${b})`;
+    const value = (rank - 1) / (maxRank - 1);
+    const hue = ((1 - value) * 120).toString(10);
+    return `hsl(${hue},100%,50%)`;
   }
 }
