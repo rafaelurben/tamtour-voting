@@ -27,7 +27,8 @@ public class ViewerWebSocketHandler extends TextWebSocketHandler {
   private static final String MSG_HEARTBEAT = "{\"type\":\"heartbeat\"}";
   private static final String MSG_CONNECTED = "{\"type\":\"connected\"}";
   private static final String MSG_DUPLICATE_KEY =
-      "{\"type\":\"error\", \"message\":\"Another viewer has connected with the same key. This session will be closed.\"}";
+      "{\"type\":\"error\", \"message\":\"Another viewer has connected with the same key. This"
+          + " session will be closed.\"}";
 
   private final ApplicationEventPublisher applicationEventPublisher;
 
