@@ -10,6 +10,13 @@
     </div>
   } @else {
     <div class="page-padding">
+      @if (authService.error()) {
+        <app-alert
+          [ngStyle]="{ marginTop: '1rem', marginBottom: '1rem' }"
+          type="danger"
+          title="Serveranfrage fehlgeschlagen"
+          [message]="authService.error()!" />
+      }
       <router-outlet />
     </div>
   }
