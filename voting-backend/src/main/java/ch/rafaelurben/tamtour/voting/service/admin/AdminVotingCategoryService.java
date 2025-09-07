@@ -67,6 +67,11 @@ public class AdminVotingCategoryService {
     return resultCalculatorService.calculateResult(category);
   }
 
+  public List<ResultCalculatorService.VotingResultItem> getCategoryResultData(Long categoryId) {
+    VotingCategory category = getCategoryById(categoryId);
+    return resultCalculatorService.calculateResultData(category);
+  }
+
   public Set<VotingSetDto> getVotingSets(Long categoryId) {
     VotingCategory category = getCategoryById(categoryId);
     return votingSetMapper.toDto(category.getVotingSets());

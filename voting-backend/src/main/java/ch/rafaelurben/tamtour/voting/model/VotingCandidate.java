@@ -8,7 +8,7 @@ import lombok.*;
 @Table(name = "voting_candidate")
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotingCandidate {

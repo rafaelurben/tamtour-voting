@@ -5,6 +5,7 @@ import ch.rafaelurben.tamtour.voting.dto.VotingCategoryBaseDto;
 import ch.rafaelurben.tamtour.voting.dto.admin.*;
 import ch.rafaelurben.tamtour.voting.security.UserRoles;
 import ch.rafaelurben.tamtour.voting.service.admin.AdminVotingCategoryService;
+import ch.rafaelurben.tamtour.voting.service.admin.ResultCalculatorService;
 import jakarta.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,12 @@ public class AdminVotingCategoryController {
   @GetMapping("/{id}/result")
   public VotingCategoryResultDto getCategoryResult(@PathVariable Long id) {
     return adminVotingCategoryService.getCategoryResult(id);
+  }
+
+  @GetMapping("/{id}/result/data")
+  public List<ResultCalculatorService.VotingResultItem> getCategoryResultData(
+      @PathVariable Long id) {
+    return adminVotingCategoryService.getCategoryResultData(id);
   }
 
   @GetMapping("/{id}/sets")

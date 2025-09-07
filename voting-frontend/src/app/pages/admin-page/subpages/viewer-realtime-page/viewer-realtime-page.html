@@ -122,6 +122,7 @@
           <th>ID</th>
           <th>Name</th>
           <th>Resultate laden</th>
+          <th>Resultat-Daten ansehen</th>
         </tr>
       </thead>
       <tbody>
@@ -140,6 +141,13 @@
                 ">
                 <span>Laden</span>
               </app-button>
+            </td>
+            <td>
+              <a
+                target="_blank"
+                [href]="`/api/admin/categories/${category.id}/result/data`">
+                <span>Ansehen</span>
+              </a>
             </td>
           </tr>
         }
