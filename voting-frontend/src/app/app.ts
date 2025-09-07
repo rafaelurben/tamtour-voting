@@ -10,12 +10,13 @@ import { Header } from './components/header/header';
 import { filter, map, mergeMap } from 'rxjs';
 import { Spinner } from './components/spinner/spinner';
 import { Footer } from './components/footer/footer';
-import { NgClass } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { UnsavedChangesService } from './service/unsaved-changes.service';
+import { Alert } from './components/alert/alert';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Spinner, Footer, NgClass],
+  imports: [RouterOutlet, Header, Spinner, Footer, NgClass, Alert, NgStyle],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
