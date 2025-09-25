@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   input,
+  OnDestroy,
   output,
   signal,
 } from '@angular/core';
@@ -23,7 +24,7 @@ import { Alert } from '../../../components/alert/alert';
   imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button, Alert],
   templateUrl: './category-vote.html',
 })
-export class CategoryVote {
+export class CategoryVote implements OnDestroy {
   private readonly votingCategoryApi = inject(VotingCategoryApi);
   private readonly timeService = inject(TimeService);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
@@ -53,16 +54,14 @@ export class CategoryVote {
       this.currentTime() >= new Date(this.categoryData().category.submissionEnd)
   );
 
-  protected isSubmissionPhase = computed(() => {
-    return this.isSubmissionStartPassed() && !this.isSubmissionEndPassed();
-  });
-
   protected isMapValid = computed(() => {
     return !Object.values(this.categoryData().positionMap).includes(null);
   });
 
   protected savingMapInProgress = signal(false);
   protected submittingVoteInProgress = signal(false);
+
+  private autoSaveTimeout: number | null = null;
 
   constructor() {
     effect(() => {
@@ -75,7 +74,48 @@ export class CategoryVote {
     );
   }
 
+  ngOnDestroy(): void {
+    this.clearAutoSaveTimeout();
+  }
+
+  private clearAutoSaveTimeout() {
+    if (this.autoSaveTimeout) {
+      clearTimeout(this.autoSaveTimeout);
+      this.autoSaveTimeout = null;
+    }
+  }
+
+  private startAutoSaveTimeout() {
+    this.clearAutoSaveTimeout();
+    this.autoSaveTimeout = window.setTimeout(() => {
+      if (this.updatedPositionMapIncludesChanges()) {
+        this.saveVotingPositions();
+      }
+    }, 2500);
+  }
+
+  protected handleMapUpdate(updatedMap: VotingPositionMapDto) {
+    this.updatedPositionMap.set(updatedMap);
+    this.startAutoSaveTimeout();
+  }
+
+  protected handleResetMap() {
+    if (
+      confirm(
+        'Möchtest du die Rangliste wirklich zurücksetzen und von vorne beginnen?'
+      )
+    ) {
+      const newMap: VotingPositionMapDto = {};
+      for (const key in this.categoryData().positionMap) {
+        newMap[key] = null;
+      }
+      this.updatedPositionMap.set(newMap);
+      this.saveVotingPositions();
+    }
+  }
+
   protected saveVotingPositions() {
+    this.clearAutoSaveTimeout();
     this.savingMapInProgress.set(true);
     this.votingCategoryApi
       .updateCategoryVotingPositions(
@@ -95,6 +135,7 @@ export class CategoryVote {
   }
 
   protected submitVote() {
+    this.clearAutoSaveTimeout();
     this.submittingVoteInProgress.set(true);
     this.votingCategoryApi
       .submitCategoryVoting(this.categoryData().category.id)
