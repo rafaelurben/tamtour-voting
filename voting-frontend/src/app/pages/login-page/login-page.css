@@ -4,14 +4,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  padding: 0 2.5rem;
+  gap: 1.5rem;
 }
 
 .logo-title-container {
   width: 100%;
 
-  padding: 3rem;
+  padding: 2.5rem 2.5rem 0;
 
   display: flex;
   flex-direction: column;
@@ -29,15 +28,6 @@
   color: black;
 }
 
-.after-header {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  align-items: center;
-  justify-content: space-around;
-  gap: 3rem;
-}
-
 .login-button-container {
   display: flex;
   flex-direction: column;
@@ -52,4 +42,8 @@
 
 .text-center {
   text-align: center;
+}
+
+.rules-alert {
+  margin-top: auto;
 }
