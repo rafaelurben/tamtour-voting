@@ -20,7 +20,7 @@ body {
 
 @media (min-width: 576px) {
   body {
-    background-image: url('/page-background.png');
+    background-image: url('/page-background.webp');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

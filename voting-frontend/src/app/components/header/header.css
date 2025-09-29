@@ -5,7 +5,7 @@ header {
   gap: 1rem;
   padding: 0.75rem;
   border-bottom: 1px solid gray;
-  background-image: url('/header-background.jpg');
+  background-image: url('/header-background.webp');
   background-size: cover;
   background-position: center center;
 }
