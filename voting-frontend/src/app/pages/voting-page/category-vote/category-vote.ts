@@ -18,10 +18,18 @@ import { Button } from '../../../components/button/button';
 import { TimeService } from '../../../service/time.service';
 import { UnsavedChangesService } from '../../../service/unsaved-changes.service';
 import { Alert } from '../../../components/alert/alert';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-category-vote',
-  imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button, Alert],
+  imports: [
+    VotingPositionOrderer,
+    DatePipe,
+    TimeRemaining,
+    Button,
+    Alert,
+    FormsModule,
+  ],
   templateUrl: './category-vote.html',
 })
 export class CategoryVote implements OnDestroy {
@@ -30,6 +38,7 @@ export class CategoryVote implements OnDestroy {
   private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   protected readonly currentTime = this.timeService.currentTime1s;
+  protected readonly autoSaveEnabled = signal(true);
 
   public categoryData = input.required<VotingCategoryUserDetailDto>();
 
@@ -85,13 +94,19 @@ export class CategoryVote implements OnDestroy {
     }
   }
 
+  private handleAutoSaveTimeout() {
+    if (this.autoSaveEnabled() && this.updatedPositionMapIncludesChanges()) {
+      this.saveVotingPositions();
+    }
+  }
+
   private startAutoSaveTimeout() {
     this.clearAutoSaveTimeout();
-    this.autoSaveTimeout = window.setTimeout(() => {
-      if (this.updatedPositionMapIncludesChanges()) {
-        this.saveVotingPositions();
-      }
-    }, 2500);
+    if (this.autoSaveEnabled()) {
+      this.autoSaveTimeout = window.setTimeout(() => {
+        this.handleAutoSaveTimeout();
+      }, 1000);
+    }
   }
 
   protected handleMapUpdate(updatedMap: VotingPositionMapDto) {
