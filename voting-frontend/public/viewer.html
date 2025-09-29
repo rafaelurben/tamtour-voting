@@ -216,6 +216,94 @@
       .box-shadow {
         box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2);
       }
+
+      /* Winner border animation */
+
+      .winner-border {
+        --winner-border-thinkness: 4px;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: calc(-1 * var(--winner-border-thinkness));
+          left: calc(-1 * var(--winner-border-thinkness));
+          height: calc(100% + (2 * var(--winner-border-thinkness)));
+          width: calc(100% + (2 * var(--winner-border-thinkness)));
+          box-sizing: border-box;
+          z-index: -1;
+
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+          background-image: conic-gradient(
+            from var(--winner-border-angle) at 50% 50%,
+            var(--winner-fill-color)
+              calc(25% - (var(--winner-border-white-percentage) / 2)),
+            #ffffff 25%,
+            var(--winner-fill-color)
+              calc(25% + (var(--winner-border-white-percentage) / 2)),
+            var(--winner-fill-color)
+              calc(75% - (var(--winner-border-white-percentage) / 2)),
+            #ffffff 75%,
+            var(--winner-fill-color)
+              calc(75% + (var(--winner-border-white-percentage) / 2))
+          );
+          animation: rotate 4s linear infinite;
+        }
+      }
+
+      @property --winner-border-white-percentage {
+        syntax: '<percentage>';
+        inherits: true;
+        initial-value: 10%;
+      }
+
+      @property --winner-border-angle {
+        syntax: '<angle>';
+        inherits: false;
+        initial-value: 0deg;
+      }
+
+      /*
+        angle for corners = (90 + Math.atan(r.height/r.width) / (2*Math.PI)*360) = approx 5deg
+       */
+      @keyframes rotate {
+        0% {
+          --winner-border-angle: 0deg;
+          --winner-border-white-percentage: 2%;
+        }
+        10% {
+          --winner-border-angle: calc(0deg + 5deg);
+          --winner-border-white-percentage: 2%;
+        }
+        25% {
+          --winner-border-angle: 90deg;
+          --winner-border-white-percentage: 30%;
+        }
+        40% {
+          --winner-border-angle: calc(180deg - 5deg);
+          --winner-border-white-percentage: 2%;
+        }
+        50% {
+          --winner-border-angle: 180deg;
+          --winner-border-white-percentage: 2%;
+        }
+        60% {
+          --winner-border-angle: calc(180deg + 5deg);
+          --winner-border-white-percentage: 2%;
+        }
+        75% {
+          --winner-border-angle: 270deg;
+          --winner-border-white-percentage: 30%;
+        }
+        90% {
+          --winner-border-angle: calc(360deg - 5deg);
+          --winner-border-white-percentage: 2%;
+        }
+        100% {
+          --winner-border-angle: 360deg;
+          --winner-border-white-percentage: 2%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -522,7 +610,9 @@
           // First place party
           this.timeoutHandles.push(
             setTimeout(() => {
-              // TODO: Add some party effect
+              firstRow
+                .querySelector('.points-bar')
+                .classList.add('winner-border');
             }, config.animationMsReveal3And2 + config.animationMsWinnerAnimation)
           );
 
