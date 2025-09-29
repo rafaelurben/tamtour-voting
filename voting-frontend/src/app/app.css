@@ -24,6 +24,7 @@
     min-height: calc(100dvh - 1rem);
     border-radius: 5px;
     margin: 0.5rem auto;
+    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
 
     &.full-width {
       width: calc(100dvw - 1rem);

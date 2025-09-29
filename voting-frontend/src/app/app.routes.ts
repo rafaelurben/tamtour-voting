@@ -17,7 +17,7 @@ export const routes: Routes = [
     path: 'login',
     component: LoginPage,
     canActivate: [redirectAuthenticatedGuard],
-    data: { hideHeader: true },
+    data: { hideHeader: false },
   },
   {
     path: 'logout',

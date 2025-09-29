@@ -6,14 +6,29 @@
   [editable]="
     !isSubmissionEndPassed() && !categoryData().userState.hasSubmitted
   "
-  (changeMap)="updatedPositionMap.set($event)" />
+  (changeMap)="handleMapUpdate($event)" />
 
-@if (updatedPositionMapIncludesChanges()) {
-  <app-button
-    (trigger)="saveVotingPositions()"
-    [loading]="savingMapInProgress()">
-    <span>Rangliste speichern</span>
-  </app-button>
+@if (!isSubmissionEndPassed() && !categoryData().userState.hasSubmitted) {
+  <div class="button-row">
+    @if (updatedPositionMapIncludesChanges()) {
+      <app-button
+        (trigger)="saveVotingPositions()"
+        [loading]="savingMapInProgress()">
+        <span>Rangliste speichern</span>
+      </app-button>
+    } @else {
+      <app-button [disabled]="true">
+        <span>Rangliste gespeichert</span>
+      </app-button>
+    }
+    <app-button variant="danger" (trigger)="handleResetMap()">
+      <span>Rangliste zurücksetzen</span>
+    </app-button>
+  </div>
+  <label>
+    <input type="checkbox" [(ngModel)]="autoSaveEnabled" />
+    Automatisch speichern
+  </label>
 }
 
 <h3>Einreichen</h3>

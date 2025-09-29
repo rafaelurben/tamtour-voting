@@ -1,34 +1,38 @@
 <div class="logo-title-container">
   <div class="logo-container">
-    <img ngSrc="/tamtour-logo.png" alt="Logo" fill priority />
+    <img ngSrc="/tamtour-logo-basel.webp" alt="Logo" fill priority />
   </div>
   <h1 class="title">Publikumsvoting</h1>
 </div>
 
-<div class="after-header">
-  <div class="login-button-container">
-    <app-google-button />
-    <a
-      class="why-google-button"
-      (click)="toggleWhyGoogleText()"
-      (keydown)="toggleWhyGoogleText()"
-      tabindex="0">
-      Wieso Google?
-    </a>
+<div class="login-button-container">
+  <app-google-button />
+  <a
+    class="why-google-button"
+    (click)="toggleWhyGoogleText()"
+    (keydown)="toggleWhyGoogleText()"
+    tabindex="0">
+    Wieso Google?
+  </a>
 
-    @if (displayWhyGoogleText()) {
-      <p class="text-center">
-        Wir verwenden Google für die Anmeldung, damit du praktisch und sicher
-        mit deinem Google-Konto abstimmen kannst, ohne noch einen weiteren
-        Account erstellen zu müssen. Ausserdem werden durch die Anmeldung mit
-        einem Drittanbieter Mehrfachteilnahmen erschwert. Für weitere
-        Informationen, siehe <a routerLink="/rules">Regeln</a>.
-      </p>
-    }
-  </div>
+  @if (displayWhyGoogleText()) {
+    <p class="text-center">
+      Wir verwenden Google für die Anmeldung, damit du praktisch und sicher mit
+      deinem Google-Konto abstimmen kannst, ohne noch einen weiteren Account
+      erstellen zu müssen. Ausserdem werden durch die Anmeldung mit einem
+      Drittanbieter Mehrfachteilnahmen erschwert. Für weitere Informationen,
+      siehe <a routerLink="/rules">Regeln</a>.
+    </p>
+  }
+</div>
 
-  <p class="text-center">
+<app-alert
+  type="info"
+  title="Teilnahmebedingungen"
+  message=""
+  class="rules-alert">
+  <p class="no-margin">
     Mit der Teilnahme am Publikumsvoting erklärst du dich mit den
     <a routerLink="/rules">Regeln</a> einverstanden.
   </p>
-</div>
+</app-alert>

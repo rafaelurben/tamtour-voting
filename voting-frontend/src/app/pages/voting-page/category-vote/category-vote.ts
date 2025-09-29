@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   input,
+  OnDestroy,
   output,
   signal,
 } from '@angular/core';
@@ -17,18 +18,27 @@ import { Button } from '../../../components/button/button';
 import { TimeService } from '../../../service/time.service';
 import { UnsavedChangesService } from '../../../service/unsaved-changes.service';
 import { Alert } from '../../../components/alert/alert';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-category-vote',
-  imports: [VotingPositionOrderer, DatePipe, TimeRemaining, Button, Alert],
+  imports: [
+    VotingPositionOrderer,
+    DatePipe,
+    TimeRemaining,
+    Button,
+    Alert,
+    FormsModule,
+  ],
   templateUrl: './category-vote.html',
 })
-export class CategoryVote {
+export class CategoryVote implements OnDestroy {
   private readonly votingCategoryApi = inject(VotingCategoryApi);
   private readonly timeService = inject(TimeService);
   private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   protected readonly currentTime = this.timeService.currentTime1s;
+  protected readonly autoSaveEnabled = signal(true);
 
   public categoryData = input.required<VotingCategoryUserDetailDto>();
 
@@ -53,16 +63,14 @@ export class CategoryVote {
       this.currentTime() >= new Date(this.categoryData().category.submissionEnd)
   );
 
-  protected isSubmissionPhase = computed(() => {
-    return this.isSubmissionStartPassed() && !this.isSubmissionEndPassed();
-  });
-
   protected isMapValid = computed(() => {
     return !Object.values(this.categoryData().positionMap).includes(null);
   });
 
   protected savingMapInProgress = signal(false);
   protected submittingVoteInProgress = signal(false);
+
+  private autoSaveTimeout: number | null = null;
 
   constructor() {
     effect(() => {
@@ -75,7 +83,54 @@ export class CategoryVote {
     );
   }
 
+  ngOnDestroy(): void {
+    this.clearAutoSaveTimeout();
+  }
+
+  private clearAutoSaveTimeout() {
+    if (this.autoSaveTimeout) {
+      clearTimeout(this.autoSaveTimeout);
+      this.autoSaveTimeout = null;
+    }
+  }
+
+  private handleAutoSaveTimeout() {
+    if (this.autoSaveEnabled() && this.updatedPositionMapIncludesChanges()) {
+      this.saveVotingPositions();
+    }
+  }
+
+  private startAutoSaveTimeout() {
+    this.clearAutoSaveTimeout();
+    if (this.autoSaveEnabled()) {
+      this.autoSaveTimeout = window.setTimeout(() => {
+        this.handleAutoSaveTimeout();
+      }, 1000);
+    }
+  }
+
+  protected handleMapUpdate(updatedMap: VotingPositionMapDto) {
+    this.updatedPositionMap.set(updatedMap);
+    this.startAutoSaveTimeout();
+  }
+
+  protected handleResetMap() {
+    if (
+      confirm(
+        'Möchtest du die Rangliste wirklich zurücksetzen und von vorne beginnen?'
+      )
+    ) {
+      const newMap: VotingPositionMapDto = {};
+      for (const key in this.categoryData().positionMap) {
+        newMap[key] = null;
+      }
+      this.updatedPositionMap.set(newMap);
+      this.saveVotingPositions();
+    }
+  }
+
   protected saveVotingPositions() {
+    this.clearAutoSaveTimeout();
     this.savingMapInProgress.set(true);
     this.votingCategoryApi
       .updateCategoryVotingPositions(
@@ -95,6 +150,7 @@ export class CategoryVote {
   }
 
   protected submitVote() {
+    this.clearAutoSaveTimeout();
     this.submittingVoteInProgress.set(true);
     this.votingCategoryApi
       .submitCategoryVoting(this.categoryData().category.id)
