@@ -47,6 +47,7 @@
             🔓
             <app-button
               (trigger)="blockUser(user.id)"
+              [disabled]="user.id === authService.user()?.id"
               [loading]="blockButtonLoadingIds.includes(user.id)"
               >Sperren
             </app-button>

@@ -10,6 +10,7 @@ import {
   NgStyle,
 } from '@angular/common';
 import { Button } from '../../../../components/button/button';
+import { AuthService } from '../../../../service/auth.service';
 
 @Component({
   selector: 'app-user-admin-page',
@@ -20,6 +21,7 @@ export class UserAdminPage {
   protected users$!: Observable<VotingUserDto[]>;
   protected blockButtonLoadingIds: number[] = [];
 
+  protected readonly authService = inject(AuthService);
   private readonly votingUsersApi = inject(AdminVotingUsersApi);
 
   constructor() {
