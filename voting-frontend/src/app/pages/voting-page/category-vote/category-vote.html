@@ -1,5 +1,14 @@
 <h3>Deine Rangliste</h3>
 
+@if (categoryData().userState.hasSubmitted || isSubmissionEndPassed()) {
+  <app-alert
+    type="warning"
+    title="Schreibgeschützt"
+    message="Du kannst diese Rangliste nicht mehr bearbeiten.">
+  </app-alert>
+  <br />
+}
+
 <app-voting-position-orderer
   [candidates]="categoryData().candidates"
   [positionMap]="categoryData().positionMap"
