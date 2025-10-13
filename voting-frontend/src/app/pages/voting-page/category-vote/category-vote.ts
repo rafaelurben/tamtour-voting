@@ -150,19 +150,25 @@ export class CategoryVote implements OnDestroy {
   }
 
   protected submitVote() {
-    this.clearAutoSaveTimeout();
-    this.submittingVoteInProgress.set(true);
-    this.votingCategoryApi
-      .submitCategoryVoting(this.categoryData().category.id)
-      .subscribe({
-        next: () => {
-          this.submittingVoteInProgress.set(false);
-          this.updateData.emit();
-        },
-        error: error => {
-          this.submittingVoteInProgress.set(false);
-          throw error;
-        },
-      });
+    if (
+      confirm(
+        'Möchtest du die Rangliste wirklich einreichen? Dies kann nicht mehr rückgängig gemacht werden.'
+      )
+    ) {
+      this.clearAutoSaveTimeout();
+      this.submittingVoteInProgress.set(true);
+      this.votingCategoryApi
+        .submitCategoryVoting(this.categoryData().category.id)
+        .subscribe({
+          next: () => {
+            this.submittingVoteInProgress.set(false);
+            this.updateData.emit();
+          },
+          error: error => {
+            this.submittingVoteInProgress.set(false);
+            throw error;
+          },
+        });
+    }
   }
 }
