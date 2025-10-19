@@ -65,7 +65,7 @@ any issues.
 
 ### What could be improved
 
-- Currently, the viewer requires an internet connection to stay connected with the Websocket. A local fallback mechanism
+- Currently, the viewer requires an internet connection to stay connected with the WebSocket. A local fallback mechanism
   would be beneficial in case of network issues.
 - The login via Google was implemented a bit hacky due to the setup with an Angular frontend and Spring Boot backend. A
   more elegant solution would be preferable, maybe using tools like Keycloak, Better-Auth, Auth0 or Clerk.
