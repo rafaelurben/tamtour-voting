@@ -37,7 +37,7 @@ Details about the event can be found at [tamtour.ch](https://tamtour.ch).
 
 Users can create their voting order during the voting period and submission period. During the submission period, users
 can submit their votes. After the submission period ends or after a vote is submitted, no further changes are possible.
-Results are not made public until the voting ends. The viewer supports no real-time updates during the voting period.
+Results are not made public until the voting ends. The viewer does not support real-time updates during the voting period.
 
 Timeline: Voting period opens → Submission period opens → Submission & voting period ends
 
